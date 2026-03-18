@@ -483,7 +483,8 @@ static void scene_push_history(gui_scene_id_t eId)
 static lv_obj_t *scene_create_root(void)
 {
     return gui_lv_container_init(NULL, 0, 0,
-                             GUI_LV_SCREEN_WIDTH, GUI_LV_SCREEN_HEIGHT,
+                             GUI_LV_SCREEN_WIDTH, 
+                             GUI_LV_SCREEN_HEIGHT,
                              rgb(0, 0, 0), false);
 }
 

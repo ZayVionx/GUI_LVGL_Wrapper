@@ -27,7 +27,7 @@
 #endif
 
 #ifdef _WIN64
-#   include "../../../lvgl/lvgl.h"
+#   include "lvgl/lvgl.h"
 #else
 #   include "lvgl.h"
 #   include "lv_port_disp_template.h"

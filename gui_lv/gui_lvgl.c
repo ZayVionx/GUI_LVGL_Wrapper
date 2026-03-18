@@ -59,7 +59,6 @@ ui_style_t ptContDefStyle = {
         border_width(0),
         pad_all(0),
         bg_color(BG_COLOR_CONT_NORMAL),
-        bg_color(lv_color_make(0, 0, 0)),
     },
 };
 
