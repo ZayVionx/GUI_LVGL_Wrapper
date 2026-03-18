@@ -1,0 +1,40 @@
+{
+    "img": [
+        {
+            "name"  : "base_test",
+            "file"  : "base_test.png",
+            "format": "LV_IMG_CF_INDEXED_4BIT"
+        },
+        {
+            "name"  : "sort_test",
+            "file"  : "sort_test.png",
+            "format": "LV_IMG_CF_INDEXED_4BIT"
+        },
+        {
+            "name"  : "hist_rec",
+            "file"  : "hist_rec.png",
+            "format": "LV_IMG_CF_INDEXED_4BIT"
+        },
+        {
+            "name"  : "sys_set",
+            "file"  : "sys_set.png",
+            "format": "LV_IMG_CF_INDEXED_4BIT"
+        },
+        {
+            "name"  : "back",
+            "file"  : "back.png",
+            "format": "LV_IMG_CF_INDEXED_4BIT"
+        },
+        {
+            "name"  : "right",
+            "file"  : "right.png",
+            "format": "LV_IMG_CF_INDEXED_4BIT"
+        },
+        {
+            "name"  : "qr_code",
+            "file"  : "qr_code.png",
+            "format": "LV_IMG_CF_INDEXED_4BIT"
+        }
+    ]
+    
+}

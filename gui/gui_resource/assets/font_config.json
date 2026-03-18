@@ -1,0 +1,67 @@
+{
+    "font": [
+        {
+            "name"     : "Roboto_Bold",
+            "text"     : "roboto_bold_16.txt",
+            "source"   : "DROIDSANS-BOLD.TTF",
+            "bpp"      : "4",
+            "size"     : "16"
+        }, 
+        {
+            "name"     : "Roboto_Bold",
+            "text"     : "roboto_bold_70.txt",
+            "source"   : "DROIDSANS-BOLD.TTF",
+            "bpp"      : "4",
+            "size"     : "70"
+        },
+        {
+            "name"     : "Roboto_Cond_Reg",
+            "text"     : "roboto_cond_reg_20.txt",
+            "source"   : "Roboto-Condensed-3.ttf",
+            "bpp"      : "4",
+            "size"     : "20"
+        }, 
+        {
+            "name"     : "Roboto_Cond_Reg",
+            "text"     : "roboto_cond_reg_22.txt",
+            "source"   : "Roboto-Condensed-3.ttf",
+            "bpp"      : "4",
+            "size"     : "22"
+        }, 
+        {
+            "name"     : "Roboto_Cond_Reg",
+            "text"     : "roboto_cond_reg_24.txt",
+            "source"   : "Roboto-Condensed-3.ttf",
+            "bpp"      : "4",
+            "size"     : "24"
+        }, 
+        {
+            "name"     : "Roboto_Cond_Bold",
+            "text"     : "roboto_cond_bold_24.txt",
+            "source"   : "Roboto-Condensed-Bold-2.ttf",
+            "bpp"      : "4",
+            "size"     : "24"
+        },
+        {
+            "name"     : "SourceHanSansSC_Reg",
+            "text"     : "siyuan_sc_reg_18.txt",
+            "source"   : "SourceHanSansSC-Regular-2.otf",
+            "bpp"      : "4",
+            "size"     : "18"
+        }, 
+        {
+            "name"     : "SourceHanSansSC_Reg",
+            "text"     : "siyuan_sc_reg_20.txt",
+            "source"   : "SourceHanSansSC-Regular.otf",
+            "bpp"      : "4",
+            "size"     : "20"
+        }, 
+        {
+            "name"     : "SourceHanSansCN_Reg",
+            "text"     : "siyuan_cn_reg_22.txt",
+            "source"   : "SourceHanSansCN-Regular.ttf",
+            "bpp"      : "4",
+            "size"     : "22"
+        }
+    ]
+}

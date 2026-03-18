@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<package schemaVersion="1.7.28"
+         xmlns:xs="http://www.w3.org/2001/XMLSchema-instance"
+         xs:noNamespaceSchemaLocation="https://raw.githubusercontent.com/Open-CMSIS-Pack/Open-CMSIS-Pack-Spec/main/schema/PACK.xsd">
+
+    <vendor>ZJY</vendor>
+    <name>GUI_LVGL_Wrapper</name>
+    <description>
+        LVGL GUI Wrapper: scene management and UI framework for LVGL 8.x.
+        This pack depends on an external LVGL 8.x pack.
+        The repository contains a bundled LVGL copy for direct source
+        integration only; that copy is NOT installed by this pack.
+    </description>
+    <url>https://github.com/ZJY-Nerd/LVGL_GUI_Wrapper.8.4.0/</url>
+    <supportContact>3102196558@qq.com</supportContact>
+    <license>LICENSE</license>
+
+    <!-- ================================================================== -->
+    <!--  Keywords                                                          -->
+    <!-- ================================================================== -->
+    <keywords>
+        <keyword>LVGL</keyword>
+        <keyword>GUI</keyword>
+        <keyword>Scene Management</keyword>
+        <keyword>Embedded UI</keyword>
+    </keywords>
+
+    <!-- ================================================================== -->
+    <!--  Release History                                                   -->
+    <!-- ================================================================== -->
+    <releases>
+        <release version="1.2.0" date="2026-03-17">
+            Revision v1.2.0
+        </release>
+
+        <release version="1.1.0" date="2026-03-17">
+            Revision v1.1.0
+        </release>
+
+        <release version="1.0.0" date="2026-03-01">
+            Revision v1.0.0
+            - Initial Version
+        </release>
+    </releases>
+
+    <!-- ================================================================== -->
+    <!--  Conditions                                                        -->
+    <!-- ================================================================== -->
+    <conditions>
+        <!-- Require LVGL 8.x to be present in the project -->
+        <!-- <condition id="LVGL8">
+            <description>Requires LVGL 8.x library</description>
+            <require Cclass="LVGL" Cgroup="lvgl"/>
+        </condition> -->
+
+        <!-- Core must be selected before Scene/Task templates -->
+        <condition id="GUI_Core">
+            <description>Requires GUI_LVGL_Wrapper Core component</description>
+            <require Cclass="GUI_LVGL_Wrapper" Cgroup="Core"/>
+            <!-- <require condition="LVGL8"/> -->
+        </condition>
+
+        <condition id="GUI_Helper">
+            <description>Requires GUI_LVGL_Wrapper Core component</description>
+            <require condition="GUI_Core"/>
+        </condition>
+
+        <condition id="GUI_User">
+            <description>Requires GUI_LVGL_Wrapper Core component</description>
+            <require condition="GUI_Core"/>
+        </condition>
+
+    </conditions>
+
+    <!-- ================================================================== -->
+    <!--  Components                                                        -->
+    <!-- ================================================================== -->
+    <components>
+         <component Cclass="GUI_LVGL_Wrapper" Cgroup="Core"
+                    Cversion="1.1.0"          condition="LVGL8">
+            <description>
+                LVGL GUI Wrapper core framework with minimal .
+            </description>
+
+            <files>
+                <!-- ======== Include paths ================================ -->
+                <!-- <file category="include" name="./"/> -->
+
+                <!-- ======== Framework headers (read-only) ================ -->
+                <file category="header"  name="core/gui_lv_common.h"/>
+                <file category="header"  name="core/gui_lv_scene_manage.h"/>
+
+                <!-- ======== Internal support headers ===================== -->
+                <!--  Required by packaged framework sources; application    -->
+                <!--  code should not include these headers directly.        -->
+                <file category="header"  name="core/_internal/emb_list.h"/>
+
+                <!-- ======== Framework sources (read-only) ================ -->
+                <file category="sourceC" name="core/gui_lv_common.c"/>
+                <file category="sourceC" name="core/gui_lv_scene_manage.c"/>
+
+            </files>
+            <Pre_Include_Global_h>
+#define __GUI_LVGL_WRAPPER__        1
+#define __LVGL_CONF_SKIP_HEADER___
+            </Pre_Include_Global_h>
+
+            <!-- Inject RTE_Components_h macro so code can detect the pack -->
+            <RTE_Components_h>
+#define __GUI_LVGL_WRAPPER__        1
+#define __GUI_LVGL_WRAPPER_CORE__   1
+            </RTE_Components_h>
+        </component>
+
+
+        <component Cclass="GUI_LVGL_Wrapper"  Cgroup="Helper"
+                   Cversion="1.1.0"           condition="GUI_Helper">
+            <description>
+                LVGL GUI Wrapper user helper functions and styles.
+            </description>
+
+            <files>
+                <!-- ======== Framework headers (read-only) ================ -->
+                <file category="header"  name="helper/include/gui_lv_helper.h"/>
+                <file category="header"  name="helper/include/gui_lv_helper_style.h"/>
+                <file category="header"  name="helper/include/gui_lv_helper_data.h"/>
+                <file category="header"  name="helper/include/gui_lv_helper_input.h"/>
+                
+
+                <!-- ======== Framework sources (read-only) ================ -->
+                <file category="sourceC" name="helper/source/gui_lv_helper_style.c"/>
+                <file category="sourceC" name="helper/source/gui_lv_helper_data.c"/>
+                <file category="sourceC" name="helper/source/gui_lv_helper_input.c"/>
+
+            </files>
+            <Pre_Include_Global_h>
+#define __GUI_LVGL_WRAPPER__        1
+#define __LVGL_CONF_SKIP_HEADER___
+            </Pre_Include_Global_h>
+
+            <!-- Inject RTE_Components_h macro so code can detect the pack -->
+            <RTE_Components_h>
+#define __GUI_LVGL_WRAPPER__        1
+#define __GUI_LVGL_WRAPPER_HELPER__ 1
+            </RTE_Components_h>
+        </component>
+
+
+        <component Cclass="GUI_LVGL_Wrapper"  Cgroup="USER"
+                   Cversion="1.1.0"           condition="GUI_User">
+            <description>
+                LVGL GUI Wrapper user code templates and examples.
+            </description>
+
+            <files>
+                <!-- ======== Framework headers (read-only) ================ -->
+                <file category="header"  name="gui_lv_utils.h"/>
+
+                <!-- ================== Framework headers ================== -->
+                <file category="header"  attr="config"  version="1.1.0" name="gui_lvgl.h"/>
+                <file category="header"  attr="config"  version="1.1.0" name="gui_lv_conf.h"/>
+                <file category="header"  attr="config"  version="1.1.0" name="gui_lv_font.h"/>
+                <file category="header"  attr="config"  version="1.1.0" name="gui_lv_sys_data.h"/>
+                <file category="header"  attr="config"  version="1.1.0" name="gui_scene_id.h"/>
+                
+                <!-- ================== Framework sources ================== -->
+                <file category="sourceC" attr="config" version="1.1.0" name="gui_lvgl.c"/>
+                <file category="sourceC" attr="config" version="1.1.0" name="gui_lv_sys_data.c"/>
+
+            </files>
+            <Pre_Include_Global_h>
+#define __GUI_LVGL_WRAPPER__        1
+#define __LVGL_CONF_SKIP_HEADER___
+            </Pre_Include_Global_h>
+
+            <!-- Inject RTE_Components_h macro so code can detect the pack -->
+            <RTE_Components_h>
+#define __GUI_LVGL_WRAPPER__        1
+#define __GUI_LVGL_WRAPPER_CONF__   1
+            </RTE_Components_h>
+        </component>
+
+
+        <component Cclass="GUI_LVGL_Wrapper"  Cgroup="Scene"
+                   Cversion="1.2.0"           condition="GUI_User" maxInstances="20">
+            <description>
+                GUI scene wrapper instance template.
+
+                Each component instance generates one wrapper source/header pair.
+                The RTE generator replaces %Instance% with 0,1,2,...
+
+                Wrapper entry:
+                - gui_lv_scene_%Instance%_init()
+            </description>
+
+            <files>
+                <file category="sourceh" version="1.2.0" name="template/gui_scene_include.h"/>
+
+                <file category="sourceC" attr="config" version="1.2.0" name="template/gui_scene.c"/>
+                <file category="header"  attr="config" version="1.2.0" name="template/gui_scene.h"/>
+                
+            </files>
+
+            <RTE_Components_h>
+#define __RTE_GUI_LVGL_WRAPPER__    1
+#define __RTE_GUI_LVGL_Scene%Instance%__
+            </RTE_Components_h>
+        </component>
+
+        <component Cclass="GUI_LVGL_Wrapper"  Cgroup="Template"
+                   Cversion="1.2.0"           condition="GUI_User">
+            <description>
+                GUI scene wrapper instance template.
+
+                Each component instance generates one wrapper source/header pair.
+                The RTE generator replaces %Instance% with 0,1,2,...
+
+                Wrapper entry:
+                - gui_lv_scene_%Instance%_init()
+            </description>
+
+            <files>
+                <!-- the template for scenes -->
+                <file category="sourceC" attr="template" version="1.2.0" name="template/gui_scene_template.c"/>
+                <file category="header"  attr="template" version="1.2.0" name="template/gui_scene_template.h"/>
+                
+            </files>
+            
+        </component>
+
+        
+    </components>
+
+</package>
