@@ -20,6 +20,7 @@
 #define __GUI_SCENE_INCLUDE_H__
 
 /*================================= INCLUDES =================================*/
+#include "RTE_Components.h"
 
 #ifdef   __cplusplus
 extern "C" {

@@ -39,7 +39,7 @@
 #if defined(__GUI_LVGL_WRAPPER__)
 #   include <gui_lvgl.h>
 #else
-#   include "./gui_lvgl.h"
+#   include "gui_lvgl.h"
 #endif
 
 #if defined(__RTE_GUI_LVGL_WRAPPER__)

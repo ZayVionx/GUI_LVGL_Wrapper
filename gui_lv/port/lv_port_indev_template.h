@@ -17,8 +17,13 @@ extern "C" {
 /*********************
  *      INCLUDES
  *********************/
-#include "lvgl.h"
 #include "./gui_lv_utils.h"
+
+#if defined(LV_LVGL_H_INCLUDE_SIMPLE)
+#	include "lvgl.h"
+#else
+#	include "lvgl/lvgl.h"
+#endif
 
 #ifdef __GUI_LVGL_WRAPPER__
 #   include <gui_lv_conf.h>
