@@ -20,7 +20,7 @@
 #define __GUI_LV_HELPER_DATA_H__
 
 /*================================= INCLUDES =================================*/
-#include "./helper/include/gui_lv_helper_input.h"
+#include "helper/include/gui_lv_helper_input.h"
 #include <stdint.h>
 #include <stdbool.h>
 

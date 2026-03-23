@@ -33,17 +33,17 @@
 #define __GUI_LVGL_H__
 
 /*================================= INCLUDES =================================*/
-#include "./core/gui_lv_scene_manage.h"
-#include "./helper/include/gui_lv_helper.h"
+#include "core/gui_lv_scene_manage.h"
+#include "helper/include/gui_lv_helper.h"
 
 #ifdef __GUI_LVGL_WRAPPER_CONF__
 #   include <gui_scene_id.h>
 #   include <gui_lv_font.h>
 #   include <gui_lv_sys_data.h>
 #else
-#   include "./gui_scene_id.h"
-#   include "./gui_lv_font.h"
-#   include "./gui_lv_sys_data.h"
+#   include "gui_scene_id.h"
+#   include "gui_lv_font.h"
+#   include "gui_lv_sys_data.h"
 #endif
 
 #ifdef   __cplusplus

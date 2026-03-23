@@ -35,7 +35,7 @@
 #ifdef __GUI_LVGL_WRAPPER_CONF__
 #   include <gui_lvgl.h>
 #else
-#   include "./gui_lvgl.h"
+#   include "gui_lvgl.h"
 #endif
 
 /*============================ MACROS ========================================*/

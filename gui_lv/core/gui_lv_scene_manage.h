@@ -20,12 +20,12 @@
 #define __GUI_LV_SCENE_MANAGE_H__
 
 /*================================= INCLUDES =================================*/
-#include "./core/gui_lv_common.h"
+#include "core/gui_lv_common.h"
 
 #ifdef __GUI_LVGL_WRAPPER_CONF__
 #   include <gui_scene_id.h>
 #else
-#   include "./gui_scene_id.h"
+#   include "gui_scene_id.h"
 #endif
 
 #include <stdint.h>

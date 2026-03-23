@@ -20,7 +20,7 @@
 #define __GUI_LV_HELPER_STYLE_H__
 
 /*============================ INCLUDES ======================================*/
-#include "./gui_lv_utils.h"
+#include "gui_lv_utils.h"
 
 #ifdef   __cplusplus
 extern "C" {

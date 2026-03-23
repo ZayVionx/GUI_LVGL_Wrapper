@@ -3,8 +3,8 @@
 
 /*=============================== UI LIB MACROS ==============================*/
 /*================================= INCLUDES =================================*/
-#include "./gui_lv_utils.h"
-#include "./helper/include/gui_lv_helper_input.h"
+#include "gui_lv_utils.h"
+#include "helper/include/gui_lv_helper_input.h"
 
 #ifdef   __cplusplus
 extern "C" {

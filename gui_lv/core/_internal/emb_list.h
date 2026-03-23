@@ -20,7 +20,7 @@
 #define __EMB_LIST_H__
 
 /*================================= INCLUDES =================================*/
-#include "./gui_lv_utils.h"
+#include "gui_lv_utils.h"
 
 #ifdef   __cplusplus
 extern "C" {

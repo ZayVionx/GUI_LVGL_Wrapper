@@ -5,7 +5,7 @@
 #ifdef __GUI_LVGL_WRAPPER_CONF__
 #   include <gui_lv_sys_data.h>
 #else
-#   include "./gui_lv_sys_data.h"
+#   include "gui_lv_sys_data.h"
 #endif
 
 #ifdef   __cplusplus

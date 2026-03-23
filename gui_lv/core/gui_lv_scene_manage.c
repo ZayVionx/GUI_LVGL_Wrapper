@@ -17,14 +17,14 @@
 ****************************************************************************/
 
 /*================================= INCLUDES =================================*/
-#include "./core/gui_lv_scene_manage.h"
+#include "core/gui_lv_scene_manage.h"
 #include <stddef.h>
 #include <string.h>
 
 #ifdef __EMB_UTILS_LIB_SUPPORTED__
 #   include "emb_list.h"
 #else
-#   include "./core/_internal/emb_list.h"
+#   include "core/_internal/emb_list.h"
 #endif
 
 /*================================== MACROS ==================================*/

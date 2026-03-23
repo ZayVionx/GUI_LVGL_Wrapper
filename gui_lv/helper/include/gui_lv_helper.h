@@ -20,9 +20,9 @@
 #define __GUI_LV_HELPER_H__
 
 /*================================= INCLUDES =================================*/
-#include "./helper/include/gui_lv_helper_data.h"
-#include "./helper/include/gui_lv_helper_input.h"
-#include "./helper/include/gui_lv_helper_style.h"
+#include "helper/include/gui_lv_helper_data.h"
+#include "helper/include/gui_lv_helper_input.h"
+#include "helper/include/gui_lv_helper_style.h"
 
 #ifdef   __cplusplus
 extern "C" {
