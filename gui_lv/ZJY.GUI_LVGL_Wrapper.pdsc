@@ -49,16 +49,16 @@
     <!-- ================================================================== -->
     <conditions>
         <!-- Require LVGL 8.x to be present in the project -->
-        <!-- <condition id="LVGL8">
+        <condition id="LVGL8">
             <description>Requires LVGL 8.x library</description>
             <require Cclass="LVGL" Cgroup="lvgl"/>
-        </condition> -->
+        </condition>
 
         <!-- Core must be selected before Scene/Task templates -->
         <condition id="GUI_Core">
             <description>Requires GUI_LVGL_Wrapper Core component</description>
             <require Cclass="GUI_LVGL_Wrapper" Cgroup="Core"/>
-            <!-- <require condition="LVGL8"/> -->
+            <require condition="LVGL8"/>
         </condition>
 
         <condition id="GUI_Helper">
@@ -69,6 +69,11 @@
         <condition id="GUI_User">
             <description>Requires GUI_LVGL_Wrapper Core component</description>
             <require condition="GUI_Core"/>
+        </condition>
+
+        <condition id="GUI_Template">
+            <description>Requires GUI_LVGL_Wrapper User component</description>
+            <require condition="GUI_User"/>
         </condition>
 
     </conditions>
@@ -206,7 +211,7 @@
         </component>
 
         <component Cclass="GUI_LVGL_Wrapper"  Cgroup="Template"
-                   Cversion="1.2.0"           condition="GUI_User">
+                   Cversion="1.2.0"           condition="GUI_Template">
             <description>
                 GUI scene wrapper instance template.
 
