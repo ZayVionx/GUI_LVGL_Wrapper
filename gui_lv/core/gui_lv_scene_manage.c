@@ -425,11 +425,14 @@ static void scene_setup(gui_scene_id_t eId)
     /* Call user init */
     ptCfg->pfInit(ptRoot);
 
+    /* Load screen */
+    scene_load_scr(ptRoot);
+    
     /* Auto-bind group[0] to indev */
     scene_bind_indev(ptCfg);
 
-    /* Load screen */
-    scene_load_scr(ptRoot);
+    // /* Load screen */
+    // scene_load_scr(ptRoot);
 }
 
 /*******************************************************************************
