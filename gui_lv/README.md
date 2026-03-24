@@ -1,25 +1,33 @@
 # GUI_LVGL_Wrapper
 
-GUI_LVGL_Wrapper 是一套基于 LVGL 8.x 的嵌入式 GUI 封装层，核心目标是把
-UI 初始化、场景切换、页面栈、输入焦点管理和常用控件创建做成稳定接口，
-让业务代码聚焦在“画什么”和“怎么交互”，而不是反复处理底层样板代码。
+GUI_LVGL_Wrapper 是一套面向 LVGL 8.x 的嵌入式 GUI 封装组件，用于
+统一界面初始化、场景切换、页面栈管理、输入焦点恢复及常用控件创建
+流程。该组件将应用层界面逻辑与底层样板代码解耦，使业务代码能够围绕
+界面结构与交互行为展开，并保持一致的组织方式。
 
-## 1. 功能概览
+## 1. 概述
 
-- 单入口初始化：`gui_lv_init()`
-- 场景生命周期管理：注册 / 切换 / 返回
-- 页面子栈管理：`page_push` / `page_back`
-- 焦点索引保存与恢复（支持多 group）
-- 常用控件快速创建 API（container/img/label/btn/bar/spinbox）
-- 通用样式配置器（结构化 style + 标记位）
-- 输入与参数编辑辅助模块（导航、加减、回环）
-- 同时支持：
-	- 直接源码集成（非 RTE）
-	- CMSIS-Pack / RTE 组件化集成
+本组件提供以下核心能力：
+
+- 单入口初始化接口：`gui_lv_init()`
+- 场景注册、场景切换与场景回退
+- 场景内页面压栈与页面回退
+- 多 group 焦点索引保存与恢复
+- 常用 LVGL 控件快速创建接口
+- 结构化样式描述与样式应用接口
+- 输入导航与参数调节辅助接口
+- 同时支持直接源码集成与 CMSIS-Pack / RTE 集成
+
+本组件适用于以下类型的工程：
+
+- 基于 LVGL 8.x 的 MCU 图形界面工程
+- 具有多场景、多页面层级的应用
+- 需要统一界面模块边界与初始化流程的项目
+- 需要同时兼容源码集成与 Pack 分发的工程
 
 ## 2. 目录结构
 
-`gui_lv/` 下核心目录说明：
+`gui_lv/` 目录下主要内容如下：
 
 ```text
 gui_lv/
@@ -29,121 +37,203 @@ gui_lv/
 ├─ helper/                   # 辅助模块：style / data / input
 │  ├─ include/
 │  └─ source/
-├─ port/                     # LVGL 显示与输入设备移植模板
+├─ port/                     # 显示与输入设备移植模板
 │  ├─ lv_port_disp_template.h/.c
 │  └─ lv_port_indev_template.h/.c
-├─ template/                 # 场景模板（RTE 实例模板 + 用户模板）
-├─ gui_lvgl.h/.c             # 对外主入口
-├─ gui_lv_sys_data.h/.c      # 语言/开机场景/蜂鸣档位系统数据
-├─ gui_scene_id.h            # 场景与页面 ID 枚举定义（用户维护）
-├─ gui_lv_conf.h             # GUI 封装相关配置项
-├─ gui_lv_utils.h            # 常用宏（颜色、定时器、group、对齐等）
+├─ template/                 # 场景模板与 RTE 场景实例模板
+├─ gui_lvgl.h/.c             # 组件主入口
+├─ gui_lv_sys_data.h/.c      # 系统参数接口
+├─ gui_scene_id.h            # 场景与页面 ID 定义
+├─ gui_lv_conf.h             # 组件配置项
+├─ gui_lv_utils.h            # 常用宏与快捷工具
 └─ ZJY.GUI_LVGL_Wrapper.pdsc # CMSIS-Pack 描述文件
 ```
 
-## 3. 快速开始
+各目录职责如下：
 
-### 3.1 方式 A：直接源码集成（非 RTE）
+- `core/`：提供场景管理与基础控件封装
+- `helper/`：提供样式、输入与数据辅助功能
+- `port/`：提供显示与输入设备移植模板
+- `template/`：提供场景模板与 RTE 实例模板
 
-1. 引入 LVGL 8.x，并完成你自己的 `lv_port_disp` / `lv_port_indev`。
-2. 将 `gui_lv/` 下 `core`、`helper`、`gui_lvgl.*`、`gui_lv_sys_data.*`、
-	 `gui_scene_id.h` 等加入工程编译。
-3. 在 `gui_scene_id.h` 中定义业务场景/页面 ID。
-4. 基于 `template/gui_scene_template.c/.h` 新建你的场景文件。
-5. 在 `gui_lvgl.c` 的用户代码区：
-	 - `__gui_sys_data_init()` 设置语言和开机场景
-	 - `__gui_common_style_init()` 初始化通用样式
-	 - `__gui_all_scene_init()` 注册所有场景
-6. 系统启动时调用 `gui_lv_init()`；主循环周期调用 `lv_timer_handler()`。
+## 3. 软件结构
 
-### 3.2 方式 B：CMSIS-Pack / RTE 集成
+### 3.1 主入口模块
 
-在 RTE 中按顺序启用组件：
+`gui_lvgl.h/.c` 负责提供组件初始化入口，并串联以下阶段：
+
+- 系统参数初始化
+- 公共样式初始化
+- 全部场景注册
+- 开机场景切换
+
+### 3.2 场景管理模块
+
+`core/gui_lv_scene_manage.h/.c` 负责管理场景与页面生命周期，主要包
+括：
+
+- 场景注册表管理
+- 当前场景切换
+- 历史场景回退
+- 场景内页面压栈与页面回退
+- group 焦点索引保存与恢复
+
+### 3.3 基础控件模块
+
+`core/gui_lv_common.h/.c` 对常用 LVGL 控件创建过程进行封装，用于减
+少界面初始化代码中的重复样板。
+
+### 3.4 Helper 模块
+
+`helper/` 目录用于提供辅助逻辑：
+
+- `helper/style`：统一样式描述与样式应用
+- `helper/input`：导航控制、加减调节与回环处理
+- `helper/data`：参数范围控制与持久化接口占位
+
+## 4. 集成方式
+
+本组件支持两种集成方式。
+
+### 4.1 直接源码集成
+
+适用于未使用 RTE 的普通工程。集成步骤如下：
+
+1. 引入 LVGL 8.x，并完成显示与输入设备移植。
+2. 将 `gui_lv/` 下所需源码加入工程编译。
+3. 在 `gui_scene_id.h` 中定义业务场景与页面 ID。
+4. 基于 `template/gui_scene_template.c/.h` 创建用户场景文件。
+5. 在 `gui_lvgl.c` 的用户代码区完成系统参数、公共样式和场景注册。
+6. 系统启动后调用 `gui_lv_init()`，运行阶段周期调用
+   `lv_timer_handler()`。
+
+建议至少纳入以下文件或目录：
+
+- `core/`
+- `helper/`
+- `gui_lvgl.c/.h`
+- `gui_lv_sys_data.c/.h`
+- `gui_scene_id.h`
+
+### 4.2 CMSIS-Pack / RTE 集成
+
+适用于采用 Pack 方式管理软件组件的工程。在 RTE 中按以下顺序启用
+组件：
 
 1. `GUI_LVGL_Wrapper::Core`
 2. `GUI_LVGL_Wrapper::Helper`
 3. `GUI_LVGL_Wrapper::USER`
-4. `GUI_LVGL_Wrapper::Scene`（可多实例，最多 20）
+4. `GUI_LVGL_Wrapper::Scene`
 
-说明：
+相关说明如下：
 
-- `Scene` 组件会生成 `gui_scene_%Instance%.c/.h`。
-- `gui_lvgl.c` 在 `__RTE_GUI_LVGL_WRAPPER__` 下通过
-	`template/gui_scene_include.h` 自动初始化已启用实例。
-- 如果需要自定义命名模板（`<name>` / `<NAME>`），参考：
-	`template/how_to_use_user_scene_template_in_pack_zh.md`
+- `Scene` 为可多实例组件，最大实例数为 20
+- 启用 `Scene` 后会生成对应的 `gui_scene_%Instance%.c/.h` 文件
+- `gui_lvgl.c` 在 `__RTE_GUI_LVGL_WRAPPER__` 条件下，通过
+  `template/gui_scene_include.h` 自动初始化已启用的场景实例
+- 如需基于 `<name>` 或 `<NAME>` 自定义模板命名规则，可参考
+  `template/how_to_use_user_scene_template_in_pack_zh.md`
 
-## 4. 初始化流程
+## 5. 初始化流程
 
-`gui_lv_init()` 的执行顺序：
+`gui_lv_init()` 的执行顺序如下：
 
-1. （非 `_WIN64`）`lv_init()`
-2. （非 `_WIN64`）`lv_port_disp_init()`
-3. （非 `_WIN64`）`lv_port_indev_init()`
-4. `__gui_sys_data_init()`：系统参数初始化（语言/开机场景）
-5. `__gui_common_style_init()`：通用样式初始化
-6. `__gui_all_scene_init()`：场景注册
-7. `gui_lv_scene_switch(gui_lv_get_boot_scene_id())`
-8. `lv_timer_handler()`（首次触发）
+1. 非 `_WIN64` 环境下调用 `lv_init()`
+2. 非 `_WIN64` 环境下调用 `lv_port_disp_init()`
+3. 非 `_WIN64` 环境下调用 `lv_port_indev_init()`
+4. 调用 `__gui_sys_data_init()` 初始化系统参数
+5. 调用 `__gui_common_style_init()` 初始化公共样式
+6. 调用 `__gui_all_scene_init()` 注册全部场景
+7. 调用 `gui_lv_scene_switch(gui_lv_get_boot_scene_id())`
+8. 调用 `lv_timer_handler()` 触发首次界面处理
 
-建议：`gui_lv_init()` 只做一次；后续渲染时序交给系统主循环。
+运行要求如下：
 
-## 5. 场景与页面机制
+- `gui_lv_init()` 仅调用一次
+- `lv_timer_handler()` 由系统周期调度
+- LVGL Tick 必须正常递增
+- 开机场景 ID 必须已经注册
 
-### 5.1 Scene API
+## 6. 场景与页面机制
 
-- `bool gui_lv_scene_register(const gui_scene_cfg_t *ptCfg)`
-	- 注册场景（必填：`eId`、`pfInit`、`pfDeinit`）
-- `void gui_lv_scene_switch(gui_scene_id_t eTargetId)`
-	- 切换场景：销毁当前场景后重建目标场景
-- `void gui_lv_scene_back(void)`
-	- 返回历史场景（栈深默认 8）
-- `gui_scene_id_t gui_lv_scene_get_current(void)`
-- `lv_obj_t *gui_lv_scene_get_current_root(void)`
+### 6.1 场景接口
 
-### 5.2 Page API（场景内子页面）
+场景用于表示应用中的一级界面。主要接口如下：
 
-- `bool gui_lv_scene_page_register(const gui_page_cfg_t *ptCfg)`
-- `void gui_lv_scene_page_push(gui_scene_page_id_t ePageId)`
-- `void gui_lv_scene_page_back(void)`
+| 接口 | 说明 |
+| --- | --- |
+| `bool gui_lv_scene_register(const gui_scene_cfg_t *ptCfg)` | 注册场景 |
+| `void gui_lv_scene_switch(gui_scene_id_t eTargetId)` | 切换目标场景 |
+| `void gui_lv_scene_back(void)` | 返回上一场景 |
+| `gui_scene_id_t gui_lv_scene_get_current(void)` | 获取当前场景 ID |
+| `lv_obj_t *gui_lv_scene_get_current_root(void)` | 获取当前场景根对象 |
 
-页面机制特点：
+场景注册时应至少提供以下成员：
 
-- `push` 时会清空当前 root 下 UI，再创建新页面容器
-- `back` 时通过再次调用上一层 `pfInit` 重建页面
-- 自动保存并恢复 focus index（多 group）
+- `eId`
+- `pfInit`
+- `pfDeinit`
 
-### 5.3 容量与边界（当前实现）
+场景切换过程中，组件会销毁当前场景并重新构建目标场景，以确保场景
+根对象、页面状态与焦点记录保持一致。
 
-- 场景回退历史深度：`GUI_SCENE_HISTORY_DEPTH = 8`
-- 页面节点池大小：`GUI_PAGE_NODE_POOL_SIZE = 8`
-- 单场景最大 group 记录数：`GUI_SCENE_GROUP_MAX = 4`
+### 6.2 页面接口
 
-如果业务需要更大容量，请调整 `gui_lv_scene_manage.c` 相关宏。
+页面用于表示场景内部的子页面或局部流程页面。主要接口如下：
 
-## 6. 最小使用示例（非 RTE）
+| 接口 | 说明 |
+| --- | --- |
+| `bool gui_lv_scene_page_register(const gui_page_cfg_t *ptCfg)` | 注册页面 |
+| `void gui_lv_scene_page_push(gui_scene_page_id_t ePageId)` | 进入子页面 |
+| `void gui_lv_scene_page_back(void)` | 返回上一页面 |
 
-### 6.1 定义场景 ID
+页面机制行为如下：
 
-在 `gui_scene_id.h`：
+- `push` 时清空当前场景 root 下的界面对象
+- 为目标页面重新创建容器与界面对象
+- `back` 时依据保存的页面节点重新调用上一页初始化函数
+- 自动保存并恢复焦点索引，支持多 group 场景
+
+### 6.3 容量定义
+
+当前实现使用以下默认容量：
+
+| 宏 | 默认值 | 说明 |
+| --- | --- | --- |
+| `GUI_SCENE_HISTORY_DEPTH` | 8 | 场景历史深度 |
+| `GUI_PAGE_NODE_POOL_SIZE` | 8 | 页面节点池大小 |
+| `GUI_SCENE_GROUP_MAX` | 4 | 单场景最大 group 记录数 |
+
+如业务场景需要更大容量，可在 `core/gui_lv_scene_manage.c` 中调整对应
+宏定义。
+
+## 7. 使用示例
+
+### 7.1 定义场景 ID
+
+在 `gui_scene_id.h` 中定义业务场景枚举：
 
 ```c
 typedef enum {
-		GUI_SCENE_HOME = 0,
-		GUI_SCENE_SETTING,
-		GUI_SCENE_MAX
+    GUI_SCENE_HOME = 0,
+    GUI_SCENE_SETTING,
+    GUI_SCENE_MAX
 } gui_scene_id_t;
 ```
 
-### 6.2 注册场景
+### 7.2 注册场景
 
-在你的场景文件中：
+在用户场景文件中注册场景：
 
 ```c
 static void __on_scene_home_draw(lv_obj_t *ptRoot)
 {
-		gui_lv_label_init(ptRoot, 10, 10, "Home", &lv_font_montserrat_20,
-											rgb(255, 255, 255));
+    gui_lv_label_init(ptRoot,
+                      10,
+                      10,
+                      "Home",
+                      &lv_font_montserrat_20,
+                      rgb(255, 255, 255));
 }
 
 static void __on_scene_home_depose(void)
@@ -152,38 +242,39 @@ static void __on_scene_home_depose(void)
 
 void gui_lv_scene_home_init(void)
 {
-		const gui_scene_cfg_t c_tCFG = {
-				.eId      = GUI_SCENE_HOME,
-				.ptEx     = NULL,
-				.pfInit   = __on_scene_home_draw,
-				.pfDeinit = __on_scene_home_depose,
-		};
-		gui_lv_scene_register(&c_tCFG);
+    const gui_scene_cfg_t c_tCFG = {
+        .eId      = GUI_SCENE_HOME,
+        .ptEx     = NULL,
+        .pfInit   = __on_scene_home_draw,
+        .pfDeinit = __on_scene_home_depose,
+    };
+
+    gui_lv_scene_register(&c_tCFG);
 }
 ```
 
-### 6.3 在入口里挂接
+### 7.3 配置开机场景
 
-在 `gui_lvgl.c` 用户代码区：
+在 `gui_lvgl.c` 的用户代码区完成系统参数与场景初始化：
 
 ```c
 static void __gui_sys_data_init(void)
 {
-		gui_lv_set_lang(GUI_LV_LANGUAGE_EN);
-		gui_lv_set_boot_scene_id(GUI_SCENE_HOME);
+    gui_lv_set_lang(GUI_LV_LANGUAGE_EN);
+    gui_lv_set_boot_scene_id(GUI_SCENE_HOME);
 }
 
 static void __gui_all_scene_init(void)
 {
-		gui_lv_scene_home_init();
+    gui_lv_scene_home_init();
 }
 ```
 
-## 7. Helper 模块
+## 8. Helper 模块说明
 
-### 7.1 `core/gui_lv_common.*`
+### 8.1 基础控件快捷接口
 
-常用控件快速创建：
+`core/gui_lv_common.*` 提供以下常用接口：
 
 - `gui_lv_container_init`
 - `gui_lv_img_init`
@@ -193,89 +284,119 @@ static void __gui_all_scene_init(void)
 - `gui_lv_spinbox_init`
 - `gui_lv_timer_init`
 
-Group 焦点工具：
+同时提供 group 焦点相关接口：
 
 - `gui_lv_group_focus_nav`
 - `gui_lv_group_get_focus_index`
 
-### 7.2 `helper/style`
+### 8.2 样式辅助接口
 
-- 用 `ui_style_t` + `style_config_t` 描述样式
-- 调用 `style_init()` 完成 LVGL 样式对象构建
-- 使用 `style_apply()` / `style_remove()` / `style_reset()`
-- 支持宏化字段，如：`bg_color(...)`、`radius(...)`、`text_font(...)`
+`helper/style` 使用 `ui_style_t` 与 `style_config_t` 描述样式配置，支持
+以下接口：
 
-### 7.3 `helper/input` 与 `helper/data`
+- `style_init()`
+- `style_apply()`
+- `style_remove()`
+- `style_reset()`
 
-- `ui_data_nav()`：处理网格导航（支持换行与回环）
-- `ui_data_set()`：整型/浮点参数增减与边界控制
-- `ui_data_save_to_flash()` / `ui_data_reset_to_default()`：参数持久化钩子
+支持的典型配置宏包括：
 
-## 8. 资源与字体
+- `bg_color(...)`
+- `radius(...)`
+- `text_font(...)`
 
-本仓库资源生成工具位于 `gui/gui_resource`：
+### 8.3 输入与数据辅助接口
 
-- 资源说明：`../gui/gui_resource/README.md`
-- 自动化细节：`../gui/gui_resource/copilot.md`
+`helper/input` 与 `helper/data` 主要用于参数编辑类界面：
 
-典型流程：
+- `ui_data_nav()`：网格导航控制
+- `ui_data_set()`：整型与浮点参数增减控制
+- `ui_data_save_to_flash()`：参数持久化接口占位
+- `ui_data_reset_to_default()`：参数恢复默认值接口占位
 
-1. 在 `assets/font_config.json`、`assets/img_config.json` 配置资源
-2. 运行 `tools/resource_gen.py` 或 `tools/generate_all.py`
-3. 使用 `generated/ui_resource.h` 中声明的字体/图片符号
+## 9. 资源生成说明
 
-Pack 模式通常直接消费 `generated/` 下预生成文件，不依赖 Python。
+资源生成工具位于 `gui/gui_resource/`。相关文档如下：
 
-## 9. 配置项说明
+- `../gui/gui_resource/README.md`
+- `../gui/gui_resource/copilot.md`
 
-`gui_lv_conf.h` 关键宏：
+典型使用流程如下：
 
-- 分辨率：`MY_DISP_HOR_RES`、`MY_DISP_VER_RES`
-- Buffer：`__BUF_PX_SIZE__`、`__LV_DISP_USE_BUFFER__`
-- 输入开关：
-	- `__LV_USE_KEYPAD_INDEV__`
-	- `__LV_USE_TOUCHPAD_INDEV__`
-	- `__LV_USE_ENCODER_INDEV__`
-	- `__LV_USE_MOUSE_INDEV__`
-	- `__LV_USE_BUTTON_INDEV__`
+1. 在 `assets/font_config.json` 与 `assets/img_config.json` 中配置资源
+2. 运行 `tools/resource_gen.py` 或 `tools/generate_all.py` 生成资源文件
+3. 在应用代码中使用 `generated/ui_resource.h` 中声明的字体与图片符号
 
-建议先按硬件真实能力配置输入设备，再设计 group 绑定策略。
+在 Pack 集成场景下，通常直接使用 `generated/` 目录下的预生成文件，
+不依赖 Python 运行环境。
 
-## 10. 移植检查清单
+## 10. 配置项说明
+
+`gui_lv_conf.h` 中的关键配置如下：
+
+- 显示分辨率
+  - `MY_DISP_HOR_RES`
+  - `MY_DISP_VER_RES`
+- 显示缓冲区
+  - `__BUF_PX_SIZE__`
+  - `__LV_DISP_USE_BUFFER__`
+- 输入设备使能
+  - `__LV_USE_KEYPAD_INDEV__`
+  - `__LV_USE_TOUCHPAD_INDEV__`
+  - `__LV_USE_ENCODER_INDEV__`
+  - `__LV_USE_MOUSE_INDEV__`
+  - `__LV_USE_BUTTON_INDEV__`
+
+配置输入设备时，应依据实际硬件能力与交互方式统一规划 group 绑定关
+系和焦点移动策略。
+
+## 11. 移植检查项
+
+完成工程集成后，应至少确认以下事项：
 
 - 已实现并验证 `lv_port_disp_init()`
 - 已实现并验证 `lv_port_indev_init()`
 - LVGL Tick 与 `lv_timer_handler()` 调度正常
 - `gui_scene_id.h` 已定义有效场景枚举
-- 开机场景 ID 与已注册场景一致
-- 若使用 keypad/group：确认 `indev_keypad` 非空并绑定 group
-- 若使用页面栈：页面 ID 已注册且池大小满足需求
+- 开机场景 ID 已正确配置且已注册
+- 若启用 keypad/group，已确认输入设备与 group 绑定正确
+- 若启用页面栈，页面 ID 与节点池容量满足业务需求
 
-## 11. 常见问题
+## 12. 常见问题
 
-### Q1：`gui_lv_init()` 后没有显示内容
+### Q1：调用 `gui_lv_init()` 后没有显示内容
 
-- 检查是否已注册开机场景
-- 检查 `gui_lv_set_boot_scene_id()` 的 ID 是否有效
-- 检查显示端口刷新与 `lv_timer_handler()` 调度
+排查顺序如下：
 
-### Q2：`gui_lv_scene_page_push()` 没反应
+- 确认开机场景已经注册
+- 确认 `gui_lv_set_boot_scene_id()` 设置的 ID 有效
+- 确认显示驱动刷新正常
+- 确认 `lv_timer_handler()` 被周期调用
 
-- 检查 `gui_lv_scene_page_register()` 是否已调用
-- 检查 page ID 是否越界
-- 检查页面池是否耗尽（默认最多 8 个节点）
+### Q2：调用 `gui_lv_scene_page_push()` 无页面变化
 
-### Q3：模板文件编译报错（`<name>` / `%Instance%` 未替换）
+排查顺序如下：
 
-- `template` 目录文件是模板，不应直接原样编译
-- 非 RTE 模式请先复制并替换占位符
+- 确认已调用 `gui_lv_scene_page_register()`
+- 确认 page ID 未越界
+- 确认页面节点池未耗尽
 
-### Q4：RTE 模式下 scene 未自动初始化
+### Q3：模板文件编译时报 `<name>` 或 `%Instance%` 未替换
 
-- 检查是否启用了对应 `Scene` 实例组件
-- 检查是否生成了 `__RTE_GUI_LVGL_SceneN__` 宏
+说明如下：
 
-## 12. License
+- `template/` 目录中的相关文件为模板文件
+- 模板文件不能原样直接参与编译
+- 非 RTE 模式下应先复制模板并替换占位符
+
+### Q4：RTE 模式下场景未自动初始化
+
+排查顺序如下：
+
+- 确认已启用对应 `Scene` 组件实例
+- 确认已生成 `__RTE_GUI_LVGL_SceneN__` 宏
+
+## 13. License
 
 本项目采用 Apache-2.0 License，详见 `LICENSE`。
 
