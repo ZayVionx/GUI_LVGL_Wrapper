@@ -64,6 +64,14 @@ extern lv_indev_t *enc_indev;
 #endif
 
 /*----------------------------------------------------------------------------*
+ * LVGL-MSG ID                                                                *
+ *----------------------------------------------------------------------------*/
+#if LV_USE_MSG
+#   define GUI_LV_MSG_ID_BASE         0x1000
+#   define GUI_LV_MSG_ID_LABEL        (GUI_LV_MSG_ID_BASE + 0x0001)
+#endif
+
+/*----------------------------------------------------------------------------*
  * Fall-through                                                               *
  *----------------------------------------------------------------------------*/
 #if   defined(__cplusplus) && (__cplusplus >= 201703L)
@@ -354,7 +362,60 @@ extern lv_indev_t *enc_indev;
 		}                                                                      \
 	} while (0)
 
+/*----------------------------------------------------------------------------*
+ * MSG macro func                                                             *
+ *----------------------------------------------------------------------------*/
+static inline
+void gui_lvlabel_display_event_cb(lv_event_t *e)
+{
+    lv_obj_t *ptLabel       = lv_event_get_target(e);
+    lv_msg_t *ptMsg         = lv_event_get_msg(e);
+    const uint8_t *pchValue = lv_msg_get_payload(ptMsg);
+    const char *pchFmt      = lv_msg_get_user_data(ptMsg);
+
+    GUI_LV_LABEL_SET_TEXT_FMT(ptLabel, pchFmt, *pchValue);
+}
+
+#if LV_USE_MSG
+#define GUI_LV_MSG_LABEL_SUBSCRIBE(_obj, _msg_id, _format)                \
+    do {                                                                       \
+        if ((_obj) != NULL) {                                                  \
+            lv_obj_add_event_cb((_obj), gui_lvlabel_display_event_cb, LV_EVENT_MSG_RECEIVED, NULL);   \
+            lv_msg_subscribe_obj(_msg_id, _obj, (_format));                    \
+        }                                                                      \
+    } while (0)
+
+#define GUI_LV_MSG_LABEL_UNSUBSCRIBE(_obj, _msg_id)                       \
+    do {                                                                       \
+        if ((_obj) != NULL) {                                                  \
+            lv_obj_remove_event_cb((_obj), gui_lvlabel_display_event_cb);     \
+            lv_msg_unsubscribe_obj(_msg_id, _obj);                             \
+        }                                                                      \
+    } while (0)
+
+#define GUI_LV_MSG_SEND(_msg_id,  ...)                                         \
+    do {                                                                       \
+        lv_msg_send(_msg_id,  __VA_ARGS__);                                    \
+    } while (0)
+#endif
+
 /*================================== TYPES ===================================*/
+typedef enum {
+    GUI_LV_MSG_ID1 = GUI_LV_MSG_ID_BASE+0x0001,
+    GUI_LV_MSG_ID2,
+    GUI_LV_MSG_ID3,
+    GUI_LV_MSG_ID4,
+    GUI_LV_MSG_ID5,
+    GUI_LV_MSG_ID6,
+    GUI_LV_MSG_ID7,
+    GUI_LV_MSG_ID8,
+    GUI_LV_MSG_ID9,
+    GUI_LV_MSG_ID10,
+    GUI_LV_MSG_ID11,
+    GUI_LV_MSG_ID12,
+    GUI_LV_MSG_ID13,
+} gui_lv_msg_id_t;
+
 /*============================= GLOBAL VARIABLES =============================*/
 /*============================== LOCAL VARIABLES =============================*/
 /*================================ PROTOTYPES ================================*/
