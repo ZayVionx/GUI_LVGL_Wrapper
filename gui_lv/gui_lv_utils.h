@@ -64,14 +64,6 @@ extern lv_indev_t *enc_indev;
 #endif
 
 /*----------------------------------------------------------------------------*
- * LVGL-MSG ID                                                                *
- *----------------------------------------------------------------------------*/
-#if LV_USE_MSG
-#   define GUI_LV_MSG_ID_BASE         0x1000
-#   define GUI_LV_MSG_ID_LABEL        (GUI_LV_MSG_ID_BASE + 0x0001)
-#endif
-
-/*----------------------------------------------------------------------------*
  * Fall-through                                                               *
  *----------------------------------------------------------------------------*/
 #if   defined(__cplusplus) && (__cplusplus >= 201703L)
@@ -365,43 +357,14 @@ extern lv_indev_t *enc_indev;
 /*----------------------------------------------------------------------------*
  * MSG macro func                                                             *
  *----------------------------------------------------------------------------*/
-static inline
-void gui_lvlabel_display_event_cb(lv_event_t *e)
-{
-    lv_obj_t *ptLabel       = lv_event_get_target(e);
-    lv_msg_t *ptMsg         = lv_event_get_msg(e);
-    const uint8_t *pchValue = lv_msg_get_payload(ptMsg);
-    const char *pchFmt      = lv_msg_get_user_data(ptMsg);
-
-    GUI_LV_LABEL_SET_TEXT_FMT(ptLabel, pchFmt, *pchValue);
-}
-
 #if LV_USE_MSG
-#define GUI_LV_MSG_LABEL_SUBSCRIBE(_obj, _msg_id, _format)                \
-    do {                                                                       \
-        if ((_obj) != NULL) {                                                  \
-            lv_obj_add_event_cb((_obj), gui_lvlabel_display_event_cb, LV_EVENT_MSG_RECEIVED, NULL);   \
-            lv_msg_subscribe_obj(_msg_id, _obj, (_format));                    \
-        }                                                                      \
-    } while (0)
-
-#define GUI_LV_MSG_LABEL_UNSUBSCRIBE(_obj, _msg_id)                       \
-    do {                                                                       \
-        if ((_obj) != NULL) {                                                  \
-            lv_obj_remove_event_cb((_obj), gui_lvlabel_display_event_cb);     \
-            lv_msg_unsubscribe_obj(_msg_id, _obj);                             \
-        }                                                                      \
-    } while (0)
-
-#define GUI_LV_MSG_SEND(_msg_id,  ...)                                         \
-    do {                                                                       \
-        lv_msg_send(_msg_id,  __VA_ARGS__);                                    \
-    } while (0)
-#endif
-
-/*================================== TYPES ===================================*/
 typedef enum {
-    GUI_LV_MSG_ID1 = GUI_LV_MSG_ID_BASE+0x0001,
+    MSG_INT, MSG_FLOAT, MSG_DOUBLE, MSG_STR, 
+    MSG_U8,  MSG_U16, MSG_U32, MSG_U64,
+} gui_lv_data_type_t;
+
+typedef enum {
+    GUI_LV_MSG_ID1 = 0x0001,
     GUI_LV_MSG_ID2,
     GUI_LV_MSG_ID3,
     GUI_LV_MSG_ID4,
@@ -416,6 +379,56 @@ typedef enum {
     GUI_LV_MSG_ID13,
 } gui_lv_msg_id_t;
 
+static inline
+void gui_lv_label_display_event_cb(lv_event_t *e)
+{
+    lv_msg_t *ptMsg       = lv_event_get_msg(e);
+    const char *pchFmt    = lv_msg_get_user_data(ptMsg);
+    const void *pvPayload = lv_msg_get_payload(ptMsg);
+    lv_obj_t *ptLabel     = lv_event_get_target(e);
+    uintptr_t type        = (uintptr_t)lv_event_get_user_data(e);
+
+    switch((gui_lv_data_type_t)type)
+    {
+        case MSG_INT:    lv_label_set_text_fmt(ptLabel,pchFmt,*(const int*)pvPayload );     break;
+        case MSG_FLOAT:  lv_label_set_text_fmt(ptLabel,pchFmt,*(const float*)pvPayload );   break;
+        case MSG_DOUBLE: lv_label_set_text_fmt(ptLabel,pchFmt,*(const double*)pvPayload );  break;
+        case MSG_STR:    lv_label_set_text_fmt(ptLabel,pchFmt,*(const char**)pvPayload );    break;
+        case MSG_U8:     lv_label_set_text_fmt(ptLabel,pchFmt,*(const uint8_t*)pvPayload ); break;
+        case MSG_U16:    lv_label_set_text_fmt(ptLabel,pchFmt,*(const uint16_t*)pvPayload );break;
+        case MSG_U32:    lv_label_set_text_fmt(ptLabel,pchFmt,*(const uint32_t*)pvPayload );break;
+        case MSG_U64:    lv_label_set_text_fmt(ptLabel,pchFmt,*(const uint64_t*)pvPayload );break;
+        default:         break;
+    }
+    
+}
+
+#define GUI_LV_MSG_LABEL_SUBSCRIBE(_msg_id, _obj, _format, _type)              \
+    do {                                                                       \
+        if ((_obj) != NULL) {                                                  \
+            lv_obj_add_event_cb((_obj),                                        \
+                                gui_lv_label_display_event_cb,                 \
+                                LV_EVENT_MSG_RECEIVED,                         \
+                                (void *)_type);                                \
+            lv_msg_subscribe_obj(_msg_id, _obj, (_format));                    \
+        }                                                                      \
+    } while (0)
+
+#define GUI_LV_MSG_LABEL_UNSUBSCRIBE(_msg_id, _obj)                            \
+    do {                                                                       \
+        if ((_obj) != NULL) {                                                  \
+            lv_obj_remove_event_cb((_obj), gui_lv_label_display_event_cb);     \
+            lv_msg_unsubscribe_obj(_msg_id, _obj);                             \
+        }                                                                      \
+    } while (0)
+
+#define GUI_LV_MSG_SEND(_msg_id, _payload)                                     \
+    do {                                                                       \
+        lv_msg_send(_msg_id, _payload);                                        \
+    } while (0)
+#endif
+
+/*================================== TYPES ===================================*/
 /*============================= GLOBAL VARIABLES =============================*/
 /*============================== LOCAL VARIABLES =============================*/
 /*================================ PROTOTYPES ================================*/
