@@ -35,14 +35,14 @@ extern "C" {
  *      DEFINES
  *********************/
 // 自定义键值
-#define LV_KEY_NONE      	  0 	/* 无操作 	 */
-#define LV_KEY_OK        	131		/* OK		 */
-#define LV_KEY_LONG_OK   	132		/* 长按OK	 */
-#define LV_KEY_LONG_HOME 	133		/* 长按HOME	 */
-#define LV_KEY_LONG_UP   	134		/* 长按UP	 */
-#define LV_KEY_LONG_DOWN 	135		/* 长按DOWN  */
-#define LV_KEY_LONG_LEFT 	136		/* 长按LEFT  */
-#define LV_KEY_LONG_RIGHT	137		/* 长按RIGHT */
+#define LV_KEY_NONE      	  0 	/* None Operation 	*/
+#define LV_KEY_OK        	131		/* OK		        */
+#define LV_KEY_LONG_OK   	132		/* Long Press OK	*/
+#define LV_KEY_LONG_HOME 	133		/* Long Press HOME	*/
+#define LV_KEY_LONG_UP   	134		/* Long Press UP	*/
+#define LV_KEY_LONG_DOWN 	135		/* Long Press DOWN  */
+#define LV_KEY_LONG_LEFT 	136		/* Long Press LEFT  */
+#define LV_KEY_LONG_RIGHT	137		/* Long Press RIGHT */
 	
 /**********************
  *      TYPEDEFS

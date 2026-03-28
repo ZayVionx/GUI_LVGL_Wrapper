@@ -23,6 +23,10 @@
 #endif
 
 /*================================== MACROS ==================================*/
+#ifndef GUI_LV_NULL
+#   define GUI_LV_NULL      ((void *)0)
+#endif  
+
 /*============================ MACROFIED FUNCTIONS ===========================*/
 /*================================== TYPES ===================================*/
 /*============================= GLOBAL VARIABLES =============================*/
@@ -75,6 +79,29 @@ bool gui_lv_set_beep_level(gui_lv_beep_level_t eLevel)
     return true;
 }
 
+/*******************************************************************************
+ * @brief   Set device information. 
+ * @param[in] pchName Device name string (null-terminated). 
+ * @param[in] u32SN Device serial number.   
+ * @param[in] chHardWare_Ver Device hardware version.
+ * @param[in] chSoftWare_Ver Device software version.
+ * @return  true: Set device info Success;
+ *          false: Fail.
+ */
+bool gui_lv_set_device_info( const char *pchName, 
+                             uint32_t u32SN, 
+                             uint8_t chHardWare_Ver, 
+                             uint8_t chSoftWare_Ver )
+{
+    if(pchName == GUI_LV_NULL) return false;
+
+    s_tUiSysData.tDeviceInfo.pchName        = pchName;
+    s_tUiSysData.tDeviceInfo.u32SN          = u32SN;
+    s_tUiSysData.tDeviceInfo.chHardWare_Ver = chHardWare_Ver;
+    s_tUiSysData.tDeviceInfo.chSoftWare_Ver = chSoftWare_Ver;
+    return true;
+}   
+
 /*============================= GETTER FUNCTIONS =============================*/
 /*******************************************************************************
  * @brief   Get current UI language.
@@ -101,6 +128,15 @@ gui_scene_id_t gui_lv_get_boot_scene_id(void)
 gui_lv_beep_level_t gui_lv_get_beep_level(void)
 {
     return s_tUiSysData.eBeepLevel;
+}
+
+/*******************************************************************************
+ * @brief   Get device information.
+ * @return  Pointer to the current device information structure.
+ ******************************************************************************/
+gui_lv_device_info_t gui_lv_get_device_info(void)
+{
+    return s_tUiSysData.tDeviceInfo;
 }
 
 /*=================================== END ====================================*/

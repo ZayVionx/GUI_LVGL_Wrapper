@@ -55,11 +55,20 @@ typedef enum {
     GUI_LV_BEEP_LEVEL_MAX
 } gui_lv_beep_level_t;
 
+/*! \brief Device information. */
+typedef struct {
+    const char *pchName;        //!< Device name
+    uint32_t    u32SN;          //!< Device serial number
+    uint8_t     chHardWare_Ver; //!< Device hardware version
+    uint8_t     chSoftWare_Ver; //!< Device software version
+} gui_lv_device_info_t;
+
 /*! \brief System-level UI persistent data. */
 typedef struct {
-    gui_lv_language_t   eLanguage;    //!< Current display language.
-    gui_scene_id_t      eBootSceneId; //!< Scene shown at startup.
-    gui_lv_beep_level_t eBeepLevel;   //!< Buzzer volume level.
+    gui_lv_language_t    eLanguage;    //!< Current display language.
+    gui_scene_id_t       eBootSceneId; //!< Scene shown at startup.
+    gui_lv_beep_level_t  eBeepLevel;   //!< Buzzer volume level.
+    gui_lv_device_info_t tDeviceInfo;  //!< Device information.
 } gui_lv_sys_data_t;
 
 /*============================= GLOBAL VARIABLES =============================*/
@@ -93,6 +102,21 @@ bool gui_lv_set_boot_scene_id(gui_scene_id_t eSceneId);
 extern
 bool gui_lv_set_beep_level(gui_lv_beep_level_t eLevel);
 
+/*!
+ * \brief   Set device information.
+ * \param[in] pchName Device name string (null-terminated).
+ * \param[in] u32SN Device serial number.
+ * \param[in] chHardWare_Ver Hardware version number.
+ * \param[in] chSoftWare_Ver Software version number.
+ * \retval  true  Success.
+ * \retval  false Fail.
+ */
+extern
+bool gui_lv_set_device_info( const char *pchName, 
+                             uint32_t u32SN, 
+                             uint8_t chHardWare_Ver, 
+                             uint8_t chSoftWare_Ver );
+
 /*============================= GETTER FUNCTIONS =============================*/
 /*!
  * \brief   Get current UI language.
@@ -114,6 +138,14 @@ gui_scene_id_t gui_lv_get_boot_scene_id(void);
  */
 extern
 gui_lv_beep_level_t gui_lv_get_beep_level(void);
+
+/*!
+ * \brief   Get device information.
+ * \retval  Device information.
+ */
+extern
+gui_lv_device_info_t gui_lv_get_device_info(void);
+
 /*=================================== END ====================================*/
 #ifdef   __cplusplus
 }

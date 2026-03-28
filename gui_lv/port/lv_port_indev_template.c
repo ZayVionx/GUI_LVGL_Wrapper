@@ -43,7 +43,6 @@
 #if __LV_USE_KEYPAD_INDEV__
 static void keypad_init(void);
 static void keypad_read(lv_indev_drv_t * indev_drv, lv_indev_data_t * data);
-static uint32_t keypad_get_key(void);
 #endif
 
 #if __LV_USE_ENCODER_INDEV__
@@ -102,7 +101,7 @@ void lv_port_indev_init(void)
      *  You should shape them according to your hardware
      */
 
-    static lv_indev_drv_t indev_drv;
+    // static lv_indev_drv_t indev_drv;
 
 #if __LV_USE_TOUCHPAD_INDEV__
     /*------------------
@@ -113,10 +112,11 @@ void lv_port_indev_init(void)
     touchpad_init();
 
     /*Register a touchpad input device*/
-    lv_indev_drv_init(&indev_drv);
-    indev_drv.type = LV_INDEV_TYPE_POINTER;
-    indev_drv.read_cb = touchpad_read;
-    indev_touchpad = lv_indev_drv_register(&indev_drv);
+    static lv_indev_drv_t indev_touchpad_drv;
+    lv_indev_drv_init(&indev_touchpad_drv);
+    indev_touchpad_drv.type = LV_INDEV_TYPE_POINTER;
+    indev_touchpad_drv.read_cb = touchpad_read;
+    indev_touchpad = lv_indev_drv_register(&indev_touchpad_drv);
 #endif
 
 #if __LV_USE_MOUSE_INDEV__
@@ -128,10 +128,11 @@ void lv_port_indev_init(void)
     mouse_init();
 
     /*Register a mouse input device*/
-    lv_indev_drv_init(&indev_drv);
-    indev_drv.type = LV_INDEV_TYPE_POINTER;
-    indev_drv.read_cb = mouse_read;
-    indev_mouse = lv_indev_drv_register(&indev_drv);
+    static lv_indev_drv_t indev_mouse_drv;
+    lv_indev_drv_init(&indev_mouse_drv);
+    indev_mouse_drv.type = LV_INDEV_TYPE_POINTER;
+    indev_mouse_drv.read_cb = mouse_read;
+    indev_mouse = lv_indev_drv_register(&indev_mouse_drv);
 
     /*Set cursor. For simplicity set a HOME symbol now.*/
     lv_obj_t * mouse_cursor = lv_img_create(lv_scr_act());
@@ -148,10 +149,11 @@ void lv_port_indev_init(void)
     keypad_init();
 
     /*Register a keypad input device*/
-    lv_indev_drv_init(&indev_drv);
-    indev_drv.type = LV_INDEV_TYPE_KEYPAD;
-    indev_drv.read_cb = keypad_read;
-    indev_keypad = lv_indev_drv_register(&indev_drv);
+    static lv_indev_drv_t indev_keypad_drv;
+    lv_indev_drv_init(&indev_keypad_drv);
+    indev_keypad_drv.type = LV_INDEV_TYPE_KEYPAD;
+    indev_keypad_drv.read_cb = keypad_read;
+    indev_keypad = lv_indev_drv_register(&indev_keypad_drv);
 
     /*Later you should create group(s) with `lv_group_t * group = lv_group_create()`,
      *add objects to the group with `lv_group_add_obj(group, obj)`
@@ -168,10 +170,11 @@ void lv_port_indev_init(void)
     encoder_init();
 
     /*Register a encoder input device*/
-    lv_indev_drv_init(&indev_drv);
-    indev_drv.type = LV_INDEV_TYPE_ENCODER;
-    indev_drv.read_cb = encoder_read;
-    indev_encoder = lv_indev_drv_register(&indev_drv);
+    static lv_indev_drv_t indev_encoder_drv;
+    lv_indev_drv_init(&indev_encoder_drv);
+    indev_encoder_drv.type = LV_INDEV_TYPE_ENCODER;
+    indev_encoder_drv.read_cb = encoder_read;
+    indev_encoder = lv_indev_drv_register(&indev_encoder_drv);
 
     /*Later you should create group(s) with `lv_group_t * group = lv_group_create()`,
      *add objects to the group with `lv_group_add_obj(group, obj)`
@@ -188,10 +191,11 @@ void lv_port_indev_init(void)
     button_init();
 
     /*Register a button input device*/
-    lv_indev_drv_init(&indev_drv);
-    indev_drv.type = LV_INDEV_TYPE_BUTTON;
-    indev_drv.read_cb = button_read;
-    indev_button = lv_indev_drv_register(&indev_drv);
+    static lv_indev_drv_t indev_button_drv;
+    lv_indev_drv_init(&indev_button_drv);
+    indev_button_drv.type = LV_INDEV_TYPE_BUTTON;
+    indev_button_drv.read_cb = button_read;
+    indev_button = lv_indev_drv_register(&indev_button_drv);
 #endif
 
     /*Assign buttons to points on the screen*/

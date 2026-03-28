@@ -82,10 +82,15 @@
  **********************/
 static void disp_init(void);
 
-static void disp_flush(lv_disp_drv_t * disp_drv, const lv_area_t * area, lv_color_t * color_p);
+static void disp_flush( lv_disp_drv_t * disp_drv, 
+                        const lv_area_t * area, 
+                        lv_color_t * color_p );
 #if __LV_DISP_HELPER_USE_GPU__
-static void gpu_fill(lv_disp_drv_t * disp_drv, lv_color_t * dest_buf, lv_coord_t dest_width,
-       const lv_area_t * fill_area, lv_color_t color);
+static void gpu_fill( lv_disp_drv_t * disp_drv, 
+                      lv_color_t * dest_buf, 
+                      lv_coord_t dest_width,
+                      const lv_area_t * fill_area, 
+                      lv_color_t color );
 #endif
 
 /**********************

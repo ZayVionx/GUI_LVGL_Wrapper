@@ -111,6 +111,8 @@ extern lv_indev_t *enc_indev;
 /*----------------------------------------------------------------------------*
  * Misc                                                                       *
  *----------------------------------------------------------------------------*/
+#define GUI_LV_NULL                 ((void *)0)
+
 #define GUI_LV_UNUSED(__VAR)        (void)(__VAR)
 
 #define GUI_LV_ASSERT(_expr)        do { if(!(_expr)){while(1);} } while(0)
@@ -383,9 +385,9 @@ static inline
 void gui_lv_label_display_event_cb(lv_event_t *e)
 {
     lv_msg_t *ptMsg       = lv_event_get_msg(e);
+    lv_obj_t *ptLabel     = lv_event_get_target(e);
     const char *pchFmt    = lv_msg_get_user_data(ptMsg);
     const void *pvPayload = lv_msg_get_payload(ptMsg);
-    lv_obj_t *ptLabel     = lv_event_get_target(e);
     uintptr_t type        = (uintptr_t)lv_event_get_user_data(e);
 
     switch((gui_lv_data_type_t)type)

@@ -73,7 +73,7 @@ static void __gui_sys_data_init(void)
     /*---------------------- user code begin: sys data ----------------------*/
     /* Override defaults (language/boot scene/etc.) for your application. */
     gui_lv_set_lang(GUI_LV_LANGUAGE_TC);
-    gui_lv_set_boot_scene_id(GUI_SCENE_OPTION);
+    gui_lv_set_boot_scene_id( (gui_scene_id_t)(0) );
     /*---------------------- user code end  : sys data ----------------------*/
 }
 

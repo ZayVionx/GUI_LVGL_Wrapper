@@ -39,14 +39,10 @@ extern "C" {
 
 /*================================== TYPES ===================================*/
 typedef struct {
-#if (__UI_LIB__ == __LVGL_LIB)
     uint8_t      u8GroupNum;       /* Number of groups in the scene  */
     uint8_t      u8TimerNum;       /* Number of timers in the scene  */
     lv_group_t **ptSceneGroup;     /* Pointer to scene's group array */
     lv_timer_t **ptSceneTimer;     /* Pointer to scene's timer array */
-#else
-    /* Extend for other GUI libraries */
-#endif  /* __UI_LIB__ */
 } gui_scene_ex_t;
 
 typedef struct {
