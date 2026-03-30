@@ -89,8 +89,8 @@ static inline void emb_list_del(emb_list_t *list)
     EMB_LIST_CHECK_NODE(list);
     list->prev->next = list->next;
     list->next->prev = list->prev;
-    list->next = list;
-    list->prev = list;
+    list->next       = list;
+    list->prev       = list;
 }
 
 /** @brief  Get the last (tail) node, or NULL if empty. */
