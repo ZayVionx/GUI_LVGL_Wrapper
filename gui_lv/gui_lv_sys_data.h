@@ -36,21 +36,21 @@ extern "C" {
 /*================================== TYPES ===================================*/
 /*! \brief UI display language. */
 typedef enum {
-    GUI_LV_LANGUAGE_CN  = 0,   //!< Simplified Chinese
-    GUI_LV_LANGUAGE_TC  = 1,   //!< Traditional Chinese
-    GUI_LV_LANGUAGE_EN  = 2,   //!< English
-    GUI_LV_LANGUAGE_JP  = 3,   //!< Japanese
-    GUI_LV_LANGUAGE_RUS = 4,   //!< Russian
+    GUI_LV_LANGUAGE_CN  = 0,    //!< Simplified Chinese
+    GUI_LV_LANGUAGE_TC  = 1,    //!< Traditional Chinese
+    GUI_LV_LANGUAGE_EN  = 2,    //!< English
+    GUI_LV_LANGUAGE_JP  = 3,    //!< Japanese
+    GUI_LV_LANGUAGE_RUS = 4,    //!< Russian
 
     GUI_LV_LANGUAGE_MAX
 } gui_lv_language_t;
 
 /*! \brief Buzzer volume level. */
 typedef enum {
-    GUI_LV_BEEP_LEVEL_1   = 0,   //!< Low
-    GUI_LV_BEEP_LEVEL_2   = 1,   //!< Medium
-    GUI_LV_BEEP_LEVEL_3   = 2,   //!< High
-    GUI_LV_BEEP_LEVEL_OFF = 3,   //!< Off
+    GUI_LV_BEEP_LEVEL_1   = 0,  //!< Low
+    GUI_LV_BEEP_LEVEL_2   = 1,  //!< Medium
+    GUI_LV_BEEP_LEVEL_3   = 2,  //!< High
+    GUI_LV_BEEP_LEVEL_OFF = 3,  //!< Off
 
     GUI_LV_BEEP_LEVEL_MAX
 } gui_lv_beep_level_t;
@@ -63,12 +63,13 @@ typedef struct {
     uint8_t     chSoftWare_Ver; //!< Device software version
 } gui_lv_device_info_t;
 
+
 /*! \brief System-level UI persistent data. */
 typedef struct {
-    gui_lv_language_t    eLanguage;    //!< Current display language.
-    gui_scene_id_t       eBootSceneId; //!< Scene shown at startup.
-    gui_lv_beep_level_t  eBeepLevel;   //!< Buzzer volume level.
-    gui_lv_device_info_t tDeviceInfo;  //!< Device information.
+    gui_lv_language_t    eLanguage;     //!< Current display language.
+    gui_scene_id_t       eBootSceneId;  //!< Scene shown at startup.
+    gui_lv_beep_level_t  eBeepLevel;    //!< Buzzer volume level.
+    gui_lv_device_info_t tDeviceInfo;   //!< Device information.
 } gui_lv_sys_data_t;
 
 /*============================= GLOBAL VARIABLES =============================*/

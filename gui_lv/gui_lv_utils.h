@@ -363,7 +363,7 @@ extern lv_indev_t *enc_indev;
 typedef enum {
     MSG_INT, MSG_FLOAT, MSG_DOUBLE, MSG_STR, 
     MSG_U8,  MSG_U16, MSG_U32, MSG_U64,
-} gui_lv_data_type_t;
+} gui_lv_msg_type_t;
 
 typedef enum {
     GUI_LV_MSG_ID1 = 0x0001,
@@ -390,7 +390,7 @@ void gui_lv_label_display_event_cb(lv_event_t *e)
     const void *pvPayload = lv_msg_get_payload(ptMsg);
     uintptr_t type        = (uintptr_t)lv_event_get_user_data(e);
 
-    switch((gui_lv_data_type_t)type)
+    switch((gui_lv_msg_type_t)type)
     {
         case MSG_INT:    lv_label_set_text_fmt(ptLabel,pchFmt,*(const int*)pvPayload );     break;
         case MSG_FLOAT:  lv_label_set_text_fmt(ptLabel,pchFmt,*(const float*)pvPayload );   break;
