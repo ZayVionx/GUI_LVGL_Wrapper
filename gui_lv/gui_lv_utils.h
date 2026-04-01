@@ -108,9 +108,32 @@ extern lv_indev_t *enc_indev;
 			ALT_EMB_CONNECT2( EMB_CONNECT,                                     \
 							  __EMB_VA_NUM_ARGS(__VA_ARGS__))(__VA_ARGS__)
 
+
 /*----------------------------------------------------------------------------*
  * Misc                                                                       *
  *----------------------------------------------------------------------------*/
+/*!
+ * \brief A macro to safely invode a function pointer
+ * 
+ * \param[in] __FUNC_PTR the target function pointer
+ * \param[in] ... an optional parameter list
+ */
+#define GUI_LV_INVOKE(__FUNC_PTR, ...)                                         \
+    ((NULL == (__FUNC_PTR)) ? 0 : ((*(__FUNC_PTR))(__VA_ARGS__)))
+
+/*!
+ * \brief A macro to safely call a function pointer that has no return value
+ * 
+ * \param[in] __FUNC_PTR the target function pointer
+ * \param[in] ... an optional parameter list
+ */
+#define GUI_LV_INVOKE_RT_VOID(__FUNC_PTR, ...)                                 \
+    if (NULL != (__FUNC_PTR)) (*(__FUNC_PTR))(__VA_ARGS__)
+    
+/*----------------------------------------------------------------------------*
+ * Misc                                                                       *
+ *----------------------------------------------------------------------------*/
+
 #define GUI_LV_NULL                 ((void *)0)
 
 #define GUI_LV_UNUSED(__VAR)        (void)(__VAR)

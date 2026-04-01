@@ -50,6 +50,7 @@
 /*============================ TYPES =========================================*/
 typedef struct {
     lv_obj_t   *ptRoot;                                 /*!< Scene root container */
+
     /* -- insert your members begin -- */
 
     /* -- insert your members end -- */
@@ -117,6 +118,8 @@ static void __on_scene%Instance%_load(lv_obj_t *ptRoot)
  */
 static void __on_scene%Instance%_depose(void)
 {
+    GUI_LV_UNUSED(0);
+
     /*--------------------- insert your depose code begin --------------------*/
 
 

@@ -34,6 +34,7 @@
 
 /*================================= INCLUDES =================================*/
 #include "core/gui_lv_scene_manage.h"
+#include "./core/gui_lv_bind.h"
 #include "helper/include/gui_lv_helper.h"
 
 #ifdef __GUI_LVGL_WRAPPER_CONF__
