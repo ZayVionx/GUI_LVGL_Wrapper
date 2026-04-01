@@ -69,14 +69,14 @@ extern "C" {
     //     <0=>DMA Disable
     //     <1=>DMA Enable
     #ifndef __LV_PORT_DISP_USE_DMA__
-    #   define __LV_PORT_DISP_USE_DMA__ 0
+    #   define __LV_PORT_DISP_USE_DMA__     0
     #endif
 
     // <o> Is GPU used for filling operations?
     //     <0=>GPU Disable
     //     <1=>GPU Enable
     #ifndef __LV_DISP_HELPER_USE_GPU__
-    #   define __LV_DISP_HELPER_USE_GPU__     0
+    #   define __LV_DISP_HELPER_USE_GPU__   0
     #endif
 // </h>
 
