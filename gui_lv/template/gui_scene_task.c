@@ -1,5 +1,5 @@
 /****************************************************************************
-*  Copyright 2025 ZJY (Email:3102196558@qq.com)                             *
+*  Copyright 2025 ZJY <3102196558@qq.com>                                   *
 *                                                                           *
 *  Licensed under the Apache License, Version 2.0 (the "License");          *
 *  you may not use this file except in compliance with the License.         *
@@ -16,18 +16,9 @@
 *                                                                           *
 ****************************************************************************/
 
-#ifndef __GUI_LV_HELPER_H__
-#define __GUI_LV_HELPER_H__
-
 /*================================= INCLUDES =================================*/
-#include "helper/include/gui_lv_helper_data.h"
-#include "helper/include/gui_lv_helper_input.h"
-#include "helper/include/gui_lv_helper_style.h"
-#include "helper/include/gui_lv_helper_bind.h"
+#include "gui_scene_task_%Instance%.h"
 
-#ifdef   __cplusplus
-extern "C" {
-#endif
 /*================================== MACROS ==================================*/
 /*============================ MACROFIED FUNCTIONS ===========================*/
 /*================================== TYPES ===================================*/
@@ -35,8 +26,25 @@ extern "C" {
 /*============================== LOCAL VARIABLES =============================*/
 /*================================ PROTOTYPES ================================*/
 /*============================== IMPLEMENTATION ==============================*/
-/*=================================== END ====================================*/
-#ifdef   __cplusplus
+
+/*!
+ * \brief GUI scene <NAME> task implementation.
+ */
+void gui_scene_task_%Instance%(void)
+{
+    if(lv_event_get_code(e) != LV_EVENT_KEY)    return;
+    uint32_t u32Key = lv_indev_get_key(LV_INDEV_KEYPAD);
+
+    switch(u32Key)
+    {
+        case LV_LEY_UP:    break;
+        case LV_KEY_DOWN:  break;
+        case LV_KEY_LEFT:  break;
+        case LV_KEY_RIGHT: break;
+        case LV_KEY_ESC:   break;
+        case LV_KEY_ENTER: break;
+    }
+
 }
-#endif
-#endif /* __GUI_LV_HELPER_H__ */
+
+/*==================================== END ===================================*/

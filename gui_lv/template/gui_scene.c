@@ -38,6 +38,11 @@
 #   include "gui_lvgl.h"
 #endif
 
+#ifdef __GUI_SCENE_%Instance%_H__
+#   include <gui_scene_%Instance%.h>
+#   include <gui_scene_task_%Instance%.h>
+#endif
+
 /*============================ MACROS ========================================*/
 /*!
  * \brief Scene group/timer config.
@@ -85,7 +90,8 @@ static void __on_scene%Instance%_timer0_cb(lv_timer_t *ptTimer)
  */
 static void __on_scene%Instance%_draw(lv_obj_t *ptRoot)
 {
-    s_tScene.ptRoot = ptRoot;
+    s_tScene.ptRoot         = ptRoot;
+    gui_lv_language_t eLang = gui_lv_get_current_lang();
 
     /*------------------------- draw the scene begin -------------------------*/
 

@@ -113,13 +113,14 @@
                 <file category="header"  name="helper/include/gui_lv_helper_style.h"/>
                 <file category="header"  name="helper/include/gui_lv_helper_data.h"/>
                 <file category="header"  name="helper/include/gui_lv_helper_input.h"/>
-                
+                <file category="header"  name="helper/include/gui_lv_helper_bind.h"/>
 
                 <!-- ======== Framework sources (read-only) ================ -->
                 <file category="sourceC" name="helper/source/gui_lv_helper_style.c"/>
                 <file category="sourceC" name="helper/source/gui_lv_helper_data.c"/>
                 <file category="sourceC" name="helper/source/gui_lv_helper_input.c"/>
-
+                <file category="sourceC" name="helper/source/gui_lv_helper_bind.c"/>
+                
             </files>
             <Pre_Include_Global_h>
 #define __GUI_LVGL_WRAPPER__        1
@@ -184,7 +185,9 @@
 
                 <file category="sourceC" attr="config" version="1.2.0" name="template/gui_scene.c"/>
                 <file category="header"  attr="config" version="1.2.0" name="template/gui_scene.h"/>
-                
+                <file category="sourceC" attr="config" version="1.2.0" name="template/gui_scene_task.c"/>
+                <file category="header"  attr="config" version="1.2.0" name="template/gui_scene_task.h"/>
+
             </files>
 
             <RTE_Components_h>

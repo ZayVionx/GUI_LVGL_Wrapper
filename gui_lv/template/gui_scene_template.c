@@ -40,6 +40,8 @@
 #   include "gui_lvgl.h"
 #endif
 
+#include "gui_scene_<name>.h"
+
 /*============================ MACROS ========================================*/
 /*!
  * \brief Scene group/timer config.
@@ -88,6 +90,7 @@ static void __on_scene_<name>_timer0_cb(lv_timer_t *ptTimer)
 static void __on_scene_<name>_draw(lv_obj_t *ptRoot)
 {
     s_tScene.ptRoot = ptRoot;
+    gui_lv_language_t eLang = gui_lv_get_current_lang();
 
     /*------------------------- draw the scene begin -------------------------*/
 
@@ -120,6 +123,8 @@ static void __on_scene_<name>_load(lv_obj_t *ptRoot)
  */
 static void __on_scene_<name>_depose(void)
 {
+    GUI_LV_UNUSED(ptRoot);
+
     /*--------------------- insert your depose code begin --------------------*/
 
 

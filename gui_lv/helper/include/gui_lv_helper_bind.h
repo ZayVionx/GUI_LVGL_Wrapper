@@ -15,11 +15,11 @@
 *                                                                           *
 ****************************************************************************/
 
-#ifndef __GUI_LV_BIND_H__
-#define __GUI_LV_BIND_H__
+#ifndef __GUI_LV_HELPER_BIND_H__
+#define __GUI_LV_HELPER_BIND_H__
 
 /*================================= INCLUDES =================================*/
-#include "gui_lv_common.h"
+#include "core/gui_lv_common.h"
 
 #ifdef   __cplusplus
 extern "C" {
