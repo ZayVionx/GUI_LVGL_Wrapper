@@ -39,7 +39,7 @@ extern "C" {
  * \brief GUI scene <NAME> task implementation.
  */
 extern
-void gui_scene_task_%Instance%(void);
+void gui_scene_task_%Instance%(lv_event_t *e);
 
 /*============================== IMPLEMENTATION ==============================*/
 /*=================================== END ====================================*/

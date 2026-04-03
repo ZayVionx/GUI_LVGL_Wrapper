@@ -17,7 +17,8 @@
 ****************************************************************************/
 
 /*================================= INCLUDES =================================*/
-#include "gui_scene_task_%Instance%.h"
+#include <gui_scene_task_%Instance%.h>
+#include <gui_scene_%Instance%.h>
 
 /*================================== MACROS ==================================*/
 /*============================ MACROFIED FUNCTIONS ===========================*/
@@ -26,11 +27,11 @@
 /*============================== LOCAL VARIABLES =============================*/
 /*================================ PROTOTYPES ================================*/
 /*============================== IMPLEMENTATION ==============================*/
-
+    
 /*!
  * \brief GUI scene <NAME> task implementation.
  */
-void gui_scene_task_%Instance%(void)
+void gui_scene_task_%Instance%(lv_event_t *e)
 {
     if(lv_event_get_code(e) != LV_EVENT_KEY)    return;
     uint32_t u32Key = lv_indev_get_key(LV_INDEV_KEYPAD);
