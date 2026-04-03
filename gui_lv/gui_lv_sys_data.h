@@ -63,15 +63,6 @@ typedef struct {
     uint8_t     chSoftWare_Ver; //!< Device software version
 } gui_lv_device_info_t;
 
-
-/*! \brief System-level UI persistent data. */
-typedef struct {
-    gui_lv_language_t    eLanguage;     //!< Current display language.
-    gui_scene_id_t       eBootSceneId;  //!< Scene shown at startup.
-    gui_lv_beep_level_t  eBeepLevel;    //!< Buzzer volume level.
-    gui_lv_device_info_t tDeviceInfo;   //!< Device information.
-} gui_lv_sys_data_t;
-
 /*============================= GLOBAL VARIABLES =============================*/
 /*============================== LOCAL VARIABLES =============================*/
 /*================================ PROTOTYPES ================================*/
