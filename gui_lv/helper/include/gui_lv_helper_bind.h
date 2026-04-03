@@ -133,4 +133,4 @@ void gui_lv_bind_unbind_by_root(lv_obj_t *ptRoot);
 #ifdef   __cplusplus
 }
 #endif
-#endif /* __GUI_LV_BIND_H__ */
+#endif /* __GUI_LV_HELPER_BIND_H__ */

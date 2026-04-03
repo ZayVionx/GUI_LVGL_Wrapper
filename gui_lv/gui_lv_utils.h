@@ -20,6 +20,10 @@
 #define __GUI_LV_UTILS_H__
 
 /*================================= INCLUDES =================================*/
+#ifdef _RTE_
+#   include "RTE_Components.h"
+#endif
+
 #if __GUI_LVGL_WRAPPER_CONF__
 #   include <gui_lv_conf.h>
 #else  

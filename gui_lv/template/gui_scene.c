@@ -38,7 +38,7 @@
 #   include "gui_lvgl.h"
 #endif
 
-#ifdef __GUI_SCENE_%Instance%_H__
+#ifdef __RTE_Acceleration_GUI_LVGL_Scene%Instance%__
 #   include <gui_scene_%Instance%.h>
 #   include <gui_scene_task_%Instance%.h>
 #endif
