@@ -53,12 +53,12 @@
 /*================================== TYPES ===================================*/
 /*============================== LOCAL VARIABLES =============================*/
 /*============================== GLOBAL VARIABLES ============================*/
-ui_style_t ptContDefStyle = {
+gui_lv_style_t ptContDefStyle = {
     .config = {
-        radius(0),
-        border_width(0),
-        pad_all(0),
-        bg_color(BG_COLOR_CONT_NORMAL),
+        GUI_LV_STYLE_RADIUS(0),
+        GUI_LV_STYLE_BORDER_WIDTH(0),
+        GUI_LV_STYLE_PAD_ALL(0),
+        GUI_LV_STYLE_BG_COLOR(BG_COLOR_CONT_NORMAL),
     },
 };
 
@@ -84,7 +84,7 @@ static void __gui_sys_data_init(void)
 static void __gui_common_style_init(void)
 {
     /*------------------- user code begin: common style -------------------*/
-    style_init(&ptContDefStyle);
+    gui_lv_style_init(&gui_lv_cont_def_style);
     
     /*------------------- user code end  : common style -------------------*/
 }
@@ -129,6 +129,7 @@ void gui_lv_init(void)
     lv_port_disp_init();
     lv_port_indev_init();
 #endif
+    __gui_lv_helper_init();
 
     /* initialize members of scene begin */
     __gui_sys_data_init();

@@ -40,10 +40,12 @@
 #   include <gui_scene_id.h>
 #   include <gui_lv_font.h>
 #   include <gui_lv_sys_data.h>
+#   include <gui_lv_custom_components.h>   
 #else
 #   include "gui_scene_id.h"
 #   include "gui_lv_font.h"
 #   include "gui_lv_sys_data.h"
+#   include "gui_lv_custom_components.h"
 #endif
 
 #ifdef   __cplusplus
@@ -53,7 +55,7 @@ extern "C" {
 /*============================ MACROFIED FUNCTIONS ===========================*/
 /*================================== TYPES ===================================*/
 /*============================= GLOBAL VARIABLES =============================*/
-extern ui_style_t ptContDefStyle;
+extern gui_lv_style_t ptContDefStyle;
 
 /*============================== LOCAL VARIABLES =============================*/
 /*================================ PROTOTYPES ================================*/

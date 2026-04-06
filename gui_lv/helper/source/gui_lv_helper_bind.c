@@ -87,27 +87,27 @@ static gui_lv_bind_meta_t s_atMetaPool[GUI_LV_BIND_META_MAX];
 static int16_t            s_ai16HashHead[GUI_LV_BIND_HASH_BUCKETS];
 
 /*================================ PROTOTYPES ================================*/
-static uint16_t bind_hash_ptr(const void *pvAddr);
-static void bind_init_once(void);
-static int16_t bind_src_find(const void *pvAddr);
-static int16_t bind_src_ensure(const void *pvAddr, gui_lv_bind_data_type_t eType);
-static int16_t bind_node_alloc(void);
-static int16_t bind_meta_ensure(lv_obj_t *ptObj);
-static gui_lv_bind_meta_t *bind_meta_find(lv_obj_t *ptObj);
-static lv_obj_t *bind_find_root(lv_obj_t *ptObj);
-static bool bind_update_u16_value(gui_lv_bind_meta_t *ptMeta, int32_t i32Delta);
-static void bind_update_label_u8(gui_lv_bind_node_t *ptNode, const gui_lv_bind_src_t *ptSrc);
-static void bind_update_label_u16(gui_lv_bind_node_t *ptNode, const gui_lv_bind_src_t *ptSrc);
-static void bind_update_arc_u8(gui_lv_bind_node_t *ptNode, const gui_lv_bind_src_t *ptSrc);
+static uint16_t gui_lv_bind_hash_ptr(const void *pvAddr);
+static void gui_lv_bind_init_once(void);
+static int16_t gui_lv_bind_src_find(const void *pvAddr);
+static int16_t gui_lv_bind_src_ensure(const void *pvAddr, gui_lv_bind_data_type_t eType);
+static int16_t gui_lv_bind_node_alloc(void);
+static int16_t gui_lv_bind_meta_ensure(lv_obj_t *ptObj);
+static gui_lv_bind_meta_t *gui_lv_bind_meta_find(lv_obj_t *ptObj);
+static lv_obj_t *gui_lv_bind_find_root(lv_obj_t *ptObj);
+static bool gui_lv_bind_update_u16_value(gui_lv_bind_meta_t *ptMeta, int32_t i32Delta);
+static void gui_lv_bind_update_label_u8(gui_lv_bind_node_t *ptNode, const gui_lv_bind_src_t *ptSrc);
+static void gui_lv_bind_update_label_u16(gui_lv_bind_node_t *ptNode, const gui_lv_bind_src_t *ptSrc);
+static void gui_lv_bind_update_arc_u8(gui_lv_bind_node_t *ptNode, const gui_lv_bind_src_t *ptSrc);
 
 /*============================== IMPLEMENTATION ==============================*/
-static uint16_t bind_hash_ptr(const void *pvAddr)
+static uint16_t gui_lv_bind_hash_ptr(const void *pvAddr)
 {
     uintptr_t uAddr = (uintptr_t)pvAddr;
     return (uint16_t)((uAddr >> 2U) & (GUI_LV_BIND_HASH_BUCKETS - 1U));
 }
 
-static void bind_init_once(void)
+static void gui_lv_bind_init_once(void)
 {
     static bool s_bInited = false;
 
@@ -119,15 +119,15 @@ static void bind_init_once(void)
     s_bInited = true;
 }
 
-static int16_t bind_src_find(const void *pvAddr)
+static int16_t gui_lv_bind_src_find(const void *pvAddr)
 {
     uint16_t u16Bucket;
     int16_t  i16Idx;
 
     if(pvAddr == NULL) return GUI_LV_BIND_INVALID_IDX;
 
-    bind_init_once();
-    u16Bucket = bind_hash_ptr(pvAddr);
+    gui_lv_bind_init_once();
+    u16Bucket = gui_lv_bind_hash_ptr(pvAddr);
     i16Idx = s_ai16HashHead[u16Bucket];
 
     while(i16Idx != GUI_LV_BIND_INVALID_IDX)
@@ -140,12 +140,12 @@ static int16_t bind_src_find(const void *pvAddr)
     return GUI_LV_BIND_INVALID_IDX;
 }
 
-static int16_t bind_src_ensure(const void *pvAddr, gui_lv_bind_data_type_t eType)
+static int16_t gui_lv_bind_src_ensure(const void *pvAddr, gui_lv_bind_data_type_t eType)
 {
     int16_t  i16Idx;
     uint16_t u16Bucket;
 
-    i16Idx = bind_src_find(pvAddr);
+    i16Idx = gui_lv_bind_src_find(pvAddr);
     if(i16Idx != GUI_LV_BIND_INVALID_IDX)
         return i16Idx;
 
@@ -159,7 +159,7 @@ static int16_t bind_src_ensure(const void *pvAddr, gui_lv_bind_data_type_t eType
             s_atSrcPool[i16Idx].i16NodeHead = GUI_LV_BIND_INVALID_IDX;
             s_atSrcPool[i16Idx].bUsed = true;
 
-            u16Bucket = bind_hash_ptr(pvAddr);
+            u16Bucket = gui_lv_bind_hash_ptr(pvAddr);
             s_atSrcPool[i16Idx].i16HashNext = s_ai16HashHead[u16Bucket];
             s_ai16HashHead[u16Bucket] = i16Idx;
             return i16Idx;
@@ -169,7 +169,7 @@ static int16_t bind_src_ensure(const void *pvAddr, gui_lv_bind_data_type_t eType
     return GUI_LV_BIND_INVALID_IDX;
 }
 
-static int16_t bind_node_alloc(void)
+static int16_t gui_lv_bind_node_alloc(void)
 {
     for(int16_t i16Idx = 0; i16Idx < GUI_LV_BIND_NODE_MAX; i16Idx++)
     {
@@ -186,7 +186,7 @@ static int16_t bind_node_alloc(void)
     return GUI_LV_BIND_INVALID_IDX;
 }
 
-static int16_t bind_meta_ensure(lv_obj_t *ptObj)
+static int16_t gui_lv_bind_meta_ensure(lv_obj_t *ptObj)
 {
     for(int16_t i16Idx = 0; i16Idx < GUI_LV_BIND_META_MAX; i16Idx++)
     {
@@ -200,7 +200,7 @@ static int16_t bind_meta_ensure(lv_obj_t *ptObj)
         {
             memset(&s_atMetaPool[i16Idx], 0, sizeof(s_atMetaPool[i16Idx]));
             s_atMetaPool[i16Idx].ptObj = ptObj;
-            s_atMetaPool[i16Idx].ptRoot = bind_find_root(ptObj);
+            s_atMetaPool[i16Idx].ptRoot = gui_lv_bind_find_root(ptObj);
             s_atMetaPool[i16Idx].i16SrcIdx = GUI_LV_BIND_INVALID_IDX;
             s_atMetaPool[i16Idx].bUsed = true;
             return i16Idx;
@@ -210,7 +210,7 @@ static int16_t bind_meta_ensure(lv_obj_t *ptObj)
     return GUI_LV_BIND_INVALID_IDX;
 }
 
-static gui_lv_bind_meta_t *bind_meta_find(lv_obj_t *ptObj)
+static gui_lv_bind_meta_t *gui_lv_bind_meta_find(lv_obj_t *ptObj)
 {
     for(int16_t i16Idx = 0; i16Idx < GUI_LV_BIND_META_MAX; i16Idx++)
     {
@@ -221,7 +221,7 @@ static gui_lv_bind_meta_t *bind_meta_find(lv_obj_t *ptObj)
     return NULL;
 }
 
-static lv_obj_t *bind_find_root(lv_obj_t *ptObj)
+static lv_obj_t *gui_lv_bind_find_root(lv_obj_t *ptObj)
 {
     lv_obj_t *ptIter = ptObj;
 
@@ -235,7 +235,7 @@ static lv_obj_t *bind_find_root(lv_obj_t *ptObj)
     return ptObj;
 }
 
-static bool bind_update_u16_value(gui_lv_bind_meta_t *ptMeta, int32_t i32Delta)
+static bool gui_lv_bind_update_u16_value(gui_lv_bind_meta_t *ptMeta, int32_t i32Delta)
 {
     uint16_t u16Value;
     int32_t  i32NewValue;
@@ -266,7 +266,7 @@ static bool bind_update_u16_value(gui_lv_bind_meta_t *ptMeta, int32_t i32Delta)
     return gui_lv_bind_notify(ptMeta->pu16EditAddr);
 }
 
-static void bind_update_label_u8(gui_lv_bind_node_t *ptNode, const gui_lv_bind_src_t *ptSrc)
+static void gui_lv_bind_update_label_u8(gui_lv_bind_node_t *ptNode, const gui_lv_bind_src_t *ptSrc)
 {
     const uint8_t *pu8Value;
 
@@ -277,7 +277,7 @@ static void bind_update_label_u8(gui_lv_bind_node_t *ptNode, const gui_lv_bind_s
     lv_label_set_text_fmt(ptNode->ptObj, ptNode->tCfg.tLabel.pchFmt, *pu8Value);
 }
 
-static void bind_update_label_u16(gui_lv_bind_node_t *ptNode, const gui_lv_bind_src_t *ptSrc)
+static void gui_lv_bind_update_label_u16(gui_lv_bind_node_t *ptNode, const gui_lv_bind_src_t *ptSrc)
 {
     const uint16_t *pu16Value;
 
@@ -288,7 +288,7 @@ static void bind_update_label_u16(gui_lv_bind_node_t *ptNode, const gui_lv_bind_
     lv_label_set_text_fmt(ptNode->ptObj, ptNode->tCfg.tLabel.pchFmt, *pu16Value);
 }
 
-static void bind_update_arc_u8(gui_lv_bind_node_t *ptNode, const gui_lv_bind_src_t *ptSrc)
+static void gui_lv_bind_update_arc_u8(gui_lv_bind_node_t *ptNode, const gui_lv_bind_src_t *ptSrc)
 {
     const uint8_t *pu8Value;
     int32_t        i32Value;
@@ -313,8 +313,8 @@ bool gui_lv_bind_label_to_u8(lv_obj_t *ptObj,
 
     if(ptObj == NULL || pu8Addr == NULL || pchFmt == NULL) return false;
 
-    i16SrcIdx = bind_src_ensure(pu8Addr, GUI_LV_BIND_DATA_U8);
-    i16NodeIdx = bind_node_alloc();
+    i16SrcIdx = gui_lv_bind_src_ensure(pu8Addr, GUI_LV_BIND_DATA_U8);
+    i16NodeIdx = gui_lv_bind_node_alloc();
     if(i16SrcIdx == GUI_LV_BIND_INVALID_IDX || i16NodeIdx == GUI_LV_BIND_INVALID_IDX)
         return false;
 
@@ -322,7 +322,7 @@ bool gui_lv_bind_label_to_u8(lv_obj_t *ptObj,
     s_atNodePool[i16NodeIdx].eKind = GUI_LV_BIND_NODE_LABEL;
     s_atNodePool[i16NodeIdx].i16SrcIdx = i16SrcIdx;
     s_atNodePool[i16NodeIdx].tCfg.tLabel.pchFmt = pchFmt;
-    s_atNodePool[i16NodeIdx].pfUpdate = bind_update_label_u8;
+    s_atNodePool[i16NodeIdx].pfUpdate = gui_lv_bind_update_label_u8;
     s_atNodePool[i16NodeIdx].i16NextSrc = s_atSrcPool[i16SrcIdx].i16NodeHead;
     s_atSrcPool[i16SrcIdx].i16NodeHead = i16NodeIdx;
     return true;
@@ -337,8 +337,8 @@ bool gui_lv_bind_label_to_u16(lv_obj_t *ptObj,
 
     if(ptObj == NULL || pu16Addr == NULL || pchFmt == NULL) return false;
 
-    i16SrcIdx = bind_src_ensure(pu16Addr, GUI_LV_BIND_DATA_U16);
-    i16NodeIdx = bind_node_alloc();
+    i16SrcIdx = gui_lv_bind_src_ensure(pu16Addr, GUI_LV_BIND_DATA_U16);
+    i16NodeIdx = gui_lv_bind_node_alloc();
     if(i16SrcIdx == GUI_LV_BIND_INVALID_IDX || i16NodeIdx == GUI_LV_BIND_INVALID_IDX)
         return false;
 
@@ -346,7 +346,7 @@ bool gui_lv_bind_label_to_u16(lv_obj_t *ptObj,
     s_atNodePool[i16NodeIdx].eKind = GUI_LV_BIND_NODE_LABEL;
     s_atNodePool[i16NodeIdx].i16SrcIdx = i16SrcIdx;
     s_atNodePool[i16NodeIdx].tCfg.tLabel.pchFmt = pchFmt;
-    s_atNodePool[i16NodeIdx].pfUpdate = bind_update_label_u16;
+    s_atNodePool[i16NodeIdx].pfUpdate = gui_lv_bind_update_label_u16;
     s_atNodePool[i16NodeIdx].i16NextSrc = s_atSrcPool[i16SrcIdx].i16NodeHead;
     s_atSrcPool[i16SrcIdx].i16NodeHead = i16NodeIdx;
     return true;
@@ -362,8 +362,8 @@ bool gui_lv_bind_arc_to_u8(lv_obj_t *ptObj,
 
     if(ptObj == NULL || pu8Addr == NULL) return false;
 
-    i16SrcIdx = bind_src_ensure(pu8Addr, GUI_LV_BIND_DATA_U8);
-    i16NodeIdx = bind_node_alloc();
+    i16SrcIdx = gui_lv_bind_src_ensure(pu8Addr, GUI_LV_BIND_DATA_U8);
+    i16NodeIdx = gui_lv_bind_node_alloc();
     if(i16SrcIdx == GUI_LV_BIND_INVALID_IDX || i16NodeIdx == GUI_LV_BIND_INVALID_IDX)
         return false;
 
@@ -372,7 +372,7 @@ bool gui_lv_bind_arc_to_u8(lv_obj_t *ptObj,
     s_atNodePool[i16NodeIdx].i16SrcIdx = i16SrcIdx;
     s_atNodePool[i16NodeIdx].tCfg.tArc.i32Min = i32Min;
     s_atNodePool[i16NodeIdx].tCfg.tArc.i32Max = i32Max;
-    s_atNodePool[i16NodeIdx].pfUpdate = bind_update_arc_u8;
+    s_atNodePool[i16NodeIdx].pfUpdate = gui_lv_bind_update_arc_u8;
     s_atNodePool[i16NodeIdx].i16NextSrc = s_atSrcPool[i16SrcIdx].i16NodeHead;
     s_atSrcPool[i16SrcIdx].i16NodeHead = i16NodeIdx;
     return true;
@@ -405,8 +405,8 @@ bool gui_lv_bind_edit_to_u16_ex(lv_obj_t *ptObj,
 
     if(ptObj == NULL || pu16Addr == NULL) return false;
 
-    i16MetaIdx = bind_meta_ensure(ptObj);
-    i16SrcIdx = bind_src_ensure(pu16Addr, GUI_LV_BIND_DATA_U16);
+    i16MetaIdx = gui_lv_bind_meta_ensure(ptObj);
+    i16SrcIdx = gui_lv_bind_src_ensure(pu16Addr, GUI_LV_BIND_DATA_U16);
     if(i16MetaIdx == GUI_LV_BIND_INVALID_IDX || i16SrcIdx == GUI_LV_BIND_INVALID_IDX)
         return false;
 
@@ -430,7 +430,7 @@ bool gui_lv_bind_action(lv_obj_t *ptObj,
 
     if(ptObj == NULL || pfAction == NULL) return false;
 
-    i16MetaIdx = bind_meta_ensure(ptObj);
+    i16MetaIdx = gui_lv_bind_meta_ensure(ptObj);
     if(i16MetaIdx == GUI_LV_BIND_INVALID_IDX)
         return false;
 
@@ -446,7 +446,7 @@ bool gui_lv_bind_notify(const void *pvAddr)
     int16_t i16SrcIdx;
     int16_t i16NodeIdx;
 
-    i16SrcIdx = bind_src_find(pvAddr);
+    i16SrcIdx = gui_lv_bind_src_find(pvAddr);
     if(i16SrcIdx == GUI_LV_BIND_INVALID_IDX)
         return false;
 
@@ -464,21 +464,21 @@ bool gui_lv_bind_notify(const void *pvAddr)
 
 bool gui_lv_bind_inc_by_obj(lv_obj_t *ptObj)
 {
-    gui_lv_bind_meta_t *ptMeta = bind_meta_find(ptObj);
+    gui_lv_bind_meta_t *ptMeta = gui_lv_bind_meta_find(ptObj);
     if(ptMeta == NULL) return false;
-    return bind_update_u16_value(ptMeta, ptMeta->u16Step);
+    return gui_lv_bind_update_u16_value(ptMeta, ptMeta->u16Step);
 }
 
 bool gui_lv_bind_dec_by_obj(lv_obj_t *ptObj)
 {
-    gui_lv_bind_meta_t *ptMeta = bind_meta_find(ptObj);
+    gui_lv_bind_meta_t *ptMeta = gui_lv_bind_meta_find(ptObj);
     if(ptMeta == NULL) return false;
-    return bind_update_u16_value(ptMeta, -((int32_t)ptMeta->u16Step));
+    return gui_lv_bind_update_u16_value(ptMeta, -((int32_t)ptMeta->u16Step));
 }
 
 bool gui_lv_bind_exec_by_obj(lv_obj_t *ptObj)
 {
-    gui_lv_bind_meta_t *ptMeta = bind_meta_find(ptObj);
+    gui_lv_bind_meta_t *ptMeta = gui_lv_bind_meta_find(ptObj);
     if(ptMeta == NULL || !ptMeta->bHasAction || ptMeta->pfAction == NULL)
         return false;
 
@@ -496,7 +496,7 @@ void gui_lv_bind_unbind_by_root(lv_obj_t *ptRoot)
         if(s_atNodePool[i16Idx].ptObj == NULL) continue;
 
         if(!lv_obj_is_valid(s_atNodePool[i16Idx].ptObj) ||
-           bind_find_root(s_atNodePool[i16Idx].ptObj) == ptRoot)
+              gui_lv_bind_find_root(s_atNodePool[i16Idx].ptObj) == ptRoot)
         {
             s_atNodePool[i16Idx].bUsed = false;
         }

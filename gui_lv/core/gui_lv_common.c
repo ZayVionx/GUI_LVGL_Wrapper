@@ -116,16 +116,16 @@ lv_timer_t *gui_lv_timer_init(lv_timer_cb_t timer_cb, uint32_t period, void *use
  *
  * @param  group   LVGL group (contains the focusable objects)
  * @param  cols    Number of columns in the grid (1 = vertical list)
- * @param  eNav    UI_NAV_UP / DOWN / LEFT / RIGHT (others = no move)
+ * @param  eNav    GUI_LV_NAV_UP / DOWN / LEFT / RIGHT (others = no move)
  * @param  wrap    true = wrap around edges, false = clamp
  * @return 0-based focus index after navigation, or -1 if group is empty
  *
  * Usage:
- *   Direction:  ui_group_focus_nav(group, 2, UI_NAV_UP,      true);
- *   Confirm:    int32_t idx = ui_group_focus_nav(group, 2, UI_NAV_MAX, false);
- *   1D list:    ui_group_focus_nav(group, 1, UI_NAV_DOWN,    true);
+ *   Direction:  gui_lv_group_focus_nav(group, 2, GUI_LV_NAV_UP,      true);
+ *   Confirm:    int32_t idx = gui_lv_group_focus_nav(group, 2, GUI_LV_NAV_MAX, false);
+ *   1D list:    gui_lv_group_focus_nav(group, 1, GUI_LV_NAV_DOWN,    true);
  */
-int32_t gui_lv_group_focus_nav(uint8_t cols, ui_navigation_t eNav, bool wrap)
+int32_t gui_lv_group_focus_nav(uint8_t cols, gui_lv_navigation_t eNav, bool wrap)
 {
     extern lv_indev_t *indev_keypad;
     lv_group_t *group = indev_keypad->group;
@@ -147,10 +147,10 @@ int32_t gui_lv_group_focus_nav(uint8_t cols, ui_navigation_t eNav, bool wrap)
     /* --- 2. calculate target --- */
     switch(eNav) 
     {
-        case UI_NAV_LEFT:   target = cur - 1;     break;
-        case UI_NAV_RIGHT:  target = cur + 1;     break;
-        case UI_NAV_UP:     target = cur - cols;  break;
-        case UI_NAV_DOWN:   target = cur + cols;  break;
+        case GUI_LV_NAV_LEFT:   target = cur - 1;     break;
+        case GUI_LV_NAV_RIGHT:  target = cur + 1;     break;
+        case GUI_LV_NAV_UP:     target = cur - cols;  break;
+        case GUI_LV_NAV_DOWN:   target = cur + cols;  break;
         default:            return cur;  /* no move, just return index */
     }
 

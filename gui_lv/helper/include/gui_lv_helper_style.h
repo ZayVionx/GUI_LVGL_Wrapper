@@ -27,57 +27,57 @@ extern "C" {
 #endif
 /*============================ MACROS ========================================*/
 // 简化的设置宏
-#define min_width(v)     .min_width     = (v), ._mark_min_width     = 1
-#define min_height(v)    .min_height    = (v), ._mark_min_height    = 1
-#define width(v)         .width         = (v), ._mark_width         = 1
-#define height(v)        .height        = (v), ._mark_height        = 1
-#define pad_top(v)       .pad_top       = (v), ._mark_pad_top       = 1
-#define pad_bottom(v)    .pad_bottom    = (v), ._mark_pad_bottom    = 1
-#define pad_left(v)      .pad_left      = (v), ._mark_pad_left      = 1
-#define pad_right(v)     .pad_right     = (v), ._mark_pad_right     = 1
-#define pad_all(v)       .pad_all       = (v), ._mark_pad_all       = 1
-#define bg_color(v)      .bg_color      = {v}, ._mark_bg_color      = 1
-#define bg_opa(v)        .bg_opa        = (v), ._mark_bg_opa        = 1
-#define radius(v)        .radius        = (v), ._mark_radius        = 1
-#define border_color(v)  .border_color  = {v}, ._mark_border_color  = 1
-#define border_width(v)  .border_width  = (v), ._mark_border_width  = 1
-#define border_opa(v)    .border_opa    = (v), ._mark_border_opa    = 1
-#define text_font(v)     .text_font     = (v), ._mark_text_font     = 1
-#define text_color(v)    .text_color    = {v}, ._mark_text_color    = 1
-#define text_align(v)    .text_align    = (v), ._mark_text_align    = 1
-#define outline_color(v) .outline_color = {v}, ._mark_outline_color = 1
-#define outline_width(v) .outline_width = (v), ._mark_outline_width = 1
-#define outline_pad(v)   .outline_pad   = (v), ._mark_outline_pad   = 1
-#define outline_opa(v)   .outline_opa   = (v), ._mark_outline_opa   = 1
-#define shadow_width(v)  .shadow_width  = (v), ._mark_shadow_width  = 1
-#define shadow_opa(v)    .shadow_opa    = (v), ._mark_shadow_opa    = 1
-#define bg_img_src(v)    .bg_img_src    = (v), ._mark_bg_img_src    = 1
-#define line_color(v)   .line_color     = {v}, ._mark_line_color    = 1
-#define line_width(v)   .line_width     = (v), ._mark_line_width    = 1
-#define line_dash_width(v) .line_dash_width = (v), ._mark_line_dash_width = 1
-#define line_dash_gap(v)   .line_dash_gap   = (v), ._mark_line_dash_gap   = 1
+#define GUI_LV_STYLE_MIN_WIDTH(v)      .min_width      = (v), ._mark_min_width      = 1
+#define GUI_LV_STYLE_MIN_HEIGHT(v)     .min_height     = (v), ._mark_min_height     = 1
+#define GUI_LV_STYLE_WIDTH(v)          .width          = (v), ._mark_width          = 1
+#define GUI_LV_STYLE_HEIGHT(v)         .height         = (v), ._mark_height         = 1
+#define GUI_LV_STYLE_PAD_TOP(v)        .pad_top        = (v), ._mark_pad_top        = 1
+#define GUI_LV_STYLE_PAD_BOTTOM(v)     .pad_bottom     = (v), ._mark_pad_bottom     = 1
+#define GUI_LV_STYLE_PAD_LEFT(v)       .pad_left       = (v), ._mark_pad_left       = 1
+#define GUI_LV_STYLE_PAD_RIGHT(v)      .pad_right      = (v), ._mark_pad_right      = 1
+#define GUI_LV_STYLE_PAD_ALL(v)        .pad_all        = (v), ._mark_pad_all        = 1
+#define GUI_LV_STYLE_BG_COLOR(v)       .bg_color       = {v}, ._mark_bg_color       = 1
+#define GUI_LV_STYLE_BG_OPA(v)         .bg_opa         = (v), ._mark_bg_opa         = 1
+#define GUI_LV_STYLE_RADIUS(v)         .radius         = (v), ._mark_radius         = 1
+#define GUI_LV_STYLE_BORDER_COLOR(v)   .border_color   = {v}, ._mark_border_color   = 1
+#define GUI_LV_STYLE_BORDER_WIDTH(v)   .border_width   = (v), ._mark_border_width   = 1
+#define GUI_LV_STYLE_BORDER_OPA(v)     .border_opa     = (v), ._mark_border_opa     = 1
+#define GUI_LV_STYLE_TEXT_FONT(v)      .text_font      = (v), ._mark_text_font      = 1
+#define GUI_LV_STYLE_TEXT_COLOR(v)     .text_color     = {v}, ._mark_text_color     = 1
+#define GUI_LV_STYLE_TEXT_ALIGN(v)     .text_align     = (v), ._mark_text_align     = 1
+#define GUI_LV_STYLE_OUTLINE_COLOR(v)  .outline_color  = {v}, ._mark_outline_color  = 1
+#define GUI_LV_STYLE_OUTLINE_WIDTH(v)  .outline_width  = (v), ._mark_outline_width  = 1
+#define GUI_LV_STYLE_OUTLINE_PAD(v)    .outline_pad    = (v), ._mark_outline_pad    = 1
+#define GUI_LV_STYLE_OUTLINE_OPA(v)    .outline_opa    = (v), ._mark_outline_opa    = 1
+#define GUI_LV_STYLE_SHADOW_WIDTH(v)   .shadow_width   = (v), ._mark_shadow_width   = 1
+#define GUI_LV_STYLE_SHADOW_OPA(v)     .shadow_opa     = (v), ._mark_shadow_opa     = 1
+#define GUI_LV_STYLE_BG_IMG_SRC(v)     .bg_img_src     = (v), ._mark_bg_img_src     = 1
+#define GUI_LV_STYLE_LINE_COLOR(v)     .line_color     = {v}, ._mark_line_color     = 1
+#define GUI_LV_STYLE_LINE_WIDTH(v)     .line_width     = (v), ._mark_line_width     = 1
+#define GUI_LV_STYLE_LINE_DASH_WIDTH(v) .line_dash_width = (v), ._mark_line_dash_width = 1
+#define GUI_LV_STYLE_LINE_DASH_GAP(v)   .line_dash_gap   = (v), ._mark_line_dash_gap   = 1
 
 
 /*============================ MACROFIED FUNCTIONS ===========================*/
 // 简化应用样式到主要部分
-#define STYLE_APPLY_MAIN(obj, style)                                           \
-    style_apply(obj, style, LV_PART_MAIN)
+#define GUI_LV_STYLE_APPLY_MAIN(obj, style)                                    \
+    gui_lv_style_apply(obj, style, LV_PART_MAIN)
 
 // 简化应用样式到聚焦状态
-#define STYLE_APPLY_FOCUSED(obj, style)                                        \
-    style_apply(obj, style, LV_PART_MAIN | LV_STATE_FOCUSED)
+#define GUI_LV_STYLE_APPLY_FOCUSED(obj, style)                                 \
+    gui_lv_style_apply(obj, style, LV_PART_MAIN | LV_STATE_FOCUSED)
 
 // 简化应用样式到按下状态
-#define STYLE_APPLY_PRESSED(obj, style)                                        \
-    style_apply(obj, style, LV_PART_MAIN | LV_STATE_PRESSED)
+#define GUI_LV_STYLE_APPLY_PRESSED(obj, style)                                 \
+    gui_lv_style_apply(obj, style, LV_PART_MAIN | LV_STATE_PRESSED)
 
 // 简化应用样式到选中状态
-#define STYLE_APPLY_CHECKED(obj, style)                                        \
-    style_apply(obj, style, LV_PART_INDICATOR | LV_STATE_CHECKED)
+#define GUI_LV_STYLE_APPLY_CHECKED(obj, style)                                 \
+    gui_lv_style_apply(obj, style, LV_PART_INDICATOR | LV_STATE_CHECKED)
 
 // 简化应用样式到指示器部分
-#define STYLE_APPLY_INDICATOR(obj, style)                                      \
-    style_apply(obj, style, LV_PART_INDICATOR)
+#define GUI_LV_STYLE_APPLY_INDICATOR(obj, style)                               \
+    gui_lv_style_apply(obj, style, LV_PART_INDICATOR)
 
 /*============================ TYPES =========================================*/
 /**
@@ -162,16 +162,16 @@ typedef struct {
     uint8_t _mark_line_dash_width;
     uint8_t _mark_line_dash_gap;
 
-} style_config_t;
+} gui_lv_style_config_t;
 
 /**
  * @brief 样式对象（包含LVGL样式和配置）
  */
 typedef struct {
     lv_style_t style;
-    style_config_t config;
+    gui_lv_style_config_t config;
     // const char* name;  // 用于调试
-} ui_style_t;
+} gui_lv_style_t;
 
 
 
@@ -184,7 +184,7 @@ typedef struct {
  * @return 无
  */
 extern
-void style_init(ui_style_t* my_style);
+void gui_lv_style_init(gui_lv_style_t *ptStyle);
 
 /**
  * @brief 应用样式到对象
@@ -193,7 +193,7 @@ void style_init(ui_style_t* my_style);
  * @param selector 选择器（如 LV_PART_MAIN, LV_PART_MAIN | LV_STATE_FOCUSED）
  */
 extern
-void style_apply(lv_obj_t* obj, ui_style_t* my_style, lv_style_selector_t selector);
+void gui_lv_style_apply(lv_obj_t *ptObj, gui_lv_style_t *ptStyle, lv_style_selector_t selector);
 
 /**
  * @brief 移除样式
@@ -202,14 +202,14 @@ void style_apply(lv_obj_t* obj, ui_style_t* my_style, lv_style_selector_t select
  * @param selector 选择器
  */
 extern
-void style_remove(lv_obj_t* obj, ui_style_t* my_style, lv_style_selector_t selector);
+void gui_lv_style_remove(lv_obj_t *ptObj, gui_lv_style_t *ptStyle, lv_style_selector_t selector);
 
 /**
  * @brief 重置样式（释放资源）
  * @param my_style 样式对象指针
  */
 extern
-void style_reset(ui_style_t* my_style);
+void gui_lv_style_reset(gui_lv_style_t *ptStyle);
 
 /*============================ IMPLEMENTATION ================================*/
 /*============================ END ===========================================*/

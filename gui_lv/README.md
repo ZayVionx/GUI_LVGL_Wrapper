@@ -291,28 +291,28 @@ static void __gui_all_scene_init(void)
 
 ### 8.2 样式辅助接口
 
-`helper/style` 使用 `ui_style_t` 与 `style_config_t` 描述样式配置，支持
+`helper/style` 使用 `gui_lv_style_t` 与 `gui_lv_style_config_t` 描述样式配置，支持
 以下接口：
 
-- `style_init()`
-- `style_apply()`
-- `style_remove()`
-- `style_reset()`
+- `gui_lv_style_init()`
+- `gui_lv_style_apply()`
+- `gui_lv_style_remove()`
+- `gui_lv_style_reset()`
 
 支持的典型配置宏包括：
 
-- `bg_color(...)`
-- `radius(...)`
-- `text_font(...)`
+- `GUI_LV_STYLE_BG_COLOR(...)`
+- `GUI_LV_STYLE_RADIUS(...)`
+- `GUI_LV_STYLE_TEXT_FONT(...)`
 
 ### 8.3 输入与数据辅助接口
 
 `helper/input` 与 `helper/data` 主要用于参数编辑类界面：
 
-- `ui_data_nav()`：网格导航控制
-- `ui_data_set()`：整型与浮点参数增减控制
-- `ui_data_save_to_flash()`：参数持久化接口占位
-- `ui_data_reset_to_default()`：参数恢复默认值接口占位
+- `gui_lv_input_nav()`：网格导航控制
+- `gui_lv_data_set()`：整型与浮点参数增减控制
+- `gui_lv_data_save_to_flash()`：参数持久化接口占位
+- `gui_lv_data_reset_to_default()`：参数恢复默认值接口占位
 
 ## 9. 资源生成说明
 

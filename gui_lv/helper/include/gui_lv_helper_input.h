@@ -38,53 +38,53 @@ extern "C" {
  * @brief   UI Event Types.
  */
 typedef enum {
-    UI_EVENT_TYPE_NAV  = 0,     
-    UI_EVENT_TYPE_EDIT = 1,     
-    UI_EVENT_TYPE_MAX
-} ui_event_type_t;
+    GUI_LV_EVENT_TYPE_NAV  = 0,
+    GUI_LV_EVENT_TYPE_EDIT = 1,
+    GUI_LV_EVENT_TYPE_MAX
+} gui_lv_event_type_t;
 
 /**
  * @brief   UI Navigation Commands.
  */
 typedef enum {
-    UI_NAV_UP      = 0,           
-    UI_NAV_DOWN    = 1,           
-    UI_NAV_LEFT    = 2,
-    UI_NAV_RIGHT   = 3,
-    UI_NAV_CONFIRM = 4,
-    UI_NAV_CANCEL  = 5,
-	
-	UI_NAV_MAX
-} ui_navigation_t;
+    GUI_LV_NAV_UP      = 0,
+    GUI_LV_NAV_DOWN    = 1,
+    GUI_LV_NAV_LEFT    = 2,
+    GUI_LV_NAV_RIGHT   = 3,
+    GUI_LV_NAV_CONFIRM = 4,
+    GUI_LV_NAV_CANCEL  = 5,
+
+	GUI_LV_NAV_MAX
+} gui_lv_navigation_t;
 
 /**
  * @brief   UI Edit Commands.
  */
 typedef enum {
-    UI_EDIT_ADD     = 0,
-    UI_EDIT_REDUCE  = 1,
-    UI_EDIT_CONFIRM = 2,
-    UI_EDIT_CANCEL  = 3,
-	
-	UI_EDIT_MAX
-} ui_edit_t;
+    GUI_LV_EDIT_ADD     = 0,
+    GUI_LV_EDIT_REDUCE  = 1,
+    GUI_LV_EDIT_CONFIRM = 2,
+    GUI_LV_EDIT_CANCEL  = 3,
+
+	GUI_LV_EDIT_MAX
+} gui_lv_edit_t;
 
 typedef struct {
     uint8_t u8FocusIndex;
     uint8_t u8MaxIndex;
     uint8_t u8MinIndex;
-} ui_index_t;
+} gui_lv_index_t;
 
 /**
  * @brief   UI Input Event Container.
  */
 typedef struct {
-    ui_event_type_t     eType;  /* Type of the event */
+    gui_lv_event_type_t  eType;  /* Type of the event */
     union {
-        ui_navigation_t eNav;   /* Payload for navigation events */
-        ui_edit_t       eEdit;  /* Payload for edit events */
+        gui_lv_navigation_t eNav;   /* Payload for navigation events */
+        gui_lv_edit_t       eEdit;  /* Payload for edit events */
     } uCmd;
-} ui_input_t;
+} gui_lv_input_t;
 
 /*============================= GLOBAL VARIABLES =============================*/
 /*============================== LOCAL VARIABLES =============================*/
@@ -96,7 +96,7 @@ typedef struct {
  * @param   bIsWrap: Whether to wrap around on overflow/underflow.
  */
 extern 
-void ui_data_nav(ui_index_t *ptIndex, ui_navigation_t eNav, uint8_t u8ColNum, bool bIsWrap);
+void gui_lv_input_nav(gui_lv_index_t *ptIndex, gui_lv_navigation_t eNav, uint8_t u8ColNum, bool bIsWrap);
 
 /*=================================== END ====================================*/
 #ifdef   __cplusplus

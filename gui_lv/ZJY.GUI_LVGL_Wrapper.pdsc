@@ -116,6 +116,7 @@
                 <file category="header"  name="helper/include/gui_lv_helper_bind.h"/>
 
                 <!-- ======== Framework sources (read-only) ================ -->
+                <file category="sourceC" name="helper/source/gui_lv_helper.c"/>
                 <file category="sourceC" name="helper/source/gui_lv_helper_style.c"/>
                 <file category="sourceC" name="helper/source/gui_lv_helper_data.c"/>
                 <file category="sourceC" name="helper/source/gui_lv_helper_input.c"/>
@@ -150,10 +151,12 @@
                 <file category="header"  attr="config"  version="1.1.0" name="gui_lv_font.h"/>
                 <file category="header"  attr="config"  version="1.1.0" name="gui_lv_sys_data.h"/>
                 <file category="header"  attr="config"  version="1.1.0" name="gui_scene_id.h"/>
-                
+                <file category="header"  attr="config"  version="1.0.0" name="gui_lv_custom_components.h"/>
+
                 <!-- ================== Framework sources ================== -->
                 <file category="sourceC" attr="config" version="1.1.0" name="gui_lvgl.c"/>
                 <file category="sourceC" attr="config" version="1.1.0" name="gui_lv_sys_data.c"/>
+                <file category="sourceC" attr="config" version="1.0.0" name="gui_lv_custom_components.c"/>
 
             </files>
             <Pre_Include_Global_h>

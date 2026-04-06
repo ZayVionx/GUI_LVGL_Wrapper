@@ -39,11 +39,11 @@ extern "C" {
  * @brief   Supported Data Types.
  */
 typedef enum {
-    UI_DATA_TYPE_INT,
-    UI_DATA_TYPE_FLOAT,
-    UI_DATA_TYPE_BOOL,
-    UI_DATA_TYPE_STRING,
-} ui_data_type_t;
+    GUI_LV_DATA_TYPE_INT,
+    GUI_LV_DATA_TYPE_FLOAT,
+    GUI_LV_DATA_TYPE_BOOL,
+    GUI_LV_DATA_TYPE_STRING,
+} gui_lv_data_type_t;
 
 /**
  * @brief   Data Range Constraint.
@@ -64,27 +64,27 @@ typedef union {
         float  fStep;
         float  fValue;
     } fData_t;
-} ui_data_range_t;
+} gui_lv_data_range_t;
 
 /**
  * @brief   Generic Data Entry.
  * @note    Container for any type of data managed by the UI.
  */
 typedef struct {
-    void           *pValue;       /* Pointer to the actual data */
-    void           *pRange;       /* Pointer to range constraint (optional) */
-    ui_data_type_t  eType;        /* Data type */
-} ui_data_entry_t;
+    void                *pValue;       /* Pointer to the actual data */
+    void                *pRange;       /* Pointer to range constraint (optional) */
+    gui_lv_data_type_t   eType;        /* Data type */
+} gui_lv_data_entry_t;
 
  typedef struct {
     bool (*pfDataLoad )(void);
     bool (*pfDataSave )(void);
     bool (*pfDataReset)(void);
- } ui_data_cfg_t;
+ } gui_lv_data_cfg_t;
 
 typedef struct {
-    ui_data_cfg_t *ptCfg;
-} ui_data_t;
+    gui_lv_data_cfg_t *ptCfg;
+} gui_lv_data_t;
 
 /*============================= GLOBAL VARIABLES =============================*/
 /*============================== LOCAL VARIABLES =============================*/
@@ -93,7 +93,7 @@ typedef struct {
  * @brief   Initialize UI data module.
  */
 extern
-bool ui_data_init(ui_data_cfg_t *ptCfg);
+bool gui_lv_data_init(gui_lv_data_cfg_t *ptCfg);
 
 /**
  * @brief   Set UI data value.
@@ -102,19 +102,22 @@ bool ui_data_init(ui_data_cfg_t *ptCfg);
  * @param   bIsWrap: Whether to wrap around on overflow/underflow.
  */
 extern 
-void ui_data_set(ui_data_range_t *ptRange, ui_data_type_t eType, ui_edit_t eDit, bool bIsWrap);
+void gui_lv_data_set(gui_lv_data_range_t *ptRange,
+                     gui_lv_data_type_t eType,
+                     gui_lv_edit_t eDit,
+                     bool bIsWrap);
 
 /**
  * @brief   Save parameters to flash.
  */
 extern
-void ui_data_save_to_flash(void);
+void gui_lv_data_save_to_flash(void);
 
 /**
  * @brief   Reset parameters to default values.
  */
 extern 
-void ui_data_reset_to_default(void);
+void gui_lv_data_reset_to_default(void);
 
 /*=================================== END ====================================*/
 #ifdef   __cplusplus

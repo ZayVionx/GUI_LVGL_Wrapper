@@ -39,7 +39,6 @@ extern "C" {
 #   define __LV_USE_FILE_SYSTEM__   0
 #endif
 
-
 // <h> Display configuration
     // <o> Horizontal resolution 
 	// <1-4096>
@@ -112,6 +111,34 @@ extern "C" {
     #   define __LV_SCENE_DEFAULT_INDEV__   1
     #endif
 // </h>
+
+
+// <h> Time base configuration
+    /* Optional custom time source hooks for gui_lv_helper.
+     * Define both macros together when binding to a board-specific timer.
+     *
+     * Example:
+     *   #define GUI_LV_GET_SYSTEM_TIMESTAMP()              sys_run_count
+     *   #define GUI_LV_GET_REFERENCE_CLOCK_FREQUENCY()     1000u
+     *
+     * Default behaviour:
+     * - target builds use lv_tick_get() with a 1000 Hz reference clock
+     * - host/simulation builds fall back to platform time APIs
+     */
+    // <i> System timestamp source used by gui_lv_helper.
+    // <i> Default: lv_tick_get()
+    // <i> Override this macro in board config when a custom timer is needed.
+    #ifndef GUI_LV_GET_SYSTEM_TIMESTAMP
+    #   define GUI_LV_GET_SYSTEM_TIMESTAMP()            lv_tick_get()
+    #endif
+    // <o> Custom reference clock frequency (Hz)    
+    // <i> Default: 1000 Hz
+    // <i> Override this macro in board config when a custom timer is needed.
+    #ifndef GUI_LV_GET_REFERENCE_CLOCK_FREQUENCY
+    #   define GUI_LV_GET_REFERENCE_CLOCK_FREQUENCY()   1000u 
+    #endif
+// </h>
+
 
 // <<< end of configuration section >>>
 

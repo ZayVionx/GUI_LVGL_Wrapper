@@ -32,7 +32,7 @@
  * @param   eNav:    Navigation command.
  * @param   bIsWrap: Whether to wrap around on overflow/underflow.
  ******************************************************************************/
-void ui_data_nav(ui_index_t *ptIndex, ui_navigation_t eNav, uint8_t u8ColNum, bool bIsWrap)
+void gui_lv_input_nav(gui_lv_index_t *ptIndex, gui_lv_navigation_t eNav, uint8_t u8ColNum, bool bIsWrap)
 {
     if(ptIndex == NULL) return;
     if(u8ColNum == 0) u8ColNum = 1; // 防止除0错误，默认为1列
@@ -47,7 +47,7 @@ void ui_data_nav(ui_index_t *ptIndex, ui_navigation_t eNav, uint8_t u8ColNum, bo
 
     switch(eNav)
     {
-        case UI_NAV_LEFT:
+        case GUI_LV_NAV_LEFT:
             if(u8Norm > 0)
             {
                 u8Norm--;
@@ -58,7 +58,7 @@ void ui_data_nav(ui_index_t *ptIndex, ui_navigation_t eNav, uint8_t u8ColNum, bo
             }
             break;
 
-        case UI_NAV_RIGHT:
+        case GUI_LV_NAV_RIGHT:
             if(u8Norm < u8Total - 1)
             {
                 u8Norm++;
@@ -69,7 +69,7 @@ void ui_data_nav(ui_index_t *ptIndex, ui_navigation_t eNav, uint8_t u8ColNum, bo
             }
             break;
 
-        case UI_NAV_UP:
+        case GUI_LV_NAV_UP:
             if(u8Norm >= u8ColNum)
             {
                 u8Norm -= u8ColNum;
@@ -90,7 +90,7 @@ void ui_data_nav(ui_index_t *ptIndex, ui_navigation_t eNav, uint8_t u8ColNum, bo
             }
             break;
 
-        case UI_NAV_DOWN:
+        case GUI_LV_NAV_DOWN:
             if(u8Norm + u8ColNum < u8Total)
             {
                 u8Norm += u8ColNum;

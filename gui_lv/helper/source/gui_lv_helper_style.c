@@ -35,117 +35,117 @@
 /**
  * @brief 初始化样式（从配置结构体创建样式）
  */
-void style_init(ui_style_t* my_style)
+void gui_lv_style_init(gui_lv_style_t *ptStyle)
 {
-    if (!my_style) return;
+    if (ptStyle == NULL) return;
     
-    lv_style_init(&my_style->style);
+    lv_style_init(&ptStyle->style);
     
-    style_config_t* cfg = &my_style->config;
+    gui_lv_style_config_t *ptCfg = &ptStyle->config;
     
     // 尺寸
-    if (cfg->_mark_min_width) {
-        lv_style_set_min_width(&my_style->style, cfg->min_width);
+    if (ptCfg->_mark_min_width) {
+        lv_style_set_min_width(&ptStyle->style, ptCfg->min_width);
     }
-    if (cfg->_mark_min_height) {
-        lv_style_set_min_height(&my_style->style, cfg->min_height);
+    if (ptCfg->_mark_min_height) {
+        lv_style_set_min_height(&ptStyle->style, ptCfg->min_height);
     }
-    if (cfg->_mark_width) {
-        lv_style_set_width(&my_style->style, cfg->width);
+    if (ptCfg->_mark_width) {
+        lv_style_set_width(&ptStyle->style, ptCfg->width);
     }
-    if (cfg->_mark_height) {
-        lv_style_set_height(&my_style->style, cfg->height);
+    if (ptCfg->_mark_height) {
+        lv_style_set_height(&ptStyle->style, ptCfg->height);
     }
     
     // 内边距
-    if (cfg->_mark_pad_all) {
-        lv_style_set_pad_all(&my_style->style, cfg->pad_all);
+    if (ptCfg->_mark_pad_all) {
+        lv_style_set_pad_all(&ptStyle->style, ptCfg->pad_all);
     } 
-    if (cfg->_mark_pad_top) {
-        lv_style_set_pad_top(&my_style->style, cfg->pad_top);
+    if (ptCfg->_mark_pad_top) {
+        lv_style_set_pad_top(&ptStyle->style, ptCfg->pad_top);
     }
-    if (cfg->_mark_pad_bottom) {
-        lv_style_set_pad_bottom(&my_style->style, cfg->pad_bottom);
+    if (ptCfg->_mark_pad_bottom) {
+        lv_style_set_pad_bottom(&ptStyle->style, ptCfg->pad_bottom);
     }
-    if (cfg->_mark_pad_left) {
-        lv_style_set_pad_left(&my_style->style, cfg->pad_left);
+    if (ptCfg->_mark_pad_left) {
+        lv_style_set_pad_left(&ptStyle->style, ptCfg->pad_left);
     }
-    if (cfg->_mark_pad_right) {
-        lv_style_set_pad_right(&my_style->style, cfg->pad_right);
+    if (ptCfg->_mark_pad_right) {
+        lv_style_set_pad_right(&ptStyle->style, ptCfg->pad_right);
     }
         
     // 背景
-    if (cfg->_mark_bg_color) {
-        lv_style_set_bg_color(&my_style->style, cfg->bg_color);
+    if (ptCfg->_mark_bg_color) {
+        lv_style_set_bg_color(&ptStyle->style, ptCfg->bg_color);
     }
-    if (cfg->_mark_bg_opa) {
-        lv_style_set_bg_opa(&my_style->style, cfg->bg_opa);
+    if (ptCfg->_mark_bg_opa) {
+        lv_style_set_bg_opa(&ptStyle->style, ptCfg->bg_opa);
     }
-    if (cfg->_mark_radius) {
-        lv_style_set_radius(&my_style->style, cfg->radius);
+    if (ptCfg->_mark_radius) {
+        lv_style_set_radius(&ptStyle->style, ptCfg->radius);
     }
     
     // 边框
-    if (cfg->_mark_border_color) {
-        lv_style_set_border_color(&my_style->style, cfg->border_color);
+    if (ptCfg->_mark_border_color) {
+        lv_style_set_border_color(&ptStyle->style, ptCfg->border_color);
     }
-    if (cfg->_mark_border_width) {
-        lv_style_set_border_width(&my_style->style, cfg->border_width);
+    if (ptCfg->_mark_border_width) {
+        lv_style_set_border_width(&ptStyle->style, ptCfg->border_width);
     }
-    if (cfg->_mark_border_opa) {
-        lv_style_set_border_opa(&my_style->style, cfg->border_opa);
+    if (ptCfg->_mark_border_opa) {
+        lv_style_set_border_opa(&ptStyle->style, ptCfg->border_opa);
     }
     
     // 文本
-    if (cfg->_mark_text_font) {
-        lv_style_set_text_font(&my_style->style, cfg->text_font);
+    if (ptCfg->_mark_text_font) {
+        lv_style_set_text_font(&ptStyle->style, ptCfg->text_font);
     }
-    if (cfg->_mark_text_color) {
-        lv_style_set_text_color(&my_style->style, cfg->text_color);
+    if (ptCfg->_mark_text_color) {
+        lv_style_set_text_color(&ptStyle->style, ptCfg->text_color);
     }
-    if (cfg->_mark_text_align) {
-        lv_style_set_text_align(&my_style->style, cfg->text_align);
+    if (ptCfg->_mark_text_align) {
+        lv_style_set_text_align(&ptStyle->style, ptCfg->text_align);
     }
     
     // 轮廓
-    if (cfg->_mark_outline_color) {
-        lv_style_set_outline_color(&my_style->style, cfg->outline_color);
+    if (ptCfg->_mark_outline_color) {
+        lv_style_set_outline_color(&ptStyle->style, ptCfg->outline_color);
     }
-    if (cfg->_mark_outline_width) {
-        lv_style_set_outline_width(&my_style->style, cfg->outline_width);
+    if (ptCfg->_mark_outline_width) {
+        lv_style_set_outline_width(&ptStyle->style, ptCfg->outline_width);
     }
-    if (cfg->_mark_outline_pad) {
-        lv_style_set_outline_pad(&my_style->style, cfg->outline_pad);
+    if (ptCfg->_mark_outline_pad) {
+        lv_style_set_outline_pad(&ptStyle->style, ptCfg->outline_pad);
     }
-    if (cfg->_mark_outline_opa) {
-        lv_style_set_outline_opa(&my_style->style, cfg->outline_opa);
+    if (ptCfg->_mark_outline_opa) {
+        lv_style_set_outline_opa(&ptStyle->style, ptCfg->outline_opa);
     }
     
     // 阴影
-    if (cfg->_mark_shadow_width) {
-        lv_style_set_shadow_width(&my_style->style, cfg->shadow_width);
+    if (ptCfg->_mark_shadow_width) {
+        lv_style_set_shadow_width(&ptStyle->style, ptCfg->shadow_width);
     }
-    if (cfg->_mark_shadow_opa) {
-        lv_style_set_shadow_opa(&my_style->style, cfg->shadow_opa);
+    if (ptCfg->_mark_shadow_opa) {
+        lv_style_set_shadow_opa(&ptStyle->style, ptCfg->shadow_opa);
     }
     
     // 背景图片
-    if (cfg->_mark_bg_img_src) {
-        lv_style_set_bg_img_src(&my_style->style, cfg->bg_img_src);
+    if (ptCfg->_mark_bg_img_src) {
+        lv_style_set_bg_img_src(&ptStyle->style, ptCfg->bg_img_src);
     }
 
     // 线
-    if (cfg->_mark_line_color) {
-        lv_style_set_line_color(&my_style->style, cfg->line_color);
+    if (ptCfg->_mark_line_color) {
+        lv_style_set_line_color(&ptStyle->style, ptCfg->line_color);
     }   
-    if (cfg->_mark_line_width) {
-        lv_style_set_line_width(&my_style->style, cfg->line_width);
+    if (ptCfg->_mark_line_width) {
+        lv_style_set_line_width(&ptStyle->style, ptCfg->line_width);
     }
-    if (cfg->_mark_line_dash_width) {
-        lv_style_set_line_dash_width(&my_style->style, cfg->line_dash_width);
+    if (ptCfg->_mark_line_dash_width) {
+        lv_style_set_line_dash_width(&ptStyle->style, ptCfg->line_dash_width);
     }
-    if (cfg->_mark_line_dash_gap) {
-        lv_style_set_line_dash_gap(&my_style->style, cfg->line_dash_gap);
+    if (ptCfg->_mark_line_dash_gap) {
+        lv_style_set_line_dash_gap(&ptStyle->style, ptCfg->line_dash_gap);
     }
     
 }
@@ -153,30 +153,30 @@ void style_init(ui_style_t* my_style)
 /**
  * @brief 应用样式到对象
  */
-void style_apply(lv_obj_t* obj, ui_style_t* my_style, lv_style_selector_t selector) 
+void gui_lv_style_apply(lv_obj_t *ptObj, gui_lv_style_t *ptStyle, lv_style_selector_t selector)
 {
-    if (obj && my_style) {
-        lv_obj_add_style(obj, &my_style->style, selector);
+    if (ptObj != NULL && ptStyle != NULL) {
+        lv_obj_add_style(ptObj, &ptStyle->style, selector);
     }
 }
 
 /**
  * @brief 移除样式
  */
-void style_remove(lv_obj_t* obj, ui_style_t* my_style, lv_style_selector_t selector) 
+void gui_lv_style_remove(lv_obj_t *ptObj, gui_lv_style_t *ptStyle, lv_style_selector_t selector)
 {
-    if (obj && my_style) {
-        lv_obj_remove_style(obj, &my_style->style, selector);
+    if (ptObj != NULL && ptStyle != NULL) {
+        lv_obj_remove_style(ptObj, &ptStyle->style, selector);
     }
 }
 
 /**
  * @brief 重置样式
  */
-void style_reset(ui_style_t* my_style) 
+void gui_lv_style_reset(gui_lv_style_t *ptStyle)
 {
-    if (my_style) {
-        lv_style_reset(&my_style->style);
+    if (ptStyle != NULL) {
+        lv_style_reset(&ptStyle->style);
     }
 }
 

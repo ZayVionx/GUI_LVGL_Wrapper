@@ -20,6 +20,10 @@
 #define __GUI_LV_UTILS_H__
 
 /*================================= INCLUDES =================================*/
+#include <stdbool.h>
+#include <stddef.h>
+#include <stdint.h>
+
 #ifdef _RTE_
 #   include "RTE_Components.h"
 #endif
@@ -112,6 +116,12 @@ extern lv_indev_t *enc_indev;
 			ALT_EMB_CONNECT2( EMB_CONNECT,                                     \
 							  __EMB_VA_NUM_ARGS(__VA_ARGS__))(__VA_ARGS__)
 
+/*!
+ * \brief A macro to generate a safe name, usually used in macro template as the 
+ *        name of local variables
+ * 
+ */
+#define GUI_LV_SAFE_NAME(...)       EMB_CONNECT(__,__LINE__,##__VA_ARGS__)
 
 /*----------------------------------------------------------------------------*
  * Misc                                                                       *
@@ -422,7 +432,7 @@ void gui_lv_label_display_event_cb(lv_event_t *e)
         case MSG_INT:    lv_label_set_text_fmt(ptLabel,pchFmt,*(const int*)pvPayload );     break;
         case MSG_FLOAT:  lv_label_set_text_fmt(ptLabel,pchFmt,*(const float*)pvPayload );   break;
         case MSG_DOUBLE: lv_label_set_text_fmt(ptLabel,pchFmt,*(const double*)pvPayload );  break;
-        case MSG_STR:    lv_label_set_text_fmt(ptLabel,pchFmt,*(const char**)pvPayload );    break;
+        case MSG_STR:    lv_label_set_text_fmt(ptLabel,pchFmt,*(const char**)pvPayload );   break;
         case MSG_U8:     lv_label_set_text_fmt(ptLabel,pchFmt,*(const uint8_t*)pvPayload ); break;
         case MSG_U16:    lv_label_set_text_fmt(ptLabel,pchFmt,*(const uint16_t*)pvPayload );break;
         case MSG_U32:    lv_label_set_text_fmt(ptLabel,pchFmt,*(const uint32_t*)pvPayload );break;
@@ -457,10 +467,140 @@ void gui_lv_label_display_event_cb(lv_event_t *e)
     } while (0)
 #endif
 
+
+
+/*----------------------------------------------------------------------------*
+ * PT Operations                                                              *
+ *----------------------------------------------------------------------------*/
+/*
+Protothreads open source BSD-style license
+The protothreads library is released under an open source license that allows 
+both commercial and non-commercial use without restrictions. The only 
+requirement is that credits is given in the source code and in the documentation 
+for your product.
+
+The full license text follows.
+
+Copyright (c) 2004-2005, Swedish Institute of Computer Science.
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions
+are met:
+1. Redistributions of source code must retain the above copyright
+notice, this list of conditions and the following disclaimer.
+2. Redistributions in binary form must reproduce the above copyright
+notice, this list of conditions and the following disclaimer in the
+documentation and/or other materials provided with the distribution.
+3. Neither the name of the Institute nor the names of its contributors
+may be used to endorse or promote products derived from this software
+without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE INSTITUTE AND CONTRIBUTORS `AS IS' AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ARE DISCLAIMED. IN NO EVENT SHALL THE INSTITUTE OR CONTRIBUTORS BE LIABLE
+FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+SUCH DAMAGE.
+
+Author: Adam Dunkels
+*/
+
+typedef enum {
+    gui_lv_fsm_rt_err          = -1,    //!< fsm error
+    gui_lv_fsm_rt_cpl          = 0,     //!< fsm complete
+    gui_lv_fsm_rt_on_going     = 1,     //!< fsm on-going
+    gui_lv_fsm_rt_wait_for_obj = 2,     //!< fsm wait for IPC object
+    gui_lv_fsm_rt_async        = 3,     //!< fsm work asynchronously, please check it later.
+    gui_lv_fsm_rt_wait_for_res = 4,     //!< wait for resource
+    __gui_lv_fsm_rt_last,
+} gui_lv_fsm_rt_t;
+
+#define GUI_LV_PT_BEGIN(__STATE)                                               \
+            enum {                                                             \
+                count_offset = __COUNTER__ + 1,                                \
+            };                                                                 \
+            uint8_t *ptPTState = &(__STATE);                                   \
+            switch (__STATE) {                                                 \
+                case __COUNTER__ - count_offset: (void)(*ptPTState);
+
+#define GUI_LV_PT_ENTRY(...)                                                   \
+            (*ptPTState) = (__COUNTER__ - count_offset + 1) >> 1;              \
+            __VA_ARGS__                                                        \
+            case (__COUNTER__ - count_offset) >> 1: (void)(*ptPTState);
+            
+#define GUI_LV_PT_YIELD(...)                                                   \
+            GUI_LV_PT_ENTRY(return __VA_ARGS__;)
+            
+#define GUI_LV_PT_END()                                                        \
+            (*ptPTState) = 0;                                                  \
+            break;}
+
+#define GUI_LV_PT_GOTO_PREV_ENTRY(...)    return __VA_ARGS__;
+
+#define GUI_LV_PT_WAIT_UNTIL(__CONDITION, ...)                                 \
+            GUI_LV_PT_ENTRY()                                                  \
+                __VA_ARGS__;                                                   \
+                if (!(__CONDITION)) {                                          \
+                    GUI_LV_PT_GOTO_PREV_ENTRY(gui_lv_fsm_rt_on_going);         \
+                }
+
+#define GUI_LV_PT_WAIT_OBJ_UNTIL(__CONDITION, ...)                             \
+            GUI_LV_PT_ENTRY()                                                  \
+                __VA_ARGS__;                                                   \
+                if (!(__CONDITION)) {                                          \
+                    GUI_LV_PT_GOTO_PREV_ENTRY(gui_lv_fsm_rt_wait_for_obj);     \
+                }
+
+#define GUI_LV_PT_WAIT_RESOURCE_UNTIL(__CONDITION, ...)                        \
+            GUI_LV_PT_ENTRY()                                                  \
+                __VA_ARGS__;                                                   \
+                if (!(__CONDITION)) {                                          \
+                    GUI_LV_PT_GOTO_PREV_ENTRY(gui_lv_fsm_rt_wait_for_res);     \
+                }
+
+#define GUI_LV_PT_DELAY_MS(__MS, ...)                                          \
+            GUI_LV_PT_ENTRY(                                                   \
+                static int64_t GUI_LV_SAFE_NAME(s_lTimestamp);                 \
+                int64_t *GUI_LV_SAFE_NAME(plTimestamp)                         \
+                    = (&GUI_LV_SAFE_NAME(s_lTimestamp), ##__VA_ARGS__);        \
+                *GUI_LV_SAFE_NAME(plTimestamp) =                               \
+                    gui_lv_helper_get_system_timestamp();                      \
+            )                                                                  \
+            do {                                                               \
+                GUI_LV_SAFE_NAME(plTimestamp)                                  \
+                    = (&GUI_LV_SAFE_NAME(s_lTimestamp), ##__VA_ARGS__);        \
+                int64_t GUI_LV_SAFE_NAME(lElapsedMs) =                         \
+                    gui_lv_helper_convert_ticks_to_ms(                         \
+                        gui_lv_helper_get_system_timestamp()                   \
+                    -   *GUI_LV_SAFE_NAME(plTimestamp));                       \
+                if (GUI_LV_SAFE_NAME(lElapsedMs) < (__MS)) {                   \
+                    GUI_LV_PT_GOTO_PREV_ENTRY(gui_lv_fsm_rt_on_going);         \
+                }                                                              \
+                *GUI_LV_SAFE_NAME(plTimestamp) = 0;                            \
+            } while(0)
+
+#define GUI_LV_PT_REPORT_STATUS(...)                                           \
+            GUI_LV_PT_ENTRY(                                                   \
+                return __VA_ARGS__;                                            \
+            )
+            
+#define GUI_LV_PT_RETURN(...)                                                  \
+            (*ptPTState) = 0;                                                  \
+            return __VA_ARGS__;
+
 /*================================== TYPES ===================================*/
 /*============================= GLOBAL VARIABLES =============================*/
 /*============================== LOCAL VARIABLES =============================*/
 /*================================ PROTOTYPES ================================*/
+extern int64_t gui_lv_helper_get_system_timestamp(void);
+extern int64_t gui_lv_helper_convert_ticks_to_ms(int64_t lTick);
+
 /*============================== IMPLEMENTATION ==============================*/
 /*=================================== END ====================================*/
 #ifdef   __cplusplus
