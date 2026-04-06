@@ -84,7 +84,7 @@ static void __gui_sys_data_init(void)
 static void __gui_common_style_init(void)
 {
     /*------------------- user code begin: common style -------------------*/
-    gui_lv_style_init(&gui_lv_cont_def_style);
+    gui_lv_style_init(&ptContDefStyle);
     
     /*------------------- user code end  : common style -------------------*/
 }

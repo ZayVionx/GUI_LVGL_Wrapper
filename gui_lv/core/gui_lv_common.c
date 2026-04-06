@@ -69,6 +69,8 @@ lv_obj_t *gui_lv_bar_init(lv_obj_t *parent, int16_t x, int16_t y, uint16_t width
     return bar_obj;
 }                                            
 
+#if LV_USE_SPINBOX
+
 lv_obj_t *gui_lv_spinbox_init(lv_obj_t *parent, int16_t x, int16_t y, uint16_t width, uint16_t height, 
                                       const lv_font_t *font, bool bIsClearStyle)
 {
@@ -89,6 +91,8 @@ void gui_lv_spinbox_param_init(lv_obj_t *spinbox, int32_t count, int32_t point, 
     lv_spinbox_set_value(spinbox, value);  
     lv_spinbox_set_cursor_pos(spinbox, pos);
 }
+
+#endif
 
 lv_timer_t *gui_lv_timer_init(lv_timer_cb_t timer_cb, uint32_t period, void *user_data,
                                                                     bool BIs_On)

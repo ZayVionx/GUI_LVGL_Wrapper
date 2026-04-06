@@ -29,7 +29,10 @@ lv_obj_t *gui_lv_btn_init(lv_obj_t *parent, int16_t x, int16_t y, uint16_t width
 extern
 lv_obj_t *gui_lv_bar_init(lv_obj_t *parent, int16_t x, int16_t y, uint16_t width, uint16_t height, 
                                         int32_t min, int32_t max, int32_t value);
-   
+
+
+#if LV_USE_SPINBOX
+
 extern
 lv_obj_t *gui_lv_spinbox_init(lv_obj_t *parent, int16_t x, int16_t y, uint16_t width, uint16_t height, 
                                       const lv_font_t *font, bool bIsClearStyle);
@@ -37,6 +40,8 @@ lv_obj_t *gui_lv_spinbox_init(lv_obj_t *parent, int16_t x, int16_t y, uint16_t w
 extern
 void gui_lv_spinbox_param_init(lv_obj_t *spinbox, int32_t count, int32_t point, uint32_t step,
                                int32_t value, int32_t min  , int32_t max  , uint8_t pos);
+
+#endif
 
 extern
 lv_timer_t *gui_lv_timer_init(lv_timer_cb_t timer_cb, uint32_t period, void *user_data,

@@ -20,6 +20,7 @@
 #define __GUI_LV_CUSTOM_COMPONENTS_H__
 
 /*================================= INCLUDES =================================*/
+#include "gui_lv_utils.h"
 
 #ifdef   __cplusplus
 extern "C" {
@@ -27,9 +28,43 @@ extern "C" {
 /*================================== MACROS ==================================*/
 /*============================ MACROFIED FUNCTIONS ===========================*/
 /*================================== TYPES ===================================*/
+typedef struct {
+    lv_obj_t   *ptParent;       /*!< 父容器对象 */
+    lv_obj_t   *ptFrameImg;     /*!< 电池外框图对象 */ 
+    void       *pImgScr;        /*!< 电池外框图 */    
+    lv_align_t  chAlign;        /*!< 电池对齐方式 */    
+    lv_coord_t  i16X;           /*!< 电池组件X坐标 */
+    lv_coord_t  i16Y;           /*!< 电池组件Y坐标 */
+
+    /* 电量格属性 */
+    struct {
+        uint8_t    chBattGuageW;    /*!< 电池格宽 */
+        uint8_t    chBattGuageH;    /*!< 电池格高 */
+        uint8_t    chBattMax;       /*!< 电池最大电量 */
+        uint8_t    chBattLevel;     /*!< 电池当前电量（用户设置的目标值） */
+        uint8_t    chStartX;       /*!< 第一个电量格的起始X偏移 */
+        uint8_t    chGap;           /*!< 电量格之间的间距 */
+    } BattGuage;
+
+    /* 充电动画内部状态（用户无需关心） */
+    struct {
+        lv_timer_t *ptTimer;        /*!< 闪烁定时器 */
+        uint8_t     chDisplayLevel; /*!< 当前显示的固态电量格数 */
+        bool        bBlinkVisible;  /*!< 闪烁格当前是否可见 */
+        bool        bIsCharging;    /*!< 是否处于充电模式 */
+        bool        bPendingUpdate; /*!< 是否有待同步的电量更新 */
+    } tAnim;
+    
+} gui_lv_custom_battery_t;
+
 /*============================= GLOBAL VARIABLES =============================*/
 /*============================== LOCAL VARIABLES =============================*/
 /*================================ PROTOTYPES ================================*/
+void gui_lv_custom_battery_create(gui_lv_custom_battery_t *ptBattery);
+void gui_lv_custom_battery_destroy(gui_lv_custom_battery_t *ptBattery);
+void gui_lv_custom_battery_enter_idle_mode(gui_lv_custom_battery_t *ptBattery);
+void gui_lv_custom_battery_enter_charging_mode(gui_lv_custom_battery_t *ptBattery);
+void gui_lv_custom_battery_set_level(gui_lv_custom_battery_t *ptBattery, uint8_t chBattLevel);
 
 
 
