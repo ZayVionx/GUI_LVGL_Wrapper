@@ -152,11 +152,10 @@ void gui_lv_custom_battery_create(gui_lv_custom_battery_t *ptBattery)
  */
 void gui_lv_custom_battery_destroy(gui_lv_custom_battery_t *ptBattery)
 {
-    if (ptBattery->tAnim.ptTimer) {
-        lv_timer_del(ptBattery->tAnim.ptTimer);
-        ptBattery->tAnim.ptTimer = NULL;
-    }
-    if (ptBattery->ptFrameImg) {
+    GUI_LV_TIMER_DESTROY(ptBattery->tAnim.ptTimer);
+	
+	if (ptBattery->ptFrameImg) 
+    {
         lv_obj_del(ptBattery->ptFrameImg);
         ptBattery->ptFrameImg = NULL;
     }
