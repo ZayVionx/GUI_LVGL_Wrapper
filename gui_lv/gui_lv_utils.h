@@ -50,24 +50,24 @@ extern "C" {
  * LVGL-INDEV                                                                 *
  *----------------------------------------------------------------------------*/
 #ifdef _WIN64
-#   define LV_INDEV_TOUCHPAD     mouse_indev
 #   define LV_INDEV_KEYPAD       kb_indev
 #   define LV_INDEV_ENCODER      enc_indev
-extern lv_indev_t *mouse_indev;
-extern lv_indev_t *kb_indev;
-extern lv_indev_t *enc_indev;
+#   define LV_INDEV_TOUCHPAD     mouse_indev
+    extern lv_indev_t           *kb_indev;
+    extern lv_indev_t           *enc_indev;
+    extern lv_indev_t           *mouse_indev;
 #else
 #   if __LV_USE_KEYPAD_INDEV__
+        extern lv_indev_t       *indev_keypad;
 #       define LV_INDEV_KEYPAD   indev_keypad
-		extern lv_indev_t       *indev_keypad;
 #   endif
 #   if __LV_USE_TOUCHPAD_INDEV__
+        extern lv_indev_t       *indev_touchpad;
 #       define LV_INDEV_TOUCHPAD indev_touchpad
-		extern lv_indev_t       *indev_touchpad;
 #   endif
 #   if __LV_USE_ENCODER_INDEV__
+        extern lv_indev_t       *indev_encoder;
 #       define LV_INDEV_ENCODER  indev_encoder
-		extern lv_indev_t       *indev_encoder;
 #   endif
 #endif
 
@@ -153,6 +153,20 @@ extern lv_indev_t *enc_indev;
 #define GUI_LV_UNUSED(__VAR)        (void)(__VAR)
 
 #define GUI_LV_ASSERT(_expr)        do { if(!(_expr)){while(1);} } while(0)
+
+/*!
+ * \brief a wrapper for __attribute__((nonnull))
+ */
+#ifndef GUI_LV_NONNULL
+#   if  defined(__IS_COMPILER_ARM_COMPILER_5__) ||\
+        defined(__IS_COMPILER_ARM_COMPILER_6__) ||\
+        defined(__IS_COMPILER_GCC__)            ||\
+        defined(__IS_COMPILER_LLVM__)
+#       define GUI_LV_NONNULL(...)     __attribute__((nonnull(__VA_ARGS__)))
+#   else
+#       define GUI_LV_NONNULL(...)
+#   endif
+#endif
 
 /*----------------------------------------------------------------------------*
  * Array                                                                      *

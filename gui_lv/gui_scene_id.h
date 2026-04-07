@@ -44,8 +44,8 @@ typedef enum {
     
     /* page id to end   */
 
-    GUI_SCENE_PAGE_MAX
-} gui_scene_page_id_t;
+    GUI_PAGE_MAX
+} gui_page_id_t;
 
 /*=================================== END ====================================*/
 #ifdef   __cplusplus
