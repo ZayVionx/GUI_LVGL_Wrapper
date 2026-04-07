@@ -23,6 +23,7 @@
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
+#include "platform/gui_lv_user_arch_port.h"
 
 #ifdef _RTE_
 #   include "RTE_Components.h"
@@ -46,6 +47,7 @@
 extern "C" {
 #endif
 /*================================== MACROS ==================================*/
+
 /*----------------------------------------------------------------------------*
  * LVGL-INDEV                                                                 *
  *----------------------------------------------------------------------------*/
@@ -70,118 +72,6 @@ extern "C" {
 #       define LV_INDEV_ENCODER  indev_encoder
 #   endif
 #endif
-
-/*----------------------------------------------------------------------------*
- * Fall-through                                                               *
- *----------------------------------------------------------------------------*/
-#if   defined(__cplusplus) && (__cplusplus >= 201703L)
-#   define FALL_THROUGH        [[fallthrough]]
-#elif defined(__GNUC__)    && (__GNUC__    >= 7)
-#   define FALL_THROUGH        __attribute__((fallthrough))
-#elif defined(__clang__)   && defined(__has_attribute)
-#   if __has_attribute(fallthrough)
-#       define FALL_THROUGH    __attribute__((fallthrough))
-#   else
-#       define FALL_THROUGH    ((void)0)
-#   endif
-#else
-#   define FALL_THROUGH        ((void)0)
-#endif
-
-#if !defined(GUI_LV_WEAK)
-#   if defined(__GNUC__) || defined(__clang__) || defined(__CC_ARM)            \
-        || defined(__ARMCC_VERSION)
-#       define GUI_LV_WEAK __attribute__((weak))
-#   else
-#       define GUI_LV_WEAK
-#   endif
-#endif
-
-/*----------------------------------------------------------------------------*
- * Misc                                                                       *
- *----------------------------------------------------------------------------*/
-#define __VA_NUM_ARGS( _0,_1,_2,_3,_4,_5,_6,_7,_8,_9,_10,_11,_12,              \
-								_13,_14,_15,_16,__N,...)    __N
-#define __EMB_VA_NUM_ARGS(...)                                                 \
-			__VA_NUM_ARGS( 0,##__VA_ARGS__,16,15,14,13,12,11,10,9,             \
-									  8,7,6,5,4,3,2,1,0)
-#define __EMB_CONNECT2(__A, __B)                __A##__B
-#define __EMB_CONNECT3(__A, __B, __C)           __A##__B##__C
-#define __EMB_CONNECT4(__A, __B, __C, __D)      __A##__B##__C##__D
-#define ALT_EMB_CONNECT2(__A, __B)              __EMB_CONNECT2(__A, __B)
-#define EMB_CONNECT2(__A, __B)                  __EMB_CONNECT2(__A, __B)
-#define EMB_CONNECT3(__A, __B, __C)             __EMB_CONNECT3(__A, __B, __C)
-#define EMB_CONNECT4(__A, __B, __C, __D)        __EMB_CONNECT4(__A, __B, __C, __D)
-#define EMB_CONNECT(...)                                                       \
-			ALT_EMB_CONNECT2( EMB_CONNECT,                                     \
-							  __EMB_VA_NUM_ARGS(__VA_ARGS__))(__VA_ARGS__)
-
-/*!
- * \brief A macro to generate a safe name, usually used in macro template as the 
- *        name of local variables
- * 
- */
-#define GUI_LV_SAFE_NAME(...)       EMB_CONNECT(__,__LINE__,##__VA_ARGS__)
-
-/*----------------------------------------------------------------------------*
- * Misc                                                                       *
- *----------------------------------------------------------------------------*/
-/*!
- * \brief A macro to safely invode a function pointer
- * 
- * \param[in] __FUNC_PTR the target function pointer
- * \param[in] ... an optional parameter list
- */
-#define GUI_LV_INVOKE(__FUNC_PTR, ...)                                         \
-    ((NULL == (__FUNC_PTR)) ? 0 : ((*(__FUNC_PTR))(__VA_ARGS__)))
-
-/*!
- * \brief A macro to safely call a function pointer that has no return value
- * 
- * \param[in] __FUNC_PTR the target function pointer
- * \param[in] ... an optional parameter list
- */
-#define GUI_LV_INVOKE_RT_VOID(__FUNC_PTR, ...)                                 \
-    if (NULL != (__FUNC_PTR)) (*(__FUNC_PTR))(__VA_ARGS__)
-    
-/*----------------------------------------------------------------------------*
- * Misc                                                                       *
- *----------------------------------------------------------------------------*/
-
-#define GUI_LV_NULL                 ((void *)0)
-
-#define GUI_LV_UNUSED(__VAR)        (void)(__VAR)
-
-#define GUI_LV_ASSERT(_expr)        do { if(!(_expr)){while(1);} } while(0)
-
-/*!
- * \brief a wrapper for __attribute__((nonnull))
- */
-#ifndef GUI_LV_NONNULL
-#   if  defined(__IS_COMPILER_ARM_COMPILER_5__) ||\
-        defined(__IS_COMPILER_ARM_COMPILER_6__) ||\
-        defined(__IS_COMPILER_GCC__)            ||\
-        defined(__IS_COMPILER_LLVM__)
-#       define GUI_LV_NONNULL(...)     __attribute__((nonnull(__VA_ARGS__)))
-#   else
-#       define GUI_LV_NONNULL(...)
-#   endif
-#endif
-
-/*----------------------------------------------------------------------------*
- * Array                                                                      *
- *----------------------------------------------------------------------------*/
-/**
- * @brief Get the number of elements in a real array.
- * @note This macro only works for arrays, not pointers.
- */
-#define GUI_LV_ARRAY_SIZE(a)        (sizeof(a) / sizeof((a)[0]))
-
-/**
- * @brief Get the column count of a two-dimensional array.
- * @note This macro only works for two-dimensional arrays.
- */
-#define GUI_LV_ARRAY_COLS(a)        (sizeof((a)[0]) / sizeof((a)[0][0]))
 
 /*----------------------------------------------------------------------------*
  * Color                                                                      *
@@ -225,12 +115,12 @@ extern "C" {
 /*----------------------------------------------------------------------------*
  * Font                                                                       *
  *----------------------------------------------------------------------------*/
-#define FONT(_font, _size)          EMB_CONNECT(&lv_font_, _font, _, _size)
+#define FONT(_font, _size)          GUI_LV_CONNECT4(&lv_font_, _font, _, _size)
 
 /*----------------------------------------------------------------------------*
  * Image                                                                      *
  *----------------------------------------------------------------------------*/
-#define IMAGE(_img)                 EMB_CONNECT(&lv_img_, _img)
+#define IMAGE(_img)                 GUI_LV_CONNECT2(&lv_img_, _img)
 
 /*============================ MACROFIED FUNCTIONS ===========================*/
 /*----------------------------------------------------------------------------*
@@ -482,6 +372,147 @@ void gui_lv_label_display_event_cb(lv_event_t *e)
 #endif
 
 
+/*----------------------------------------------------------------------------*
+ * Common Utilities                                                           *
+ *----------------------------------------------------------------------------*/
+/*!
+ * \brief A macro to safely invode a function pointer
+ * 
+ * \param[in] __FUNC_PTR the target function pointer
+ * \param[in] ... an optional parameter list
+ */
+#define GUI_LV_INVOKE(__FUNC_PTR, ...)                                         \
+	((NULL == (__FUNC_PTR)) ? 0 : ((*(__FUNC_PTR))(__VA_ARGS__)))
+
+/*!
+ * \brief A macro to safely call a function pointer that has no return value
+ * 
+ * \param[in] __FUNC_PTR the target function pointer
+ * \param[in] ... an optional parameter list
+ */
+#define GUI_LV_INVOKE_RT_VOID(__FUNC_PTR, ...)                                 \
+	if (NULL != (__FUNC_PTR)) (*(__FUNC_PTR))(__VA_ARGS__)
+
+#define GUI_LV_NULL                 ((void *)0)
+
+#define GUI_LV_UNUSED(__VAR)        (void)(__VAR)
+
+#define GUI_LV_ASSERT(_expr)        do { if(!(_expr)){while(1);} } while(0)
+
+/*----------------------------------------------------------------------------*
+ * Array                                                                      *
+ *----------------------------------------------------------------------------*/
+/**
+ * @brief Get the number of elements in a real array.
+ * @note This macro only works for arrays, not pointers.
+ */
+#define GUI_LV_ARRAY_SIZE(a)        (sizeof(a) / sizeof((a)[0]))
+
+/**
+ * @brief Get the column count of a two-dimensional array.
+ * @note This macro only works for two-dimensional arrays.
+ */
+#define GUI_LV_ARRAY_COLS(a)        (sizeof((a)[0]) / sizeof((a)[0][0]))
+
+/*----------------------------------------------------------------------------*
+ * OOC Access Control                                                         *
+ *----------------------------------------------------------------------------*/
+#if defined(__COUNTER__)
+#   define __GUI_LV_OOC_MASK_NAME()                                            \
+		GUI_LV_CONNECT3(chMask, __LINE__, __COUNTER__)
+#else
+#   define __GUI_LV_OOC_MASK_NAME()           GUI_LV_CONNECT2(chMask, __LINE__)
+#endif
+
+#undef GUI_LV_PRIVATE
+#undef GUI_LV_PROTECTED
+#undef GUI_LV_PUBLIC
+
+#define GUI_LV_PUBLIC(...)                                                     \
+	struct {                                                                   \
+		__VA_ARGS__                                                            \
+	};
+
+#if defined(__cplusplus) || defined(__GUI_LV_DEBUG__)
+
+#   define GUI_LV_PRIVATE(...)                                                 \
+		struct {                                                               \
+			__VA_ARGS__                                                        \
+		};
+
+#   define GUI_LV_PROTECTED(...)                                               \
+		struct {                                                               \
+			__VA_ARGS__                                                        \
+		};
+
+#elif defined(__GUI_LV_IMPL__)
+
+#   define GUI_LV_PRIVATE(...)                                                 \
+		struct {                                                               \
+			__VA_ARGS__                                                        \
+		} __ALIGNED(GUI_LV_ALIGNOF(struct {__VA_ARGS__}));
+
+#   define GUI_LV_PROTECTED(...)                                               \
+		struct {                                                               \
+			__VA_ARGS__                                                        \
+		} __ALIGNED(GUI_LV_ALIGNOF(struct {__VA_ARGS__}));
+
+#elif defined(__GUI_LV_INHERIT__)
+
+#   define GUI_LV_PRIVATE(...)                                                 \
+		uint8_t __GUI_LV_OOC_MASK_NAME()                                       \
+			[sizeof(struct {__VA_ARGS__})]                                     \
+			__ALIGNED(GUI_LV_ALIGNOF(struct {__VA_ARGS__}));
+
+#   define GUI_LV_PROTECTED(...)                                               \
+		struct {                                                               \
+			__VA_ARGS__                                                        \
+		} __ALIGNED(GUI_LV_ALIGNOF(struct {__VA_ARGS__}));
+
+#else
+
+#   define GUI_LV_PRIVATE(...)                                                 \
+		uint8_t __GUI_LV_OOC_MASK_NAME()                                       \
+			[sizeof(struct {__VA_ARGS__})]                                     \
+			__ALIGNED(GUI_LV_ALIGNOF(struct {__VA_ARGS__}));
+
+#   define GUI_LV_PROTECTED(...)                                               \
+		uint8_t __GUI_LV_OOC_MASK_NAME()                                       \
+			[sizeof(struct {__VA_ARGS__})]                                     \
+			__ALIGNED(GUI_LV_ALIGNOF(struct {__VA_ARGS__}));
+#endif
+
+/*----------------------------------------------------------------------------*
+ * OOC Method Access                                                          *
+ *----------------------------------------------------------------------------*/
+#undef GUI_LV_PRIVATE_METHOD
+#undef GUI_LV_PROTECTED_METHOD
+#undef GUI_LV_PUBLIC_METHOD
+
+#if defined(__GUI_LV_IMPL__)
+
+#   define GUI_LV_PRIVATE_METHOD(...)      __VA_ARGS__
+#   define GUI_LV_PROTECTED_METHOD(...)    __VA_ARGS__
+#   define GUI_LV_PUBLIC_METHOD(...)       __VA_ARGS__
+
+#elif defined(__GUI_LV_INHERIT__)
+
+#   define GUI_LV_PRIVATE_METHOD(...)
+#   define GUI_LV_PROTECTED_METHOD(...)    __VA_ARGS__
+#   define GUI_LV_PUBLIC_METHOD(...)       __VA_ARGS__
+
+#else
+
+#   define GUI_LV_PRIVATE_METHOD(...)
+#   define GUI_LV_PROTECTED_METHOD(...)
+#   define GUI_LV_PUBLIC_METHOD(...)       __VA_ARGS__
+
+#endif
+
+/* post un-define macros */
+#undef __GUI_LV_IMPL__
+#undef __GUI_LV_INHERIT__
+
 
 /*----------------------------------------------------------------------------*
  * PT Operations                                                              *
@@ -607,6 +638,7 @@ typedef enum {
 #define GUI_LV_PT_RETURN(...)                                                  \
             (*ptPTState) = 0;                                                  \
             return __VA_ARGS__;
+
 
 /*================================== TYPES ===================================*/
 /*============================= GLOBAL VARIABLES =============================*/

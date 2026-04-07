@@ -37,6 +37,8 @@ gui_lv/
 ├─ helper/                   # 辅助模块：style / data / input
 │  ├─ include/
 │  └─ source/
+├─ platform/                 # 编译器/架构相关基础宏移植层
+│  └─ gui_lv_user_arch_port.h
 ├─ port/                     # 显示与输入设备移植模板
 │  ├─ lv_port_disp_template.h/.c
 │  └─ lv_port_indev_template.h/.c
@@ -53,6 +55,7 @@ gui_lv/
 
 - `core/`：提供场景管理与基础控件封装
 - `helper/`：提供样式、输入与数据辅助功能
+- `platform/`：提供编译器/架构相关基础宏移植层
 - `port/`：提供显示与输入设备移植模板
 - `template/`：提供场景模板与 RTE 实例模板
 

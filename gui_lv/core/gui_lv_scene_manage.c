@@ -30,8 +30,26 @@
 #endif
 
 /*================================== MACROS ==================================*/
+#define GUI_LV_LIST_QUEUE_ENQUEUE(__HEAD, __TAIL, __ITEM)
 /*============================ MACROFIED FUNCTIONS ===========================*/
 /*================================== TYPES ===================================*/
+
+typedef struct {
+    lv_obj_t           *ptRoot;
+    gui_lv_scene_cfg_t *ptCFG;
+    uint8_t            *pchFocusIndex;
+} gui_lv_scene_t;
+
+typedef struct {
+    lv_obj_t           *ptRoot;
+    gui_lv_page_cfg_t  *ptCFG;
+    uint8_t            *pchFocusIndex;
+} gui_lv_page_t;
+
+
+typedef struct {
+    emb_list_t         tSceneHead;         //!< List head for scenes
+}
 
 /*============================= GLOBAL VARIABLES =============================*/
 
@@ -108,11 +126,9 @@ gui_lv_switch_anim_mode_t GUI_LV_SWITCH_MODE_OUT_BOTTOM  = {
 
 /*============================== LOCAL VARIABLES =============================*/
 
-typedef struct {
-    emb_list_t         tSceneHead;         //!< List head for scenes
-    gui_lv_scene_cfg_t tCFG;
-    
-}
+static gui_lv_scene_t s_tScenePools[GUI_SCENE_MAX];
+static gui_lv_page_t  s_tPagePools[GUI_PAGE_MAX];
+
 
 /*================================ PROTOTYPES ================================*/
 /*============================== IMPLEMENTATION ==============================*/
@@ -124,6 +140,17 @@ GUI_LV_NONNULL(1)
 void gui_lv_scene_register(gui_lv_scene_cfg_t *ptThis)
 {
     GUI_LV_ASSERT(ptThis != NULL);
+
+    gui_lv_scene_id_t  eId    = ptThis->eId;
+    s_tScenePools[eId].ptCFG  = ptThis;
+    s_tScenePools[eId].ptRoot = NULL;
+
+    for(uint8_t i = 0; i < ptThis->ptEx->u8GroupNum; i++)
+    {
+        s_tScenePools[eId].pchFocusIndex[i] = 0;
+    }
+
+
 
 }
 
