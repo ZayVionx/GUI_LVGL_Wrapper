@@ -138,9 +138,9 @@ extern "C" {
 #endif
 
 #ifndef GUI_LV_NONNULL
-#   if defined(__IS_COMPILER_ARM_COMPILER_5__)                               \
-	|| defined(__IS_COMPILER_ARM_COMPILER_6__)                               \
-	|| defined(__IS_COMPILER_GCC__)                                          \
+#   if defined(__IS_COMPILER_ARM_COMPILER_5__)                                 \
+	|| defined(__IS_COMPILER_ARM_COMPILER_6__)                                 \
+	|| defined(__IS_COMPILER_GCC__)                                            \
 	|| defined(__IS_COMPILER_LLVM__)
 #       define GUI_LV_NONNULL(...)           __attribute__((nonnull(__VA_ARGS__)))
 #   else
@@ -148,25 +148,7 @@ extern "C" {
 #   endif
 #endif
 
-/*----------------------------------------------------------------------------*
- * Macro Utilities                                                            *
- *----------------------------------------------------------------------------*/
-#define __GUI_LV_CONNECT2(__A, __B)            __A##__B
-#define __GUI_LV_CONNECT3(__A, __B, __C)       __A##__B##__C
-#define __GUI_LV_CONNECT4(__A, __B, __C, __D)  __A##__B##__C##__D
 
-#define GUI_LV_CONNECT2(__A, __B)              __GUI_LV_CONNECT2(__A, __B)
-#define GUI_LV_CONNECT3(__A, __B, __C)         __GUI_LV_CONNECT3(__A, __B, __C)
-#define GUI_LV_CONNECT4(__A, __B, __C, __D)    __GUI_LV_CONNECT4(__A,        \
-																  __B,        \
-																  __C,        \
-																  __D)
-
-#ifndef GUI_LV_SAFE_NAME
-#   define GUI_LV_SAFE_NAME(__NAME)            GUI_LV_CONNECT3(__,            \
-																__LINE__,     \
-																__NAME)
-#endif
 /*============================ MACROFIED FUNCTIONS ===========================*/
 /*================================== TYPES ===================================*/
 /*============================= GLOBAL VARIABLES =============================*/

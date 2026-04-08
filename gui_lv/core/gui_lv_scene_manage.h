@@ -35,218 +35,122 @@
 extern "C" {
 #endif
 /*================================== MACROS ==================================*/
-/*============================ MACROFIED FUNCTIONS ===========================*/
+#define GUI_SCENE_GROUP_MAX   4      /* Max groups per scene for focus save  */
+
 /*================================== TYPES ===================================*/
-
-/*!
- * \brief Switch screen with animation
- */
-typedef const struct {
-    uint32_t           u32AnimTime;         //!< time of the animation   
-    uint32_t           u32AnimDelay;        //!< delay before the transition
-    lv_scr_load_anim_t eLoadAnim;           //!< type of the animation (see lv_scr_load_anim_t)
-} gui_lv_switch_anim_mode_t;
-
-
-/*!
- * \brief Extended scene data structure
- */
 typedef struct {
-    uint8_t      u8GroupNum;                //!< Number of groups in the scene  
-    uint8_t      u8TimerNum;                //!< Number of timers in the scene  
-    lv_group_t **ptSceneGroup;              //!< Pointer to scene's group array 
-    lv_timer_t **ptSceneTimer;              //!< Pointer to scene's timer array 
-} gui_lv_extend_t;
+    uint8_t      u8GroupNum;       /* Number of groups in the scene  */
+    uint8_t      u8TimerNum;       /* Number of timers in the scene  */
+    lv_group_t **ptSceneGroup;     /* Pointer to scene's group array */
+    lv_timer_t **ptSceneTimer;     /* Pointer to scene's timer array */
+} gui_scene_ex_t;
 
-
-/*!
- * \brief Scene configuration structure (internal use)
- */
 typedef struct {
-    gui_scene_id_t   eId;                   //!< Scene identifier            
-    gui_lv_extend_t *ptEx;                  //!< Extended scene data (opt.)  
+    gui_scene_id_t  eId;                         /* Scene identifier            */
+    gui_scene_ex_t *ptEx;                        /* Extended scene data (opt.)  */
 
-    void (*pfnDraw  )(lv_obj_t *ptRoot);    //!< Scene init callback         
-    void (*pfnLoad  )(lv_obj_t *ptRoot);    //!< Scene load callback         
-    void (*pfnBind  )(void);                //!< Scene bind callback         
-    void (*pfnDepose)(void);                //!< Scene destroy callback      
-} gui_lv_scene_cfg_t;
+    void (*pfInit  )(lv_obj_t *ptRoot);         /* Scene init callback         */
+    void (*pfDeinit)(void);                     /* Scene destroy callback      */
+} gui_scene_cfg_t;
 
-
-/*!
- * \brief Page configuration structure
- */
 typedef struct {
-    gui_page_id_t    eId;                   //!< Page identifier            
-    gui_lv_extend_t *ptEx;                  //!< Extended scene data (opt.)  
+    gui_scene_page_id_t eId;                      /* Page identifier            */
+    void       (*pfInit  )(lv_obj_t *ptRoot);    /* Page init callback         */
+    void       (*pfDeinit)(void);                /* Page destroy callback      */
+    uint8_t      u8GroupIdx;                     /* Scene group index to bind  */
+} gui_page_cfg_t;
 
-    void (*pfnDraw  )(lv_obj_t *ptRoot);    //!< Page init callback         
-    void (*pfnLoad  )(lv_obj_t *ptRoot);    //!< Page load callback         
-    void (*pfnBind  )(void);                //!< Page bind callback         
-    void (*pfnDepose)(void);                //!< Page destroy callback          
-} gui_lv_page_cfg_t;
-
-/*============================= GLOBAL VARIABLES =============================*/
-
-extern 
-gui_lv_switch_anim_mode_t GUI_LV_SWITCH_MODE_OVER_LEFT;
-
-extern
-gui_lv_switch_anim_mode_t GUI_LV_SWITCH_MODE_OVER_RIGHT;
-
-extern
-gui_lv_switch_anim_mode_t GUI_LV_SWITCH_MODE_OVER_TOP;
-
-extern
-gui_lv_switch_anim_mode_t GUI_LV_SWITCH_MODE_OVER_BOTTOM;
-
-extern
-gui_lv_switch_anim_mode_t GUI_LV_SWITCH_MODE_MOVE_LEFT;
-
-extern
-gui_lv_switch_anim_mode_t GUI_LV_SWITCH_MODE_MOVE_RIGHT;
-
-extern
-gui_lv_switch_anim_mode_t GUI_LV_SWITCH_MODE_MOVE_TOP;
-
-extern
-gui_lv_switch_anim_mode_t GUI_LV_SWITCH_MODE_MOVE_BOTTOM;
-
-extern
-gui_lv_switch_anim_mode_t GUI_LV_SWITCH_MODE_FADE_IN;
-
-extern
-gui_lv_switch_anim_mode_t GUI_LV_SWITCH_MODE_FADE_OUT;
-
-extern
-gui_lv_switch_anim_mode_t GUI_LV_SWITCH_MODE_OUT_LEFT;
-
-extern
-gui_lv_switch_anim_mode_t GUI_LV_SWITCH_MODE_OUT_RIGHT;
-
-extern
-gui_lv_switch_anim_mode_t GUI_LV_SWITCH_MODE_OUT_TOP;
-
-extern
-gui_lv_switch_anim_mode_t GUI_LV_SWITCH_MODE_OUT_BOTTOM;
-
-/*============================== LOCAL VARIABLES =============================*/
 /*================================ PROTOTYPES ================================*/
 
-/*----------------------------------------------------------------------------*
- * Scene Management                                                           *
- *----------------------------------------------------------------------------*/
-/*!
- * \brief Register a set of scenes to a scene player
- * \param[in] ptThis the target scene player
+/**
+ * @brief   Register a scene into the scene table.
+ * @param   ptCfg: Scene config pointer (eId, pfInit, pfDeinit required).
+ * @return  true: Success; false: Fail.
  */
 extern
-GUI_LV_NONNULL(1)
-void gui_lv_scene_register(gui_lv_scene_cfg_t *ptThis);
+bool gui_lv_scene_register(const gui_scene_cfg_t *ptCfg);
 
-
-/*!
- * \brief Switch to a different scene
- * \param[in] eId the target scene id
+/**
+ * @brief   Switch to a different scene.
+ * @note    - Fully tears down current scene (pages, groups, timers, root).
+ *          - Pushes current scene ID onto back-navigation history.
+ *          - Target scene is always initialized from scratch via pfInit.
+ * @param   eTargetId: Target scene ID.
  */
 extern
-void gui_lv_scene_switch(gui_scene_id_t eId);
+void gui_lv_scene_switch(gui_scene_id_t eTargetId);
 
-
-/*!
- * \brief Switch to a different scene with animation
- * \param[in] eId the target scene id
- * \param[in] eAnimMode the animation mode
- */
-extern
-void gui_lv_scene_switch_with_anim(gui_scene_id_t eId, 
-                                   gui_lv_switch_anim_mode_t eAnimMode);
-
-
-/*!
- * \brief Go back to the previous scene with animation
+/**
+ * @brief   Go back to the previous scene.
+ * @note    - Pops one scene from the history stack.
+ *          - Fully tears down current scene.
+ *          - Previous scene is initialized from scratch (no state restore).
+ *          - No-op if history stack is empty.
  */
 extern
 void gui_lv_scene_back(void);
 
-
-/*!
- * \brief Go back to the previous scene with animation
- * \param[in] eAnimMode the animation mode
+/**
+ * @brief   Register a page config into the page table.
+ * @param   ptCfg: Page config pointer (eId, pfInit required).
+ * @return  true: Success; false: Fail.
  */
 extern
-void gui_lv_scene_back_with_anim(gui_lv_switch_anim_mode_t eAnimMode);
+bool gui_lv_scene_page_register(const gui_page_cfg_t *ptCfg);
 
-
-
-/*----------------------------------------------------------------------------*
- * Page Management                                                            *
- *----------------------------------------------------------------------------*/
-/*!
- * \brief Append a set of pages to a scene player
- * \param[in] ptThis the target scene player
- * \param[in] eSceneId the scene id to which the page belongs
+/**
+ * @brief   Push a sub-page onto the current scene's page chain.
+ * @note    - Saves the current page's focus position.
+ *          - Destroys current view's UI (lv_obj_clean) to free memory.
+ *          - Creates a full-screen container and passes it to pfInit.
+ *          - Resolves group from current scene's ptEx->ptSceneGroup[u8GroupIdx].
+ * @param   ePageId: Registered page identifier.
  */
 extern
-GUI_LV_NONNULL(1)
-void gui_lv_page_append_to_scene(gui_lv_page_cfg_t *ptThis, 
-                                 gui_scene_id_t eSceneId);
+void gui_lv_scene_page_push(gui_scene_page_id_t ePageId);
 
-
-/*!
- * \brief Switch to a different page
- * \param[in] eId the target page id
+/**
+ * @brief   Go back one page in the current scene's page chain.
+ * @note    - Tears down the top page (pfDeinit + lv_obj_clean).
+ *          - Re-creates the previous page by calling its pfInit again.
+ *          - Restores group binding and focus position (silent).
+ *          - No-op if already at the scene's base view.
  */
 extern
-void gui_lv_page_switch(gui_page_id_t eId);
+void gui_lv_scene_page_back(void);
 
-
-/*!
- * \brief Switch to a different page with animation
- * \param[in] eId the target page id
- * \param[in] eAnimMode the animation mode
+/**
+ * @brief   Get current scene ID.
+ * @return  Current scene ID, or UI_SCENE_MAX if none active.
  */
 extern
-void gui_lv_page_switch_with_anim(gui_page_id_t eId, 
-                                  gui_lv_switch_anim_mode_t eAnimMode);
+gui_scene_id_t gui_lv_scene_get_current(void);
 
-
-/*!
- * \brief Go back to the previous page
+/**
+ * @brief   Get current scene root object.
+ * @return  Current scene root object, or NULL if none active.
  */
 extern
-void gui_lv_page_back(void);
+lv_obj_t *gui_lv_scene_get_current_root(void);
 
-
-/*!
- * \brief Go back to the previous page with animation
- * \param[in] eAnimMode the animation mode
+/**
+ * @brief   Get current scene focus index for a specific group.
+ * @param   eSceneId:   Scene identifier.
+ * @param   u8GroupIdx: Group index (0-based).
+ * @return  Saved focus index for that group, or -1 if none.
  */
 extern
-void gui_lv_page_back_with_anim(gui_lv_switch_anim_mode_t eAnimMode);
+int16_t gui_lv_scene_get_focus_index(gui_scene_id_t eSceneId, uint8_t u8GroupIdx);
 
-
-
-/*----------------------------------------------------------------------------*
- * Utility Functions                                                          *
- *----------------------------------------------------------------------------*/
-/*!
- * \brief Get the current scene ID
- * \return The current scene ID
+/**
+ * @brief   Get current scene page focus index for a specific group.
+ * @param   ePageId:    Page identifier.
+ * @param   u8GroupIdx: Group index (0-based).
+ * @return  Saved focus index for that group, or -1 if none.
  */
 extern
-gui_scene_id_t gui_lv_scene_get_id(void);
+int16_t gui_lv_scene_page_get_focus_index(gui_scene_page_id_t ePageId, uint8_t u8GroupIdx);
 
-
-/*!
- * \brief Get the current page ID
- * \return The current page ID
- */
-extern
-gui_page_id_t gui_lv_page_get_id(void);
-
-/*============================== IMPLEMENTATION ==============================*/
-/*============================== IMPLEMENTATION ==============================*/
 /*=================================== END ====================================*/
 #ifdef   __cplusplus
 }
