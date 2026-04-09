@@ -166,9 +166,9 @@ void gui_lv_scene_register(gui_lv_scene_cfg_t *ptThis)
 
         //*! Set all focus indices to 0
         gui_lv_foreach(uint8_t,
-                   ptThis->pchFocusIndex,
-                   chGroupNum,
-                   pFocus)
+                       ptThis->pchFocusIndex,
+                       chGroupNum,
+                       pFocus)
         {
             *pFocus = 0;
         }
