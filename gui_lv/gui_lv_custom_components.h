@@ -51,6 +51,7 @@ typedef struct {
         uint8_t    chGap;               //!< 电量格之间的间距
     } BattGuage;
 
+GUI_LV_PRIVATE(
     /* 充电动画内部状态（用户无需关心） */
     struct {
         lv_timer_t *ptTimer;            //!< 闪烁定时器
@@ -60,7 +61,8 @@ typedef struct {
         bool        bIsCharging;        //!< 是否处于充电模式
         bool        bPendingUpdate;     //!< 是否有待同步的电量更新
     } tAnim;
-    
+)
+   
 } gui_lv_custom_battery_t;
 
 
