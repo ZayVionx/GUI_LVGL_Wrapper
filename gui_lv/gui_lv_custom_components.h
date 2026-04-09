@@ -52,7 +52,7 @@ typedef struct {
     } BattGuage;
 
 GUI_LV_PRIVATE(
-    /* 充电动画内部状态（用户无需关心） */
+    /* 充电动画内部状态 */
     struct {
         lv_timer_t *ptTimer;            //!< 闪烁定时器
         const void *pCurrentImgScr;     //!< 当前显示的电池图源
@@ -108,8 +108,10 @@ void gui_lv_custom_battery_enter_charging_mode(gui_lv_custom_battery_t *ptBatter
 
 /*!
  * \brief Set battery level.
+ 
  * \param[in] ptBattery: Pointer to battery component structure
  * \param[in] chBattLevel: Battery level to set (0 to chBattMax)
+ * 
  * \note  - In charging mode: mark pending update, will sync after current blink cycle
  *        - In idle mode: immediately refresh display
  */

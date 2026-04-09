@@ -21,9 +21,9 @@
 #include "core/gui_lv_common.h"
 
 /*================================== MACROS ==================================*/
-#define BATT_BLINK_PERIOD_MS    500                  //!< 闪烁周期
-#define BATT_COLOR_IDLE         rgb(229, 229, 229) //!< 未充电电量格颜色
-#define BATT_COLOR_CHARGING     rgb(0, 255, 0)     //!< 充电电量格颜色
+#define BATT_BLINK_PERIOD_MS    500                  //!< the blink period in millisecond
+#define BATT_COLOR_IDLE         rgb(229, 229, 229) //!< the colour of the gauge in idle mode
+#define BATT_COLOR_CHARGING     rgb(0, 255, 0)     //!< the colour of the gauge in charging mode
 
 /*============================ MACROFIED FUNCTIONS ===========================*/
 /*================================== TYPES ===================================*/
@@ -40,6 +40,12 @@ static void __gui_lv_battery_timer_cb(lv_timer_t *ptTimer);
 /*----------------------------------------------------------------------------*
  * Battery Component                                                          *
  *----------------------------------------------------------------------------*/
+/*!
+ * \brief an internal helper function to set the battery frame image
+ * 
+ * \param[in] ptThis the target battery component
+ * \param[in] pImgScr the pointer of the image source
+ */
 static 
 GUI_LV_NONNULL(1)
 void __gui_lv_battery_set_frame_img(gui_lv_custom_battery_t *ptBattery,
@@ -49,7 +55,7 @@ void __gui_lv_battery_set_frame_img(gui_lv_custom_battery_t *ptBattery,
 
     if(ptBattery->ptFrameImg == NULL || pImgScr == NULL) return;
 
-    if (ptBattery->tAnim.pCurrentImgScr == pImgScr) return;
+    if(ptBattery->tAnim.pCurrentImgScr == pImgScr)       return;
 
     ptImgDsc = (const lv_img_dsc_t *)pImgScr;
     GUI_LV_IMG_SET_SRC( ptBattery->ptFrameImg, 
@@ -62,10 +68,16 @@ void __gui_lv_battery_set_frame_img(gui_lv_custom_battery_t *ptBattery,
 }
 
 /*!
- * \note 刷新电池格显示（内部统一刷新入口）
- *       - 充电模式：[0, chDisplayLevel) 绿色显示，[chDisplayLevel] 闪烁，其余隐藏
- *       - 空闲模式：[0, chBattLevel) 灰色显示，其余隐藏
- *       - 空闲且电量为0且配置了低电量图时：切换到低电量图并隐藏所有电量格
+ * \brief an internal helper function to refresh the battery gauge display
+ * 
+ * \param[in] ptThis the target battery component
+ * \note 
+ *       - Charging mode: gauges [0, chDisplayLevel) are shown in green, 
+ *         gauge [chDisplayLevel] is blinking, and the rest are hidden.
+ *       - Idle mode: gauges [0, chBattLevel) are shown in gray, and the 
+ *         rest are hidden.
+ *       - When idle, level is 0, and a low-battery image is configured: 
+ *         switch to the low-battery image and hide all gauges.
  */
 static 
 GUI_LV_NONNULL(1)
@@ -109,8 +121,11 @@ void __gui_lv_battery_refresh_display(gui_lv_custom_battery_t *ptBattery)
 }
 
 /*!
- * \note 闪烁定时器回调
- *       每次回调切换闪烁格可见性，完成一个完整周期（亮→灭）后检查是否需要同步电量
+ * \brief the blink timer callback
+ * 
+ * \param[in] ptTimer the attached LVGL timer pointer
+ * \note It toggles the visibility of the blinking gauge and synchronizes 
+ *       the battery level at the end of a complete cycle (visible -> invisible).
  */
 static void __gui_lv_battery_timer_cb(lv_timer_t *ptTimer)
 {
@@ -129,7 +144,8 @@ static void __gui_lv_battery_timer_cb(lv_timer_t *ptTimer)
 }
 
 /*!
- * \note 创建电池组件
+ * \brief Create a custom battery component.
+ * \param[in] ptBattery: Pointer to battery component structure
  */
 GUI_LV_NONNULL(1)
 void gui_lv_custom_battery_create(gui_lv_custom_battery_t *ptBattery)
@@ -184,7 +200,8 @@ void gui_lv_custom_battery_create(gui_lv_custom_battery_t *ptBattery)
 }
 
 /*!
- * \note 销毁电池组件：释放定时器和所有UI对象
+ * \brief Destroy a custom battery component: release timer and all UI objects.
+ * \param[in] ptBattery: Pointer to battery component structure
  */
 GUI_LV_NONNULL(1)
 void gui_lv_custom_battery_destroy(gui_lv_custom_battery_t *ptBattery)
@@ -199,7 +216,8 @@ void gui_lv_custom_battery_destroy(gui_lv_custom_battery_t *ptBattery)
 }
 
 /*!
- * \note 进入未充电（空闲）模式：停止闪烁，灰色显示当前电量
+ * \brief Enter idle mode: stop blinking and display current battery level in gray.
+ * \param[in] ptBattery: Pointer to battery component structure
  */
 GUI_LV_NONNULL(1)
 void gui_lv_custom_battery_enter_idle_mode(gui_lv_custom_battery_t *ptBattery)
@@ -213,7 +231,8 @@ void gui_lv_custom_battery_enter_idle_mode(gui_lv_custom_battery_t *ptBattery)
 }
 
 /*!
- * \note 进入充电模式：启动闪烁动画
+ * \brief Enter charging mode: start blinking animation.
+ * \param[in] ptBattery: Pointer to battery component structure
  */
 GUI_LV_NONNULL(1)
 void gui_lv_custom_battery_enter_charging_mode(gui_lv_custom_battery_t *ptBattery)
@@ -228,9 +247,9 @@ void gui_lv_custom_battery_enter_charging_mode(gui_lv_custom_battery_t *ptBatter
 }
 
 /*!
- * \note 设置电量值
- *       - 充电模式下：标记待更新，等当前闪烁周期完成后自动同步
- *       - 空闲模式下：立即刷新显示
+ * \brief Set the battery level.
+ * \param[in] ptBattery: Pointer to battery component structure
+ * \param[in] chBattLevel: Battery level to set
  */
 GUI_LV_NONNULL(1)
 void gui_lv_custom_battery_set_level(gui_lv_custom_battery_t *ptBattery, 
@@ -253,7 +272,7 @@ void gui_lv_custom_battery_set_level(gui_lv_custom_battery_t *ptBattery,
 }
 
 
-#if 0 /* ======================== 用户使用示例 ======================== */
+#if 0 /* ======================== Usage instructions ======================== */
 
 gui_lv_custom_battery_t tBattery;
 
