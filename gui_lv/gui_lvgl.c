@@ -68,7 +68,7 @@ gui_lv_style_t ptContDefStyle = {
  * \note Called by gui_lv_init() after the LVGL core/port initialisation stage.
  *       Modify only the "user code" block below.
  */
-static void __gui_sys_data_init(void)
+static void gui_sys_data_init(void)
 {
     /*---------------------- user code begin: sys data ----------------------*/
     /* Override defaults (language/boot scene/etc.) for your application. */
@@ -81,7 +81,7 @@ static void __gui_sys_data_init(void)
  * \note Called by gui_lv_init() after gui_sys_data_init().
  *       Modify only the "user code" block below.
  */
-static void __gui_common_style_init(void)
+static void gui_common_style_init(void)
 {
     /*------------------- user code begin: common style -------------------*/
     gui_lv_style_init(&ptContDefStyle);
@@ -94,8 +94,10 @@ static void __gui_common_style_init(void)
  *       - RTE build: keep the default __GUI_LV_ALL_SCENE_INIT().
  *       - Non-RTE  : register scenes manually in the "user code" block.
  */
-static void __gui_all_scene_init(void)
+static void gui_all_scene_init(void)
 {
+    __GUI_LV_SCENE_LIST_INIT();
+
 #if defined(__RTE_Acceleration_GUI_LVGL_SCENE__)
     __GUI_LV_ALL_SCENE_INIT();
 #else
@@ -132,9 +134,9 @@ void gui_lv_init(void)
     __gui_lv_helper_init();
 
     /* initialize members of scene begin */
-    __gui_sys_data_init();
-    __gui_common_style_init();
-    __gui_all_scene_init();
+    gui_sys_data_init();
+    gui_common_style_init();
+    gui_all_scene_init();
     /* initialize members of scene end */
     
     gui_lv_scene_switch( 

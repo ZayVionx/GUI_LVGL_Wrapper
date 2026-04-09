@@ -126,6 +126,24 @@ extern "C" {
 																  __C,         \
 																  __D)
 
+/*!
+ * \note do NOT use this macro directly
+ */
+#define __GUI_LV_VA_NUM_ARGS_IMPL( _0,_1,_2,_3,_4,_5,_6,_7,_8,_9,_10,_11,_12,  \
+                                _13,_14,_15,_16,__N,...)      __N
+
+/*!
+ * \brief A macro to count the number of parameters
+ * 
+ * \note if GNU extension is not supported or enabled, the following express will
+ *       be false:  (__GUI_LV_VA_NUM_ARGS() != 0)
+ *       This might cause problems when in this library.
+ */
+#define __GUI_LV_VA_NUM_ARGS(...)                                              \
+            __GUI_LV_VA_NUM_ARGS_IMPL( 0,##__VA_ARGS__,16,15,14,13,12,11,10,9, \
+                                      8,7,6,5,4,3,2,1,0)
+
+
 #ifndef GUI_LV_SAFE_NAME
 #   define GUI_LV_SAFE_NAME(__NAME)            GUI_LV_CONNECT3(__,             \
 																__LINE__,      \
@@ -395,6 +413,17 @@ void gui_lv_label_display_event_cb(lv_event_t *e)
 /*----------------------------------------------------------------------------*
  * Common Utilities                                                           *
  *----------------------------------------------------------------------------*/
+#define GUI_LV_NULL                 ((void *)0)
+
+#define GUI_LV_UNUSED(__VAR)        (void)(__VAR)
+
+#define GUI_LV_ASSERT(_expr)        do { if(!(_expr)){while(1);} } while(0)
+
+#define GUI_LV_ARRAY_SIZE(a)        (sizeof(a) / sizeof((a)[0]))
+
+#define GUI_LV_ARRAY_COLS(a)        (sizeof((a)[0]) / sizeof((a)[0][0]))
+
+
 /*!
  * \brief A macro to safely invode a function pointer
  * 
@@ -413,127 +442,137 @@ void gui_lv_label_display_event_cb(lv_event_t *e)
 #define GUI_LV_INVOKE_RT_VOID(__FUNC_PTR, ...)                                 \
 	if (NULL != (__FUNC_PTR)) (*(__FUNC_PTR))(__VA_ARGS__)
 
-#define GUI_LV_NULL                 ((void *)0)
 
-#define GUI_LV_UNUSED(__VAR)        (void)(__VAR)
-
-#define GUI_LV_ASSERT(_expr)        do { if(!(_expr)){while(1);} } while(0)
-
-/*----------------------------------------------------------------------------*
- * Array                                                                      *
- *----------------------------------------------------------------------------*/
-/**
- * @brief Get the number of elements in a real array.
- * @note This macro only works for arrays, not pointers.
+/*!
+ * \note do NOT use this macro directly
  */
-#define GUI_LV_ARRAY_SIZE(a)        (sizeof(a) / sizeof((a)[0]))
+#define __GUI_LV_USING1(__declare)                                                 \
+            for (__declare, *GUI_LV_CONNECT3(__GUI_LV_USING_, __LINE__,_ptr) = NULL;  \
+                 GUI_LV_CONNECT3(__GUI_LV_USING_, __LINE__,_ptr)++ == NULL;           \
+                )
 
-/**
- * @brief Get the column count of a two-dimensional array.
- * @note This macro only works for two-dimensional arrays.
+/*!
+ * \note do NOT use this macro directly
  */
-#define GUI_LV_ARRAY_COLS(a)        (sizeof((a)[0]) / sizeof((a)[0][0]))
+#define __GUI_LV_USING2(__declare, __on_leave_expr)                                \
+            for (__declare, *GUI_LV_CONNECT3(__GUI_LV_USING_, __LINE__,_ptr) = NULL;  \
+                 GUI_LV_CONNECT3(__GUI_LV_USING_, __LINE__,_ptr)++ == NULL;           \
+                 (__on_leave_expr)                                              \
+                )
 
-/*----------------------------------------------------------------------------*
- * OOC Access Control                                                         *
- *----------------------------------------------------------------------------*/
-#if defined(__COUNTER__)
-#   define __GUI_LV_OOC_MASK_NAME()                                            \
-		GUI_LV_CONNECT3(chMask, __LINE__, __COUNTER__)
-#else
-#   define __GUI_LV_OOC_MASK_NAME()           GUI_LV_CONNECT2(chMask, __LINE__)
-#endif
+/*!
+ * \note do NOT use this macro directly
+ */
+#define __GUI_LV_USING3(__declare, __on_enter_expr, __on_leave_expr)               \
+            for (__declare, *GUI_LV_CONNECT3(__GUI_LV_USING_, __LINE__,_ptr) = NULL;  \
+                 GUI_LV_CONNECT3(__GUI_LV_USING_, __LINE__,_ptr)++ == NULL ?          \
+                    ((__on_enter_expr),1) : 0;                                  \
+                 (__on_leave_expr)                                              \
+                )
 
-#undef GUI_LV_PRIVATE
-#undef GUI_LV_PROTECTED
-#undef GUI_LV_PUBLIC
+/*!
+ * \note do NOT use this macro directly
+ */
+#define __GUI_LV_USING4(__dcl1, __dcl2, __on_enter_expr, __on_leave_expr)          \
+            for (__dcl1,__dcl2,*GUI_LV_CONNECT3(__GUI_LV_USING_, __LINE__,_ptr)= NULL;\
+                 GUI_LV_CONNECT3(__GUI_LV_USING_, __LINE__,_ptr)++ == NULL ?          \
+                    ((__on_enter_expr),1) : 0;                                  \
+                 (__on_leave_expr)                                              \
+                )
 
-#define GUI_LV_PUBLIC(...)                                                     \
-	struct {                                                                   \
-		__VA_ARGS__                                                            \
-	};
+/*!
+ * \brief create a code segment with up to two local variables and 
+ *        entering/leaving operations
+ * \note prototype 1
+ *       gui_lv_using(local variable declaration) {
+ *           code body 
+ *       }
+ * 
+ * \note prototype 2
+ *       gui_lv_using(local variable declaration, {code segment before leaving the body}) {
+ *           code body
+ *       }
+ *
+ * \note prototype 3
+ *       gui_lv_using( local variable declaration, 
+ *                    {code segment before entering the body},
+ *                    {code segment before leaving the body}
+ *                    ) {
+ *           code body 
+ *       }
+ *
+ * \note prototype 4
+ *       gui_lv_using( local variable1 declaration,
+                       local variable2 with the same type as the local variable 1,
+ *                    {code segment before entering the body},
+ *                    {code segment before leaving the body}
+ *                    ) {
+ *           code body 
+ *       }
+ */
+#define gui_lv_using(...)                                                      \
+            GUI_LV_CONNECT2(__GUI_LV_USING, __GUI_LV_VA_NUM_ARGS(__VA_ARGS__))(__VA_ARGS__)
 
-#if defined(__cplusplus) || defined(__GUI_LV_DEBUG__)
+/*!
+ * \brief access each items in a given array
+ * \param __array the target array
+ * \note you can use "_" as the current object (iterator)
+ */
+#define GUI_LV_FOREACH1(__array)                                                   \
+            gui_lv_using(typeof(__array[0]) *_ = __array)                          \
+            for (   uint_fast32_t GUI_LV_CONNECT2(count,__LINE__) = dimof(__array);\
+                    GUI_LV_CONNECT2(count,__LINE__) > 0;                           \
+                    _++, GUI_LV_CONNECT2(count,__LINE__)--                         \
+                )
 
-#   define GUI_LV_PRIVATE(...)                                                 \
-		struct {                                                               \
-			__VA_ARGS__                                                        \
-		};
+/*!
+ * \brief access each items in a given array
+ * \param __type the type of the array
+ * \param __array the target array
+ * \note you can use "_" as the current object (iterator)
+ */
+#define GUI_LV_FOREACH2(__type, __array)                                           \
+            gui_lv_using(__type *_ = __array)                                      \
+            for (   uint_fast32_t GUI_LV_CONNECT2(count,__LINE__) = dimof(__array);\
+                    GUI_LV_CONNECT2(count,__LINE__) > 0;                           \
+                    _++, GUI_LV_CONNECT2(count,__LINE__)--                         \
+                )
 
-#   define GUI_LV_PROTECTED(...)                                               \
-		struct {                                                               \
-			__VA_ARGS__                                                        \
-		};
+/*!
+ * \brief access each items in a given array
+ * \param __type the type of the array
+ * \param __array the target array
+ * \param __item a name for the current item (iterator)
+ */
+#define GUI_LV_FOREACH3(__type, __array, __item)                                   \
+            gui_lv_using(__type *_ = __array, *__item = _, (void)_, (void)0 )      \
+            for (   uint_fast32_t GUI_LV_CONNECT2(count,__LINE__) = dimof(__array);\
+                    GUI_LV_CONNECT2(count,__LINE__) > 0;                           \
+                    _++, __item = _, GUI_LV_CONNECT2(count,__LINE__)--             \
+                )
 
-#elif defined(__GUI_LV_IMPL__)
+/*!
+ * \brief access each items in a given array
+ * \param __type the type of the array
+ * \param __array the target array or the pointer of an memory block
+ * \param __count number of items in the array/memory block
+ * \param __item a name for the current item (iterator)
+ */
+#define GUI_LV_FOREACH4(__type, __array, __count, __item)                      \
+            gui_lv_using(__type *_ = __array, *__item = _, (void)_, (void)0)   \
+            for (   uint_fast32_t GUI_LV_CONNECT2(count,__LINE__) = (__count); \
+                    GUI_LV_CONNECT2(count,__LINE__) > 0;                       \
+                    _++, __item = _, GUI_LV_CONNECT2(count,__LINE__)--         \
+                )
 
-#   define GUI_LV_PRIVATE(...)                                                 \
-		struct {                                                               \
-			__VA_ARGS__                                                        \
-		} __ALIGNED(GUI_LV_ALIGNOF(struct {__VA_ARGS__}));
+/*!
+ * \brief access each items in a given array
+ * \note there are 4 prototypes, please refer to GUI_LV_FOREACH1/2/3/4 for details
+ */
+#define gui_lv_foreach(...)                                                        \
+            GUI_LV_CONNECT2(GUI_LV_FOREACH, __GUI_LV_VA_NUM_ARGS(__VA_ARGS__))(__VA_ARGS__)
 
-#   define GUI_LV_PROTECTED(...)                                               \
-		struct {                                                               \
-			__VA_ARGS__                                                        \
-		} __ALIGNED(GUI_LV_ALIGNOF(struct {__VA_ARGS__}));
-
-#elif defined(__GUI_LV_INHERIT__)
-
-#   define GUI_LV_PRIVATE(...)                                                 \
-		uint8_t __GUI_LV_OOC_MASK_NAME()                                       \
-			[sizeof(struct {__VA_ARGS__})]                                     \
-			__ALIGNED(GUI_LV_ALIGNOF(struct {__VA_ARGS__}));
-
-#   define GUI_LV_PROTECTED(...)                                               \
-		struct {                                                               \
-			__VA_ARGS__                                                        \
-		} __ALIGNED(GUI_LV_ALIGNOF(struct {__VA_ARGS__}));
-
-#else
-
-#   define GUI_LV_PRIVATE(...)                                                 \
-		uint8_t __GUI_LV_OOC_MASK_NAME()                                       \
-			[sizeof(struct {__VA_ARGS__})]                                     \
-			__ALIGNED(GUI_LV_ALIGNOF(struct {__VA_ARGS__}));
-
-#   define GUI_LV_PROTECTED(...)                                               \
-		uint8_t __GUI_LV_OOC_MASK_NAME()                                       \
-			[sizeof(struct {__VA_ARGS__})]                                     \
-			__ALIGNED(GUI_LV_ALIGNOF(struct {__VA_ARGS__}));
-#endif
-
-/*----------------------------------------------------------------------------*
- * OOC Method Access                                                          *
- *----------------------------------------------------------------------------*/
-#undef GUI_LV_PRIVATE_METHOD
-#undef GUI_LV_PROTECTED_METHOD
-#undef GUI_LV_PUBLIC_METHOD
-
-#if defined(__GUI_LV_IMPL__)
-
-#   define GUI_LV_PRIVATE_METHOD(...)      __VA_ARGS__
-#   define GUI_LV_PROTECTED_METHOD(...)    __VA_ARGS__
-#   define GUI_LV_PUBLIC_METHOD(...)       __VA_ARGS__
-
-#elif defined(__GUI_LV_INHERIT__)
-
-#   define GUI_LV_PRIVATE_METHOD(...)
-#   define GUI_LV_PROTECTED_METHOD(...)    __VA_ARGS__
-#   define GUI_LV_PUBLIC_METHOD(...)       __VA_ARGS__
-
-#else
-
-#   define GUI_LV_PRIVATE_METHOD(...)
-#   define GUI_LV_PROTECTED_METHOD(...)
-#   define GUI_LV_PUBLIC_METHOD(...)       __VA_ARGS__
-
-#endif
-
-/* post un-define macros */
-#undef __GUI_LV_IMPL__
-#undef __GUI_LV_INHERIT__
-
-
+            
 /*----------------------------------------------------------------------------*
  * PT Operations                                                              *
  *----------------------------------------------------------------------------*/
@@ -659,17 +698,117 @@ typedef enum {
             (*ptPTState) = 0;                                                  \
             return __VA_ARGS__;
 
-
-/*================================== TYPES ===================================*/
-/*============================= GLOBAL VARIABLES =============================*/
-/*============================== LOCAL VARIABLES =============================*/
 /*================================ PROTOTYPES ================================*/
 extern int64_t gui_lv_helper_get_system_timestamp(void);
 extern int64_t gui_lv_helper_convert_ticks_to_ms(int64_t lTick);
-
-/*============================== IMPLEMENTATION ==============================*/
 /*=================================== END ====================================*/
 #ifdef   __cplusplus
 }
 #endif
-#endif /* __GUI_LV_UTILS_H__ */
+#endif /* end of __GUI_LV_UTILS_H__ */
+
+
+
+/*! @} */
+
+/*================================== MACROS ==================================*/
+/*----------------------------------------------------------------------------*
+ * OOC Access Control                                                         *
+ *----------------------------------------------------------------------------*/
+#if defined(__COUNTER__)
+#   define __GUI_LV_OOC_MASK_NAME()                                            \
+		GUI_LV_CONNECT3(chMask, __LINE__, __COUNTER__)
+#else
+#   define __GUI_LV_OOC_MASK_NAME()           GUI_LV_CONNECT2(chMask, __LINE__)
+#endif
+
+#undef GUI_LV_PRIVATE
+#undef GUI_LV_PROTECTED
+#undef GUI_LV_PUBLIC
+
+
+#define GUI_LV_PUBLIC(...)                                                     \
+	struct {                                                                   \
+		__VA_ARGS__                                                            \
+	};
+
+#if defined(__cplusplus) || defined(__GUI_LV_DEBUG__)
+
+#   define GUI_LV_PRIVATE(...)                                                 \
+		struct {                                                               \
+			__VA_ARGS__                                                        \
+		};
+
+#   define GUI_LV_PROTECTED(...)                                               \
+		struct {                                                               \
+			__VA_ARGS__                                                        \
+		};
+
+#elif defined(__GUI_LV_IMPL__)
+
+#   define GUI_LV_PRIVATE(...)                                                 \
+		struct {                                                               \
+			__VA_ARGS__                                                        \
+		} __ALIGNED(GUI_LV_ALIGNOF(struct {__VA_ARGS__}));
+
+#   define GUI_LV_PROTECTED(...)                                               \
+		struct {                                                               \
+			__VA_ARGS__                                                        \
+		} __ALIGNED(GUI_LV_ALIGNOF(struct {__VA_ARGS__}));
+
+#elif defined(__GUI_LV_INHERIT__)
+
+#   define GUI_LV_PRIVATE(...)                                                 \
+		uint8_t __GUI_LV_OOC_MASK_NAME()                                       \
+			[sizeof(struct {__VA_ARGS__})]                                     \
+			__ALIGNED(GUI_LV_ALIGNOF(struct {__VA_ARGS__}));
+
+#   define GUI_LV_PROTECTED(...)                                               \
+		struct {                                                               \
+			__VA_ARGS__                                                        \
+		} __ALIGNED(GUI_LV_ALIGNOF(struct {__VA_ARGS__}));
+
+#else
+
+#   define GUI_LV_PRIVATE(...)                                                 \
+		uint8_t __GUI_LV_OOC_MASK_NAME()                                       \
+			[sizeof(struct {__VA_ARGS__})]                                     \
+			__ALIGNED(GUI_LV_ALIGNOF(struct {__VA_ARGS__}));
+
+#   define GUI_LV_PROTECTED(...)                                               \
+		uint8_t __GUI_LV_OOC_MASK_NAME()                                       \
+			[sizeof(struct {__VA_ARGS__})]                                     \
+			__ALIGNED(GUI_LV_ALIGNOF(struct {__VA_ARGS__}));
+#endif
+
+/*----------------------------------------------------------------------------*
+ * OOC Method Access                                                          *
+ *----------------------------------------------------------------------------*/
+#undef GUI_LV_PRIVATE_METHOD
+#undef GUI_LV_PROTECTED_METHOD
+#undef GUI_LV_PUBLIC_METHOD
+
+#if defined(__GUI_LV_IMPL__)
+
+#   define GUI_LV_PRIVATE_METHOD(...)      __VA_ARGS__
+#   define GUI_LV_PROTECTED_METHOD(...)    __VA_ARGS__
+#   define GUI_LV_PUBLIC_METHOD(...)       __VA_ARGS__
+
+#elif defined(__GUI_LV_INHERIT__)
+
+#   define GUI_LV_PRIVATE_METHOD(...)
+#   define GUI_LV_PROTECTED_METHOD(...)    __VA_ARGS__
+#   define GUI_LV_PUBLIC_METHOD(...)       __VA_ARGS__
+
+#else
+
+#   define GUI_LV_PRIVATE_METHOD(...)
+#   define GUI_LV_PROTECTED_METHOD(...)
+#   define GUI_LV_PUBLIC_METHOD(...)       __VA_ARGS__
+
+#endif
+
+/* post un-define macros */
+#undef __GUI_LV_IMPL__
+#undef __GUI_LV_INHERIT__
+

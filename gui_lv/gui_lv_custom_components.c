@@ -17,6 +17,8 @@
 ****************************************************************************/
 
 /*================================= INCLUDES =================================*/
+#define __GUI_LV_CUSTOM_COMPONENTS_IMPLEMENT__
+
 #include "gui_lv_custom_components.h"
 #include "core/gui_lv_common.h"
 

@@ -20,6 +20,14 @@
 #define __GUI_LV_CUSTOM_COMPONENTS_H__
 
 /*================================= INCLUDES =================================*/
+/* OOC header, please DO NOT modify  */
+#ifdef __GUI_LV_CUSTOM_COMPONENTS_IMPLEMENT__
+#   define __GUI_LV_IMPL__
+#   undef __GUI_LV_CUSTOM_COMPONENTS_IMPLEMENT__
+#elif defined(__GUI_LV_SCENE_INHERIT__)
+#   undef __GUI_LV_SCENE_INHERIT__
+#   define __GUI_LV_INHERIT__
+#endif
 #include "gui_lv_utils.h"
 
 #ifdef   __cplusplus
@@ -51,17 +59,17 @@ typedef struct {
         uint8_t    chGap;               //!< 电量格之间的间距
     } BattGuage;
 
-GUI_LV_PRIVATE(
-    /* 充电动画内部状态 */
-    struct {
-        lv_timer_t *ptTimer;            //!< 闪烁定时器
-        const void *pCurrentImgScr;     //!< 当前显示的电池图源
-        uint8_t     chDisplayLevel;     //!< 当前显示的固态电量格数
-        bool        bBlinkVisible;      //!< 闪烁格当前是否可见
-        bool        bIsCharging;        //!< 是否处于充电模式
-        bool        bPendingUpdate;     //!< 是否有待同步的电量更新
-    } tAnim;
-)
+    GUI_LV_PRIVATE(
+        /* 充电动画内部状态 */
+        struct {
+            lv_timer_t *ptTimer;            //!< 闪烁定时器
+            const void *pCurrentImgScr;     //!< 当前显示的电池图源
+            uint8_t     chDisplayLevel;     //!< 当前显示的固态电量格数
+            bool        bBlinkVisible;      //!< 闪烁格当前是否可见
+            bool        bIsCharging;        //!< 是否处于充电模式
+            bool        bPendingUpdate;     //!< 是否有待同步的电量更新
+        } tAnim;
+    )
    
 } gui_lv_custom_battery_t;
 
@@ -117,7 +125,8 @@ void gui_lv_custom_battery_enter_charging_mode(gui_lv_custom_battery_t *ptBatter
  */
 extern
 GUI_LV_NONNULL(1)
-void gui_lv_custom_battery_set_level(gui_lv_custom_battery_t *ptBattery, uint8_t chBattLevel);
+void gui_lv_custom_battery_set_level(gui_lv_custom_battery_t *ptBattery, 
+                                     uint8_t chBattLevel);
 
 
 /*============================== IMPLEMENTATION ==============================*/
