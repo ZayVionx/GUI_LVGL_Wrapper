@@ -190,9 +190,35 @@ void gui_lv_scene_register(gui_lv_scene_cfg_t *ptThis)
 void gui_lv_scene_switch(gui_scene_id_t eId)
 {
     if(eId >= GUI_SCENE_MAX)    return;
+    GUI_LV_ASSERT(s_tScenePools[eId].ptCFG != NULL);
+    GUI_LV_ASSERT(s_tScenePools[eId].ptCFG->pfnDraw != NULL);
+    GUI_LV_ASSERT(s_tScenePools[eId].ptCFG->pfnLoad != NULL);
+    GUI_LV_ASSERT(s_tScenePools[eId].ptCFG->pfnBind != NULL);
+    GUI_LV_ASSERT(s_tScenePools[eId].ptCFG->pfndepose != NULL);
 
-    emb_list_add_tail(&s_tScenePools[eId].ptSceneList, 
+    /**************************
+     *     Clear the page     *
+     **************************/
+    do {
+        if(emb_list_is_empty(&s_tPageHead)) break;
+
+        emb_list_t        *ptNode = &s_tPageHead.prev;
+        gui_lv_page_cfg_t *ptCFG  = EMB_LIST_ENTRY( ptNode, 
+                                                    gui_lv_page_cfg_t, 
+                                                    tPageList);
+        GUI_LV_INVOKE_RT_VOID(ptCFG->pfnDepose());
+
+        emb_list_del(&s_tPageHead.prev);
+    } while(true);
+
+    /***************************
+     *   Setup the new scene   *
+     ***************************/
+    emb_list_add_tail(&(s_tScenePools[eId].ptCFG->tSceneNode), 
                       &s_tSceneHead);
+    
+    
+    
     
     
 }

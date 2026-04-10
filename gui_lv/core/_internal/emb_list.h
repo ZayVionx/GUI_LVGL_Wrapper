@@ -100,6 +100,47 @@ static inline emb_list_t *emb_list_get_tail(const emb_list_t *head)
     return head->prev;
 }
 
+
+/*============================ ITERATION HELPERS =============================*/
+/**
+ * @brief  遍历链表
+ *
+ * @param[in,out] pos   遍历时用于保存当前位置的指针（类型为 emb_list_t *）
+ * @param[in]     head  链表头
+ */
+#define emb_list_for_each(pos, head)                                           \
+    for ((pos) = (head)->next; (pos) != (head); (pos) = (pos)->next)
+
+/**
+ * @brief  安全遍历链表（遍历过程中允许删除当前节点）
+ *
+ * @param[in,out] pos   当前节点指针
+ * @param[in,out] n     临时节点指针，用于保存下一个节点
+ * @param[in]     head  链表头
+ */
+#define emb_list_for_each_safe(pos, n, head)                                   \
+    for ((pos) = (head)->next, (n) = (pos)->next;                              \
+         (pos) != (head);                                                      \
+         (pos) = (n), (n) = (pos)->next)
+
+/**
+ * @brief  遍历包含 emb_list_t 成员的外层结构体（需要 typeof/decltype 支持）。
+ *         使用前请声明 pos 为指向外层结构体的指针。
+ */
+#define emb_list_for_each_entry(pos, head, member)                             \
+    for ((pos) = EMB_LIST_ENTRY((head)->next, EMB_TYPEOF(*(pos)), member);     \
+         &((pos)->member) != (head);                                           \
+         (pos) = emb_list_next_entry(pos, member))
+
+/**
+ * @brief  支持遍历过程中安全删除节点的版本。
+ */
+#define emb_list_for_each_entry_safe(pos, n, head, member)                     \
+    for ((pos) = EMB_LIST_ENTRY((head)->next, EMB_TYPEOF(*(pos)), member),     \
+         (n) = emb_list_next_entry(pos, member);                               \
+         &((pos)->member) != (head);                                           \
+         (pos) = (n), (n) = emb_list_next_entry(n, member))
+
 /*=================================== END ====================================*/
 #ifdef   __cplusplus
 }

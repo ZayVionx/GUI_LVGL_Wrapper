@@ -93,7 +93,7 @@ typedef struct {
     void (*pfnDepose)(void);                //!< Scene destroy callback   
     
 GUI_LV_PRIVATE(
-    emb_list_t  ptSceneList;                //!< Scene list head pointer   
+    emb_list_t  tSceneNode;                 //!< Scene list node    
     uint8_t    *pchFocusIndex;              //!< Focus index array pointer
 )
 
@@ -114,7 +114,7 @@ typedef struct {
     void (*pfnDepose)(void);                //!< Page destroy callback    
 
 GUI_LV_PRIVATE(
-    emb_list_t  ptPageList;                 //!< Page list head pointer  
+    emb_list_t  tPageNode;                  //!< Page list node  
     uint8_t    *pchFocusIndex;              //!< Focus index array pointer
 )
 
