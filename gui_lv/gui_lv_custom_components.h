@@ -21,11 +21,11 @@
 
 /*================================= INCLUDES =================================*/
 /* OOC header, please DO NOT modify  */
-#ifdef __GUI_LV_CUSTOM_COMPONENTS_IMPLEMENT__
+#ifdef __GUI_LV_CUSTOM_IMPLEMENT__
 #   define __GUI_LV_IMPL__
-#   undef __GUI_LV_CUSTOM_COMPONENTS_IMPLEMENT__
-#elif defined(__GUI_LV_SCENE_INHERIT__)
-#   undef __GUI_LV_SCENE_INHERIT__
+#   undef __GUI_LV_CUSTOM_IMPLEMENT__
+#elif defined(__GUI_LV_CUSTOM_INHERIT__)
+#   undef __GUI_LV_CUSTOM_INHERIT__
 #   define __GUI_LV_INHERIT__
 #endif
 #include "gui_lv_utils.h"

@@ -189,6 +189,7 @@ void gui_lv_scene_switch(gui_scene_id_t eId);
 
 /*!
  * \brief Switch to a different scene with animation
+ *
  * \param[in] eId the target scene id
  * \param[in] eAnimMode the animation mode
  */
@@ -218,6 +219,7 @@ void gui_lv_scene_back_with_anim(gui_lv_switch_anim_mode_t eAnimMode);
  *----------------------------------------------------------------------------*/
 /*!
  * \brief Append a set of pages to a scene player
+ *
  * \param[in] ptThis the target scene player
  * \param[in] eSceneId the scene id to which the page belongs
  */
@@ -237,6 +239,7 @@ void gui_lv_page_switch(gui_page_id_t eId);
 
 /*!
  * \brief Switch to a different page with animation
+ *
  * \param[in] eId the target page id
  * \param[in] eAnimMode the animation mode
  */

@@ -17,7 +17,7 @@
 ****************************************************************************/
 
 /*================================= INCLUDES =================================*/
-#define __GUI_LV_CUSTOM_COMPONENTS_IMPLEMENT__
+#define __GUI_LV_CUSTOM_IMPLEMENT__
 
 #include "gui_lv_custom_components.h"
 #include "core/gui_lv_common.h"
@@ -42,109 +42,6 @@ static void __gui_lv_battery_timer_cb(lv_timer_t *ptTimer);
 /*----------------------------------------------------------------------------*
  * Battery Component                                                          *
  *----------------------------------------------------------------------------*/
-/*!
- * \brief an internal helper function to set the battery frame image
- * 
- * \param[in] ptThis the target battery component
- * \param[in] pImgScr the pointer of the image source
- */
-static 
-GUI_LV_NONNULL(1)
-void __gui_lv_battery_set_frame_img(gui_lv_custom_battery_t *ptBattery,
-                                           const void *pImgScr)
-{
-    const lv_img_dsc_t *ptImgDsc;
-
-    if(ptBattery->ptFrameImg == NULL || pImgScr == NULL) return;
-
-    if(ptBattery->tAnim.pCurrentImgScr == pImgScr)       return;
-
-    ptImgDsc = (const lv_img_dsc_t *)pImgScr;
-    GUI_LV_IMG_SET_SRC( ptBattery->ptFrameImg, 
-                        ptImgDsc->header.w, 
-                        ptImgDsc->header.h, 
-                        pImgScr);
-    lv_obj_align(ptBattery->ptFrameImg, ptBattery->chAlign, ptBattery->i16X, ptBattery->i16Y);
-
-    ptBattery->tAnim.pCurrentImgScr = pImgScr;
-}
-
-/*!
- * \brief an internal helper function to refresh the battery gauge display
- * 
- * \param[in] ptThis the target battery component
- * \note 
- *       - Charging mode: gauges [0, chDisplayLevel) are shown in green, 
- *         gauge [chDisplayLevel] is blinking, and the rest are hidden.
- *       - Idle mode: gauges [0, chBattLevel) are shown in gray, and the 
- *         rest are hidden.
- *       - When idle, level is 0, and a low-battery image is configured: 
- *         switch to the low-battery image and hide all gauges.
- */
-static 
-GUI_LV_NONNULL(1)
-void __gui_lv_battery_refresh_display(gui_lv_custom_battery_t *ptBattery)
-{
-    uint8_t chDisplayLevel = ptBattery->tAnim.chDisplayLevel;
-    bool    bIsCharging    = ptBattery->tAnim.bIsCharging;
-    bool    bBlinkVisible  = ptBattery->tAnim.bBlinkVisible;
-    bool    bShowLowImg    = (!bIsCharging) &&
-                             (ptBattery->BattGuage.chBattLevel == 0U) &&
-                             (ptBattery->pLowImgScr != NULL);
-    lv_color_t tColor      = bIsCharging ? BATT_COLOR_CHARGING : BATT_COLOR_IDLE;
-
-    __gui_lv_battery_set_frame_img(ptBattery, bShowLowImg ? ptBattery->pLowImgScr : ptBattery->pImgScr);
-
-    for (uint8_t i = 0; i < ptBattery->BattGuage.chBattMax; i++)
-    {
-        lv_obj_t *ptGuage = lv_obj_get_child(ptBattery->ptFrameImg, i);
-
-        if (bShowLowImg) {
-            lv_obj_add_flag(ptGuage, LV_OBJ_FLAG_HIDDEN);
-            continue;
-        }
-
-        if (i < chDisplayLevel) {
-            /* 已确认的电量格：显示 */
-            lv_obj_set_style_bg_color(ptGuage, tColor, 0);
-            lv_obj_clear_flag(ptGuage, LV_OBJ_FLAG_HIDDEN);
-        }
-        else if (bIsCharging && (i == chDisplayLevel) && (chDisplayLevel < ptBattery->BattGuage.chBattMax)) {
-            /* 闪烁格：充电模式下，下一格做闪烁 */
-            lv_obj_set_style_bg_color(ptGuage, BATT_COLOR_CHARGING, 0);
-            if (bBlinkVisible)  lv_obj_clear_flag(ptGuage, LV_OBJ_FLAG_HIDDEN);
-            else                lv_obj_add_flag(ptGuage, LV_OBJ_FLAG_HIDDEN);
-        }
-        else {
-            /* 超出电量范围：隐藏 */
-            lv_obj_add_flag(ptGuage, LV_OBJ_FLAG_HIDDEN);
-        }
-    }
-}
-
-/*!
- * \brief the blink timer callback
- * 
- * \param[in] ptTimer the attached LVGL timer pointer
- * \note It toggles the visibility of the blinking gauge and synchronizes 
- *       the battery level at the end of a complete cycle (visible -> invisible).
- */
-static void __gui_lv_battery_timer_cb(lv_timer_t *ptTimer)
-{
-    gui_lv_custom_battery_t *ptBattery = (gui_lv_custom_battery_t *)ptTimer->user_data;
-
-    /* 切换闪烁状态 */
-    ptBattery->tAnim.bBlinkVisible = !ptBattery->tAnim.bBlinkVisible;
-
-    /* 从 可见→不可见 时，是一个完整闪烁周期结束点，检查是否需要同步电量 */
-    if (!ptBattery->tAnim.bBlinkVisible && ptBattery->tAnim.bPendingUpdate) {
-        ptBattery->tAnim.bPendingUpdate = false;
-        ptBattery->tAnim.chDisplayLevel = ptBattery->BattGuage.chBattLevel;
-    }
-
-    __gui_lv_battery_refresh_display(ptBattery);
-}
-
 /*!
  * \brief Create a custom battery component.
  * \param[in] ptBattery: Pointer to battery component structure
@@ -273,6 +170,108 @@ void gui_lv_custom_battery_set_level(gui_lv_custom_battery_t *ptBattery,
     }
 }
 
+/*!
+ * \brief an internal helper function to set the battery frame image
+ * 
+ * \param[in] ptThis the target battery component
+ * \param[in] pImgScr the pointer of the image source
+ */
+static 
+GUI_LV_NONNULL(1)
+void __gui_lv_battery_set_frame_img(gui_lv_custom_battery_t *ptBattery,
+                                           const void *pImgScr)
+{
+    const lv_img_dsc_t *ptImgDsc;
+
+    if(ptBattery->ptFrameImg == NULL || pImgScr == NULL) return;
+
+    if(ptBattery->tAnim.pCurrentImgScr == pImgScr)       return;
+
+    ptImgDsc = (const lv_img_dsc_t *)pImgScr;
+    GUI_LV_IMG_SET_SRC( ptBattery->ptFrameImg, 
+                        ptImgDsc->header.w, 
+                        ptImgDsc->header.h, 
+                        pImgScr);
+    lv_obj_align(ptBattery->ptFrameImg, ptBattery->chAlign, ptBattery->i16X, ptBattery->i16Y);
+
+    ptBattery->tAnim.pCurrentImgScr = pImgScr;
+}
+
+/*!
+ * \brief an internal helper function to refresh the battery gauge display
+ * 
+ * \param[in] ptThis the target battery component
+ * \note 
+ *       - Charging mode: gauges [0, chDisplayLevel) are shown in green, 
+ *         gauge [chDisplayLevel] is blinking, and the rest are hidden.
+ *       - Idle mode: gauges [0, chBattLevel) are shown in gray, and the 
+ *         rest are hidden.
+ *       - When idle, level is 0, and a low-battery image is configured: 
+ *         switch to the low-battery image and hide all gauges.
+ */
+static 
+GUI_LV_NONNULL(1)
+void __gui_lv_battery_refresh_display(gui_lv_custom_battery_t *ptBattery)
+{
+    uint8_t chDisplayLevel = ptBattery->tAnim.chDisplayLevel;
+    bool    bIsCharging    = ptBattery->tAnim.bIsCharging;
+    bool    bBlinkVisible  = ptBattery->tAnim.bBlinkVisible;
+    bool    bShowLowImg    = (!bIsCharging) &&
+                             (ptBattery->BattGuage.chBattLevel == 0U) &&
+                             (ptBattery->pLowImgScr != NULL);
+    lv_color_t tColor      = bIsCharging ? BATT_COLOR_CHARGING : BATT_COLOR_IDLE;
+
+    __gui_lv_battery_set_frame_img(ptBattery, bShowLowImg ? ptBattery->pLowImgScr : ptBattery->pImgScr);
+
+    for (uint8_t i = 0; i < ptBattery->BattGuage.chBattMax; i++)
+    {
+        lv_obj_t *ptGuage = lv_obj_get_child(ptBattery->ptFrameImg, i);
+
+        if (bShowLowImg) {
+            lv_obj_add_flag(ptGuage, LV_OBJ_FLAG_HIDDEN);
+            continue;
+        }
+
+        if (i < chDisplayLevel) {
+            /* 已确认的电量格：显示 */
+            lv_obj_set_style_bg_color(ptGuage, tColor, 0);
+            lv_obj_clear_flag(ptGuage, LV_OBJ_FLAG_HIDDEN);
+        }
+        else if (bIsCharging && (i == chDisplayLevel) && (chDisplayLevel < ptBattery->BattGuage.chBattMax)) {
+            /* 闪烁格：充电模式下，下一格做闪烁 */
+            lv_obj_set_style_bg_color(ptGuage, BATT_COLOR_CHARGING, 0);
+            if (bBlinkVisible)  lv_obj_clear_flag(ptGuage, LV_OBJ_FLAG_HIDDEN);
+            else                lv_obj_add_flag(ptGuage, LV_OBJ_FLAG_HIDDEN);
+        }
+        else {
+            /* 超出电量范围：隐藏 */
+            lv_obj_add_flag(ptGuage, LV_OBJ_FLAG_HIDDEN);
+        }
+    }
+}
+
+/*!
+ * \brief the blink timer callback
+ * 
+ * \param[in] ptTimer the attached LVGL timer pointer
+ * \note It toggles the visibility of the blinking gauge and synchronizes 
+ *       the battery level at the end of a complete cycle (visible -> invisible).
+ */
+static void __gui_lv_battery_timer_cb(lv_timer_t *ptTimer)
+{
+    gui_lv_custom_battery_t *ptBattery = (gui_lv_custom_battery_t *)ptTimer->user_data;
+
+    /* 切换闪烁状态 */
+    ptBattery->tAnim.bBlinkVisible = !ptBattery->tAnim.bBlinkVisible;
+
+    /* 从 可见→不可见 时，是一个完整闪烁周期结束点，检查是否需要同步电量 */
+    if (!ptBattery->tAnim.bBlinkVisible && ptBattery->tAnim.bPendingUpdate) {
+        ptBattery->tAnim.bPendingUpdate = false;
+        ptBattery->tAnim.chDisplayLevel = ptBattery->BattGuage.chBattLevel;
+    }
+
+    __gui_lv_battery_refresh_display(ptBattery);
+}
 
 #if 0 /* ======================== Usage instructions ======================== */
 

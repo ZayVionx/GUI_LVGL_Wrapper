@@ -148,6 +148,10 @@ void __gui_lv_scend_list_init(void)
 /*----------------------------------------------------------------------------*
  * Scene Management                                                           *
  *----------------------------------------------------------------------------*/
+/*!
+ * \brief Register a scene configuration
+ * \param[in] ptThis the scene configuration to register
+ */
 GUI_LV_NONNULL(1)
 void gui_lv_scene_register(gui_lv_scene_cfg_t *ptThis)
 {
@@ -179,7 +183,10 @@ void gui_lv_scene_register(gui_lv_scene_cfg_t *ptThis)
     }
 }
 
-
+/*!
+ * \brief Switch to a different scene
+ * \param[in] eId the target scene id
+ */
 void gui_lv_scene_switch(gui_scene_id_t eId)
 {
     if(eId >= GUI_SCENE_MAX)    return;
@@ -190,17 +197,30 @@ void gui_lv_scene_switch(gui_scene_id_t eId)
     
 }
 
+/*!
+ * \brief Switch to a different scene with animation
+ *
+ * \param[in] eId the target scene id
+ * \param[in] eAnimMode the animation mode
+ */
 void gui_lv_scene_switch_with_anim(gui_scene_id_t eId, 
                                    gui_lv_switch_anim_mode_t eAnimMode)
 {
 
 }
 
+/*!
+ * \brief Go back to the previous scene 
+ */
 void gui_lv_scene_back(void)
 {
 
 }
 
+/*!
+ * \brief Go back to the previous scene with animation
+ * \param[in] eAnimMode the animation mode
+ */
 void gui_lv_scene_back_with_anim(gui_lv_switch_anim_mode_t eAnimMode)
 {
 
@@ -260,10 +280,8 @@ gui_page_id_t gui_lv_page_get_id(void)
 
 
 
-
-static 
 GUI_LV_NONNULL(1)
-void __gui_lv_extend_create(gui_lv_extend_t *ptEx)
+static void __gui_lv_extend_create(gui_lv_extend_t *ptEx)
 {
     GUI_LV_ASSERT(ptEx != NULL);
     GUI_LV_ASSERT(!(ptEx->u8GroupNum > 0 && ptEx->ptGroup == NULL));
@@ -289,10 +307,8 @@ void __gui_lv_extend_create(gui_lv_extend_t *ptEx)
     }
 }
 
-
-static 
 GUI_LV_NONNULL(1)
-void __gui_lv_extend_depose(gui_lv_extend_t *ptEx)
+static void __gui_lv_extend_depose(gui_lv_extend_t *ptEx)
 {
     GUI_LV_ASSERT(ptEx != NULL);
     GUI_LV_ASSERT(!(ptEx->u8GroupNum > 0 && ptEx->ptGroup == NULL));

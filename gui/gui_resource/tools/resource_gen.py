@@ -6,6 +6,7 @@
 from __future__ import annotations
 
 import argparse
+import io
 import json
 import logging
 import re
@@ -22,15 +23,37 @@ class ResourceError(RuntimeError):
     """Raised when resource generation fails."""
 
 
-IMG_FORMAT_MAP: Dict[str, Tuple[int, str]] = {
-    "CF_INDEXED_1_BIT": (1, "LV_IMG_CF_INDEXED_1BIT"),
-    "CF_INDEXED_2_BIT": (2, "LV_IMG_CF_INDEXED_2BIT"),
-    "CF_INDEXED_4_BIT": (4, "LV_IMG_CF_INDEXED_4BIT"),
-    "CF_INDEXED_8_BIT": (8, "LV_IMG_CF_INDEXED_8BIT"),
-    "LV_IMG_CF_INDEXED_1BIT": (1, "LV_IMG_CF_INDEXED_1BIT"),
-    "LV_IMG_CF_INDEXED_2BIT": (2, "LV_IMG_CF_INDEXED_2BIT"),
-    "LV_IMG_CF_INDEXED_4BIT": (4, "LV_IMG_CF_INDEXED_4BIT"),
-    "LV_IMG_CF_INDEXED_8BIT": (8, "LV_IMG_CF_INDEXED_8BIT"),
+# Maps config format strings -> (bpp, LV_IMG_CF_* macro, is_indexed, is_alpha)  [LVGL8]
+# is_indexed: palette + pixel-index data
+# is_alpha:   alpha-only data (no palette)
+IMG_FORMAT_MAP: Dict[str, Tuple[int, str, bool, bool]] = {
+    "CF_ALPHA_1_BIT":             (1,  "LV_IMG_CF_ALPHA_1BIT",   False, True),
+    "CF_ALPHA_2_BIT":             (2,  "LV_IMG_CF_ALPHA_2BIT",   False, True),
+    "CF_ALPHA_4_BIT":             (4,  "LV_IMG_CF_ALPHA_4BIT",   False, True),
+    "CF_ALPHA_8_BIT":             (8,  "LV_IMG_CF_ALPHA_8BIT",   False, True),
+    "CF_INDEXED_1_BIT":           (1,  "LV_IMG_CF_INDEXED_1BIT", True,  False),
+    "CF_INDEXED_2_BIT":           (2,  "LV_IMG_CF_INDEXED_2BIT", True,  False),
+    "CF_INDEXED_4_BIT":           (4,  "LV_IMG_CF_INDEXED_4BIT", True,  False),
+    "CF_INDEXED_8_BIT":           (8,  "LV_IMG_CF_INDEXED_8BIT", True,  False),
+    "LV_IMG_CF_ALPHA_1BIT":       (1,  "LV_IMG_CF_ALPHA_1BIT",   False, True),
+    "LV_IMG_CF_ALPHA_2BIT":       (2,  "LV_IMG_CF_ALPHA_2BIT",   False, True),
+    "LV_IMG_CF_ALPHA_4BIT":       (4,  "LV_IMG_CF_ALPHA_4BIT",   False, True),
+    "LV_IMG_CF_ALPHA_8BIT":       (8,  "LV_IMG_CF_ALPHA_8BIT",   False, True),
+    "LV_IMG_CF_INDEXED_1BIT":     (1,  "LV_IMG_CF_INDEXED_1BIT", True,  False),
+    "LV_IMG_CF_INDEXED_2BIT":     (2,  "LV_IMG_CF_INDEXED_2BIT", True,  False),
+    "LV_IMG_CF_INDEXED_4BIT":     (4,  "LV_IMG_CF_INDEXED_4BIT", True,  False),
+    "LV_IMG_CF_INDEXED_8BIT":     (8,  "LV_IMG_CF_INDEXED_8BIT", True,  False),
+    "LV_IMG_CF_TRUE_COLOR":        (32, "LV_IMG_CF_TRUE_COLOR",        False, False),
+    "LV_IMG_CF_TRUE_COLOR_ALPHA":  (32, "LV_IMG_CF_TRUE_COLOR_ALPHA",  False, False),
+    "LV_IMG_CF_TRUE_COLOR_CHROMA": (32, "LV_IMG_CF_TRUE_COLOR_CHROMA", False, False),
+    "LV_IMG_CF_RGB565A8":          (16, "LV_IMG_CF_RGB565A8",          False, False),
+    "CF_TRUE_COLOR":               (32, "LV_IMG_CF_TRUE_COLOR",        False, False),
+    "CF_TRUE_COLOR_ALPHA":         (32, "LV_IMG_CF_TRUE_COLOR_ALPHA",  False, False),
+    "CF_TRUE_COLOR_CHROMA":        (32, "LV_IMG_CF_TRUE_COLOR_CHROMA", False, False),
+    "CF_RGB565A8":                 (16, "LV_IMG_CF_RGB565A8",          False, False),
+    "CF_RAW":                      (0,  "LV_IMG_CF_RAW",               False, False),
+    "CF_RAW_CHROMA":               (0,  "LV_IMG_CF_RAW_CHROMA",        False, False),
+    "CF_RAW_ALPHA":                (0,  "LV_IMG_CF_RAW_ALPHA",         False, False),
 }
 
 
@@ -387,136 +410,135 @@ def _generate_fonts(ptFontConfigPath: Path,
             )
 
 
-def _resolve_alpha_for_palette(u32PaletteIndex: int,
-                               vTransparency) -> int:
-    if vTransparency is None:
-        return 255
-
-    if isinstance(vTransparency, bytes):
-        if u32PaletteIndex < len(vTransparency):
-            return int(vTransparency[u32PaletteIndex])
-        return 255
-
-    if isinstance(vTransparency, list):
-        if u32PaletteIndex < len(vTransparency):
-            return int(vTransparency[u32PaletteIndex])
-        return 255
-
-    if isinstance(vTransparency, int):
-        if u32PaletteIndex == vTransparency:
-            return 0
-        return 255
-
-    return 255
-
-
-def _pack_index_rows(lu8Indices: Sequence[int],
-                     u32Width: int,
-                     u32Height: int,
-                     u32Bpp: int) -> bytearray:
-    u32PixelsPerByte: int = 8 // u32Bpp
-    u32Mask: int = (1 << u32Bpp) - 1
-    lu8Packed = bytearray()
-
-    for u32Row in range(u32Height):
-        u32RowStart: int = u32Row * u32Width
-        lu8Row = lu8Indices[u32RowStart: u32RowStart + u32Width]
-
-        if u32Bpp == 8:
-            lu8Packed.extend(lu8Row)
-            continue
-
-        for u32Col in range(0, u32Width, u32PixelsPerByte):
-            u8PackedByte: int = 0
-            for u32Index in range(u32PixelsPerByte):
-                u32PixelPos: int = u32Col + u32Index
-                u8PaletteIndex: int = 0
-                if u32PixelPos < u32Width:
-                    u8PaletteIndex = int(lu8Row[u32PixelPos])
-
-                u32Shift: int = 8 - (u32Bpp * (u32Index + 1))
-                u8PackedByte |= (u8PaletteIndex & u32Mask) << u32Shift
-
-            lu8Packed.append(u8PackedByte)
-
-    return lu8Packed
-
-
-def _convert_png_to_indexed_data(ptImagePath: Path,
-                                 u32Bpp: int) -> Tuple[int, int, List[int]]:
-    try:
-        from PIL import Image  # type: ignore[import-not-found]
-    except ImportError as tError:
+def _pngquant_quantize(ptInputPath: Path, u32Colors: int) -> bytes:
+    """Run pngquant on ptInputPath, return quantized PNG bytes (stdout)."""
+    chPngquant = shutil.which("pngquant")
+    if chPngquant is None:
         raise ResourceError(
-            "Missing dependency 'Pillow', install with: "
-            "python -m pip install pillow"
-        ) from tError
-
-    u32PaletteSize: int = 1 << u32Bpp
-    tSourceImage = Image.open(ptImagePath).convert("RGBA")
-    u32Width: int = tSourceImage.width
-    u32Height: int = tSourceImage.height
-
-    tIndexedImage = tSourceImage.quantize(
-        colors=u32PaletteSize,
-        method=Image.Quantize.FASTOCTREE,
-        dither=Image.Dither.NONE,
+            "pngquant not found in PATH. "
+            "Windows: download from https://pngquant.org/ and add to PATH. "
+            "Linux: sudo apt install pngquant  "
+            "macOS: brew install pngquant"
+        )
+    tResult = subprocess.run(
+        [chPngquant, str(u32Colors), "--force", "--output", "-", "--", str(ptInputPath)],
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        check=False,
     )
+    if tResult.returncode not in (0, 98, 99):  # 98/99 = minor quality warnings
+        raise ResourceError(
+            f"pngquant failed for {ptInputPath.name}: "
+            f"{tResult.stderr.decode(errors='replace').strip()}"
+        )
+    return tResult.stdout
 
-    if tIndexedImage.mode != "P":
-        raise ResourceError(f"Indexed convert failed for: {ptImagePath}")
 
-    lu8PaletteRgb = tIndexedImage.getpalette() or []
-    vTransparency = tIndexedImage.info.get("transparency")
+def _png_bytes_to_indexed(lu8PngBytes: bytes,
+                          u32Bpp: int) -> Tuple[int, int, bytearray]:
+    """Parse a palette-mode PNG and return (w, h, lvgl8_data).
+
+    lvgl8_data layout (same as LVGL8 online converter):
+      - palette: (1<<bpp) * 4 bytes, each entry = [B, G, R, A]
+      - pixels:  packed indices, MSB-first, row-padded to byte boundary
+    """
+    try:
+        import png  # pypng
+    except ImportError as e:
+        raise ResourceError(
+            "Missing dependency 'pypng', install with: pip install pypng"
+        ) from e
+
+    reader = png.Reader(bytes=lu8PngBytes)
+    u32Width, u32Height, tRows, tMeta = reader.read()
+
+    if not tMeta.get("palette"):
+        raise ResourceError("pngquant output is not palette mode")
+
+    # palette from pypng: list of (R,G,B) or (R,G,B,A)
+    ltPalette = tMeta["palette"]
+    u32PaletteSize = 1 << u32Bpp
 
     lu8LvglPalette = bytearray()
-    for u32PaletteIndex in range(u32PaletteSize):
-        u32RgbBase: int = u32PaletteIndex * 3
-        if (u32RgbBase + 2) < len(lu8PaletteRgb):
-            u8Red: int = int(lu8PaletteRgb[u32RgbBase + 0])
-            u8Green: int = int(lu8PaletteRgb[u32RgbBase + 1])
-            u8Blue: int = int(lu8PaletteRgb[u32RgbBase + 2])
+    for u32I in range(u32PaletteSize):
+        if u32I < len(ltPalette):
+            tEntry = ltPalette[u32I]
+            u8R, u8G, u8B = int(tEntry[0]), int(tEntry[1]), int(tEntry[2])
+            u8A = int(tEntry[3]) if len(tEntry) >= 4 else 255
+            # Normalize fully-transparent entries: force RGB to (0,0,0)
+            # pngquant may output garbage RGB when A=0
+            if u8A == 0:
+                u8R, u8G, u8B = 0, 0, 0
         else:
-            u8Red = 255
-            u8Green = 255
-            u8Blue = 255
+            # Unused palette slots: transparent padding (matches LVGL8 online converter)
+            u8R, u8G, u8B, u8A = 0, 0, 0, 0
+        lu8LvglPalette.extend([u8B, u8G, u8R, u8A])  # LVGL8: B,G,R,A
 
-        u8Alpha: int = _resolve_alpha_for_palette(
-            u32PaletteIndex,
-            vTransparency,
-        )
+    # pack pixel rows MSB-first
+    u32PixPerByte = 8 // u32Bpp
+    u32Mask = (1 << u32Bpp) - 1
+    lu8Pixels = bytearray()
+    for lu8Row in tRows:
+        for u32Col in range(0, u32Width, u32PixPerByte):
+            u8Byte = 0
+            for u32Sub in range(u32PixPerByte):
+                u32Pos = u32Col + u32Sub
+                u8Idx = int(lu8Row[u32Pos]) if u32Pos < u32Width else 0
+                u8Byte |= (u8Idx & u32Mask) << (8 - u32Bpp * (u32Sub + 1))
+            lu8Pixels.append(u8Byte)
 
-        # LVGL indexed palette uses B, G, R, A order.
-        lu8LvglPalette.extend([u8Blue, u8Green, u8Red, u8Alpha])
-
-    lu8Indices: List[int] = list(tIndexedImage.getdata())
-    lu8Packed = _pack_index_rows(lu8Indices, u32Width, u32Height, u32Bpp)
-    lu8Data: List[int] = list(lu8LvglPalette + lu8Packed)
-    return u32Width, u32Height, lu8Data
+    return u32Width, u32Height, lu8LvglPalette + lu8Pixels
 
 
-def _format_hex_data_lines(lu8Data: Sequence[int],
-                           u32LineWidth: int = 12) -> List[str]:
+def _png_to_alpha_data(ptInputPath: Path,
+                       u32Bpp: int) -> Tuple[int, int, bytearray]:
+    """Extract alpha channel, quantize to u32Bpp bits, pack MSB-first."""
+    try:
+        from PIL import Image
+    except ImportError as e:
+        raise ResourceError(
+            "Missing dependency 'Pillow', install with: pip install pillow"
+        ) from e
+
+    tImg = Image.open(ptInputPath).convert("RGBA")
+    u32Width, u32Height = tImg.size
+    u32Levels = 1 << u32Bpp
+    u32PixPerByte = 8 // u32Bpp
+    u32Mask = (1 << u32Bpp) - 1
+
+    lu8Pixels = bytearray()
+    lu8Alpha = [tImg.getpixel((x, y))[3] for y in range(u32Height) for x in range(u32Width)]
+
+    for u32Row in range(u32Height):
+        for u32Col in range(0, u32Width, u32PixPerByte):
+            u8Byte = 0
+            for u32Sub in range(u32PixPerByte):
+                u32Pos = u32Row * u32Width + u32Col + u32Sub
+                if u32Pos < len(lu8Alpha):
+                    u8Idx = int(lu8Alpha[u32Pos]) * (u32Levels - 1) // 255
+                else:
+                    u8Idx = 0
+                u8Byte |= (u8Idx & u32Mask) << (8 - u32Bpp * (u32Sub + 1))
+            lu8Pixels.append(u8Byte)
+
+    return u32Width, u32Height, lu8Pixels
+
+
+def _write_lvgl8_c_file(ptOutputPath: Path,
+                        chVarName: str,
+                        chCfMacro: str,
+                        u32Width: int,
+                        u32Height: int,
+                        lu8Data: bytearray) -> None:
+    """Write a LVGL8-compatible .c image file."""
+    chAttr = f"LV_ATTRIBUTE_IMG_{chVarName.upper()}"
+    # format data: 15 bytes per line
     lchLines: List[str] = []
+    for u32Start in range(0, len(lu8Data), 15):
+        chLine = ", ".join(f"0x{b:02x}" for b in lu8Data[u32Start:u32Start + 15])
+        lchLines.append(f"  {chLine}, ")
 
-    for u32Start in range(0, len(lu8Data), u32LineWidth):
-        lu8Chunk = lu8Data[u32Start: u32Start + u32LineWidth]
-        chLineBody: str = ", ".join(f"0x{u8Byte:02x}" for u8Byte in lu8Chunk)
-        lchLines.append(f"  {chLineBody},")
-
-    return lchLines
-
-
-def _write_lvgl8_image_file(ptOutputPath: Path,
-                            chVarName: str,
-                            chImgCfMacro: str,
-                            u32Width: int,
-                            u32Height: int,
-                            lu8Data: Sequence[int]) -> None:
-    chAttrMacro: str = f"LV_ATTRIBUTE_IMG_{chVarName.upper()}"
-    lchDataLines: List[str] = _format_hex_data_lines(lu8Data)
-
-    lchContent: List[str] = [
+    lchContent = [
         "#ifdef __has_include",
         "    #if __has_include(\"lvgl.h\")",
         "        #ifndef LV_LVGL_H_INCLUDE_SIMPLE",
@@ -535,17 +557,16 @@ def _write_lvgl8_image_file(ptOutputPath: Path,
         "#define LV_ATTRIBUTE_MEM_ALIGN",
         "#endif",
         "",
-        f"#ifndef {chAttrMacro}",
-        f"#define {chAttrMacro}",
+        f"#ifndef {chAttr}",
+        f"#define {chAttr}",
         "#endif",
         "",
-        "const LV_ATTRIBUTE_MEM_ALIGN LV_ATTRIBUTE_LARGE_CONST "
-        f"{chAttrMacro} uint8_t {chVarName}_map[] = {{",
-        *lchDataLines,
+        f"const LV_ATTRIBUTE_MEM_ALIGN LV_ATTRIBUTE_LARGE_CONST {chAttr} uint8_t {chVarName}_map[] = {{",
+        *lchLines,
         "};",
         "",
         f"const lv_img_dsc_t {chVarName} = {{",
-        f"  .header.cf = {chImgCfMacro},",
+        f"  .header.cf = {chCfMacro},",
         "  .header.always_zero = 0,",
         "  .header.reserved = 0,",
         f"  .header.w = {u32Width},",
@@ -555,7 +576,6 @@ def _write_lvgl8_image_file(ptOutputPath: Path,
         "};",
         "",
     ]
-
     ptOutputPath.write_text("\n".join(lchContent), encoding="utf-8")
 
 
@@ -574,12 +594,7 @@ def _generate_images(ptImgConfigPath: Path,
         if not isinstance(tImgItem, dict):
             raise ResourceError(f"img[{u32Index}] must be an object")
 
-        _validate_fields(
-            tImgItem,
-            ["name", "file", "format"],
-            "img",
-            u32Index,
-        )
+        _validate_fields(tImgItem, ["name", "file", "format"], "img", u32Index)
 
         chName: str = str(tImgItem["name"]).strip()
         chFile: str = str(tImgItem["file"]).strip()
@@ -591,35 +606,29 @@ def _generate_images(ptImgConfigPath: Path,
                 f"Unsupported image format '{chFormat}' in img[{u32Index}]"
             )
 
-        u32Bpp, chImgCfMacro = IMG_FORMAT_MAP[chFormat]
+        u32Bpp, chCfMacro, bIndexed, bAlpha = IMG_FORMAT_MAP[chFormat]
         ptInputPath: Path = _resolve_input_path(ptConfigDir, "img_scr", chFile)
-        ptFinalOutputPath: Path = ptImgOutputDir / f"{chOutputName}.c"
+        ptOutputPath: Path = ptImgOutputDir / f"{chOutputName}.c"
 
-        logging.info(
-            "[img] generate %s from %s (%s)",
-            ptFinalOutputPath.name,
-            ptInputPath.name,
-            chFormat,
-        )
+        logging.info("[img] generate %s from %s (%s)",
+                     ptOutputPath.name, ptInputPath.name, chFormat)
 
-        u32Width, u32Height, lu8Data = _convert_png_to_indexed_data(
-            ptInputPath,
-            u32Bpp,
-        )
-        _write_lvgl8_image_file(
-            ptFinalOutputPath,
-            chOutputName,
-            chImgCfMacro,
-            u32Width,
-            u32Height,
-            lu8Data,
-        )
-        u32FileSize: int = ptFinalOutputPath.stat().st_size
-        logging.info(
-            "[img] generated %s (%d bytes)",
-            ptFinalOutputPath.name,
-            u32FileSize,
-        )
+        if bIndexed:
+            # quantize with pngquant (same as LVGL8 online converter)
+            lu8PngBytes = _pngquant_quantize(ptInputPath, 1 << u32Bpp)
+            u32W, u32H, lu8Data = _png_bytes_to_indexed(lu8PngBytes, u32Bpp)
+        elif bAlpha:
+            u32W, u32H, lu8Data = _png_to_alpha_data(ptInputPath, u32Bpp)
+        else:
+            raise ResourceError(
+                f"Format '{chFormat}' (true-color) is not yet supported"
+            )
+
+        _write_lvgl8_c_file(ptOutputPath, chOutputName, chCfMacro,
+                            u32W, u32H, lu8Data)
+
+        logging.info("[img] generated %s (%d bytes)",
+                     ptOutputPath.name, ptOutputPath.stat().st_size)
 
 
 def _collect_declarations(ptDir: Path,

@@ -49,6 +49,7 @@ static gui_lv_sys_data_t s_tUiSysData;
 /*============================= SETTER FUNCTIONS =============================*/
 /*******************************************************************************
  * @brief   Set UI language.
+ * 
  * @param[in] eLang Language to set.
  * @return  true: Set language Success;
  *          false: Fail.
@@ -63,6 +64,7 @@ bool gui_lv_set_lang(gui_lv_language_t eLang)
 
 /*******************************************************************************
  * @brief   Set boot scene ID.
+ * 
  * @param[in] eSceneId Scene ID to set.
  * @return  true: Set scene ID Success;
  *          false: Fail.
@@ -77,6 +79,7 @@ bool gui_lv_set_boot_scene_id(gui_scene_id_t eSceneId)
 
 /*******************************************************************************
  * @brief   Set the level of the buzzer.
+ * 
  * @param[in] eLevel The desired beep level (0-3).
  * @return  true: Set beep level Success;
  *          false: Fail.
@@ -91,10 +94,12 @@ bool gui_lv_set_beep_level(gui_lv_beep_level_t eLevel)
 
 /*******************************************************************************
  * @brief   Set device information. 
+ * 
  * @param[in] pchName Device name string (null-terminated). 
  * @param[in] u32SN Device serial number.   
  * @param[in] chHardWare_Ver Device hardware version.
  * @param[in] chSoftWare_Ver Device software version.
+ * 
  * @return  true: Set device info Success;
  *          false: Fail.
  */
