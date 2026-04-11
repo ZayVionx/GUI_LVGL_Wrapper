@@ -195,7 +195,7 @@ void gui_lv_scene_switch(gui_lv_scene_id_t eId)
     GUI_LV_ASSERT(s_tScenePools[eId].ptCFG->pfnDraw != NULL);
     GUI_LV_ASSERT(s_tScenePools[eId].ptCFG->pfnLoad != NULL);
     GUI_LV_ASSERT(s_tScenePools[eId].ptCFG->pfnBind != NULL);
-    GUI_LV_ASSERT(s_tScenePools[eId].ptCFG->pfndepose != NULL);
+    GUI_LV_ASSERT(s_tScenePools[eId].ptCFG->pfnDepose != NULL);
 
     /**************************
      *     Clear the page     *
@@ -206,9 +206,9 @@ void gui_lv_scene_switch(gui_lv_scene_id_t eId)
         emb_list_t        *ptNode = &s_tPageHead.prev;
         gui_lv_page_cfg_t *ptCFG  = EMB_LIST_ENTRY( ptNode, 
                                                     gui_lv_page_cfg_t, 
-                                                    tPageList);
+                                                    tSceneNode);
         emb_list_del(ptNode);
-        GUI_LV_INVOKE_RT_VOID(ptCFG->pfnDepose());
+        GUI_LV_INVOKE_RT_VOID(ptCFG->pfnDepose);
         __gui_lv_extend_depose(ptCFG->ptEx);
     } while(true);
 
@@ -263,7 +263,7 @@ void gui_lv_scene_switch_with_anim(gui_lv_scene_id_t eId,
         emb_list_t        *ptNode = &s_tPageHead.prev;
         gui_lv_page_cfg_t *ptCFG  = EMB_LIST_ENTRY( ptNode, 
                                                     gui_lv_page_cfg_t, 
-                                                    s_tPageHead);
+                                                    tSceneNode);
         emb_list_del(ptNode);
         GUI_LV_INVOKE_RT_VOID(ptCFG->pfnDepose);
         __gui_lv_extend_depose(ptCFG->ptEx);
