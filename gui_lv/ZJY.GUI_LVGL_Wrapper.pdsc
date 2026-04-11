@@ -80,10 +80,10 @@
 
             <files>
                 <!-- ======== Framework headers (read-only) ================ -->
-                <file category="header"  name="core/_internal/emb_list.h"/>
                 <file category="header"  name="core/gui_lv_common.h"/>
                 <file category="header"  name="core/gui_lv_scene_manage.h"/>
-                
+                <file category="header"  name="core/_internal/emb_list.h"/>
+
                 <!-- ======== Framework sources (read-only) ================ -->
                 <file category="sourceC" name="core/gui_lv_common.c"/>
                 <file category="sourceC" name="core/gui_lv_scene_manage.c"/>
@@ -150,7 +150,7 @@
                 <file category="header"  attr="config"  version="1.1.0" name="gui_lv_conf.h"/>
                 <file category="header"  attr="config"  version="1.1.0" name="gui_lv_font.h"/>
                 <file category="header"  attr="config"  version="1.1.0" name="gui_lv_sys_data.h"/>
-                <file category="header"  attr="config"  version="1.1.0" name="gui_scene_id.h"/>
+                <file category="header"  attr="config"  version="1.1.0" name="gui_lv_scene_id.h"/>
                 <file category="header"  attr="config"  version="1.0.0" name="gui_lv_custom_components.h"/>
                 <file category="header"  attr="config"  version="1.0.0" name="platform/gui_lv_user_arch_port.h"/>
 
@@ -185,12 +185,12 @@
             </description>
 
             <files>
-                <file category="sourceh" name="template/gui_scene_include.h"/>
+                <file category="sourceh" name="template/gui_lv_scene_include.h"/>
 
-                <file category="sourceC" attr="config" version="1.2.0" name="template/gui_scene.c"/>
-                <file category="header"  attr="config" version="1.2.0" name="template/gui_scene.h"/>
-                <file category="sourceC" attr="config" version="1.2.0" name="template/gui_scene_task.c"/>
-                <file category="header"  attr="config" version="1.2.0" name="template/gui_scene_task.h"/>
+                <file category="sourceC" attr="config" version="1.2.0" name="template/gui_lv_scene.c"/>
+                <file category="header"  attr="config" version="1.2.0" name="template/gui_lv_scene.h"/>
+                <file category="sourceC" attr="config" version="1.2.0" name="template/gui_lv_scene_task.c"/>
+                <file category="header"  attr="config" version="1.2.0" name="template/gui_lv_scene_task.h"/>
 
             </files>
 

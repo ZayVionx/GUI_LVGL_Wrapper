@@ -33,7 +33,7 @@
 /*! \brief System-level UI persistent data. */
 typedef struct {
     gui_lv_language_t    eLanguage;     //!< Current display language.
-    gui_scene_id_t       eBootSceneId;  //!< Scene shown at startup.
+    gui_lv_scene_id_t    eBootSceneId;  //!< Scene shown at startup.
     gui_lv_beep_level_t  eBeepLevel;    //!< Buzzer volume level.
     gui_lv_device_info_t tDeviceInfo;   //!< Device information.
 } gui_lv_sys_data_t;
@@ -69,9 +69,9 @@ bool gui_lv_set_lang(gui_lv_language_t eLang)
  * @return  true: Set scene ID Success;
  *          false: Fail.
  ******************************************************************************/
-bool gui_lv_set_boot_scene_id(gui_scene_id_t eSceneId)
+bool gui_lv_set_boot_scene_id(gui_lv_scene_id_t eSceneId)
 {
-    if(eSceneId >= GUI_SCENE_MAX) return false;
+    if(eSceneId >= GUI_LV_SCENE_MAX) return false;
     
     s_tUiSysData.eBootSceneId = eSceneId;
     return true;
@@ -131,7 +131,7 @@ gui_lv_language_t gui_lv_get_current_lang(void)
  * @brief   Get current boot scene ID.
  * @return  Current boot scene ID.
  ******************************************************************************/
-gui_scene_id_t gui_lv_get_boot_scene_id(void)
+gui_lv_scene_id_t gui_lv_get_boot_scene_id(void)
 {
     return s_tUiSysData.eBootSceneId;
 }

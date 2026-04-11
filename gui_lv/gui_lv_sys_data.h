@@ -23,9 +23,9 @@
 #include <stdint.h>
 
 #if __GUI_LVGL_WRAPPER_CONF__
-#   include <gui_scene_id.h>
+#   include <gui_lv_scene_id.h>
 #else
-#   include "gui_scene_id.h"
+#   include "gui_lv_scene_id.h"
 #endif
 
 #ifdef   __cplusplus
@@ -83,7 +83,7 @@ bool gui_lv_set_lang(gui_lv_language_t eLang);
  * \retval  false Fail.
  */
 extern
-bool gui_lv_set_boot_scene_id(gui_scene_id_t eSceneId);
+bool gui_lv_set_boot_scene_id(gui_lv_scene_id_t eSceneId);
 
 /*!
  * \brief   Set the level of the buzzer.
@@ -122,7 +122,7 @@ gui_lv_language_t gui_lv_get_current_lang(void);
  * \return  Current boot scene ID.
  */
 extern
-gui_scene_id_t gui_lv_get_boot_scene_id(void);
+gui_lv_scene_id_t gui_lv_get_boot_scene_id(void);
 
 /*!
  * \brief   Get the level of the buzzer.

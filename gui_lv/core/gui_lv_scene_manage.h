@@ -24,9 +24,9 @@
 #include <stdbool.h>
 
 #ifdef __GUI_LVGL_WRAPPER_CONF__
-#   include <gui_scene_id.h>
+#   include <gui_lv_scene_id.h>
 #else
-#   include "gui_scene_id.h"
+#   include "gui_lv_scene_id.h"
 #endif
 
 #ifdef __EMB_UTILS_LIB_SUPPORTED__
@@ -84,8 +84,8 @@ typedef struct {
  */
 typedef struct {
 
-    gui_scene_id_t   eId;                   //!< Scene identifier            
-    gui_lv_extend_t *ptEx;                  //!< Extended scene data (opt.)  
+    gui_lv_scene_id_t  eId ;                //!< Scene identifier            
+    gui_lv_extend_t   *ptEx;                //!< Extended scene data (opt.)  
 
     void (*pfnDraw  )(lv_obj_t *ptRoot);    //!< Scene init callback         
     void (*pfnLoad  )(lv_obj_t *ptRoot);    //!< Scene load callback         
@@ -105,8 +105,8 @@ GUI_LV_PRIVATE(
  */
 typedef struct {
 
-    gui_page_id_t    eId;                   //!< Page identifier            
-    gui_lv_extend_t *ptEx;                  //!< Extended scene data (opt.)  
+    gui_lv_page_id_t  eId ;                 //!< Page identifier            
+    gui_lv_extend_t  *ptEx;                 //!< Extended scene data (opt.)  
 
     void (*pfnDraw  )(lv_obj_t *ptRoot);    //!< Page init callback         
     void (*pfnLoad  )(lv_obj_t *ptRoot);    //!< Page load callback         
@@ -184,7 +184,7 @@ void gui_lv_scene_register(gui_lv_scene_cfg_t *ptThis);
  * \param[in] eId the target scene id
  */
 extern
-void gui_lv_scene_switch(gui_scene_id_t eId);
+void gui_lv_scene_switch(gui_lv_scene_id_t eId);
 
 
 /*!
@@ -194,7 +194,7 @@ void gui_lv_scene_switch(gui_scene_id_t eId);
  * \param[in] eAnimMode the animation mode
  */
 extern
-void gui_lv_scene_switch_with_anim(gui_scene_id_t eId, 
+void gui_lv_scene_switch_with_anim(gui_lv_scene_id_t eId, 
                                    gui_lv_switch_anim_mode_t eAnimMode);
 
 
@@ -226,7 +226,7 @@ void gui_lv_scene_back_with_anim(gui_lv_switch_anim_mode_t eAnimMode);
 extern
 GUI_LV_NONNULL(1)
 void gui_lv_page_append_to_scene(gui_lv_page_cfg_t *ptThis, 
-                                 gui_scene_id_t eSceneId);
+                                 gui_lv_scene_id_t eSceneId);
 
 
 /*!
@@ -234,7 +234,7 @@ void gui_lv_page_append_to_scene(gui_lv_page_cfg_t *ptThis,
  * \param[in] eId the target page id
  */
 extern
-void gui_lv_page_switch(gui_page_id_t eId);
+void gui_lv_page_switch(gui_lv_page_id_t eId);
 
 
 /*!
@@ -244,7 +244,7 @@ void gui_lv_page_switch(gui_page_id_t eId);
  * \param[in] eAnimMode the animation mode
  */
 extern
-void gui_lv_page_switch_with_anim(gui_page_id_t eId, 
+void gui_lv_page_switch_with_anim(gui_lv_page_id_t eId, 
                                   gui_lv_switch_anim_mode_t eAnimMode);
 
 
@@ -272,7 +272,7 @@ void gui_lv_page_back_with_anim(gui_lv_switch_anim_mode_t eAnimMode);
  * \return The current scene ID
  */
 extern
-gui_scene_id_t gui_lv_scene_get_id(void);
+gui_lv_scene_id_t gui_lv_get_scene_id(void);
 
 
 /*!
@@ -280,7 +280,7 @@ gui_scene_id_t gui_lv_scene_get_id(void);
  * \return The current page ID
  */
 extern
-gui_page_id_t gui_lv_page_get_id(void);
+gui_lv_page_id_t gui_lv_get_page_id(void);
 
 /*============================== IMPLEMENTATION ==============================*/
 /*============================== IMPLEMENTATION ==============================*/

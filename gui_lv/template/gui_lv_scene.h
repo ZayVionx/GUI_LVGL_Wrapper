@@ -29,8 +29,8 @@
  * --------------------------------------------------------------------
  */
 
-#ifndef __GUI_SCENE_%Instance%_H__
-#define __GUI_SCENE_%Instance%_H__
+#ifndef __GUI_LV_SCENE_%Instance%_H__
+#define __GUI_LV_SCENE_%Instance%_H__
 
 /*================================= INCLUDES =================================*/
 

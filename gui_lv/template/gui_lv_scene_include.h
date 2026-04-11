@@ -16,8 +16,8 @@
 *                                                                           *
 ****************************************************************************/
 
-#ifndef __GUI_SCENE_INCLUDE_H__
-#define __GUI_SCENE_INCLUDE_H__
+#ifndef __GUI_LV_SCENE_INCLUDE_H__
+#define __GUI_LV_SCENE_INCLUDE_H__
 
 /*================================= INCLUDES =================================*/
 #include "RTE_Components.h"
@@ -203,4 +203,4 @@ extern "C" {
 #ifdef   __cplusplus
 }
 #endif
-#endif /* __GUI_SCENE_INCLUDE_H__ */
+#endif /* __GUI_LV_SCENE_INCLUDE_H__ */

@@ -21,8 +21,8 @@
  * Description:  Canonical scene and page identifier definitions.
  * -------------------------------------------------------------------- */
 
-#ifndef __GUI_SCENE_ID_H__
-#define __GUI_SCENE_ID_H__
+#ifndef __GUI_LV_SCENE_ID_H__
+#define __GUI_LV_SCENE_ID_H__
 
 /*================================= INCLUDES =================================*/
 
@@ -31,24 +31,28 @@ extern "C" {
 #endif
 /*================================== TYPES ===================================*/
 typedef enum {
+    PLACEHOLDER0,   /* Placeholder */
+
     /* scene id to begin */
 
     /* scene id to end   */
 
-    GUI_SCENE_MAX
-} gui_scene_id_t;
+    GUI_LV_SCENE_MAX
+} gui_lv_scene_id_t;
 
 
 typedef enum {
+    PLACEHOLDER1,   /* Placeholder */
+    
     /* page id to begin */
     
     /* page id to end   */
 
-    GUI_PAGE_MAX
-} gui_page_id_t;
+    GUI_LV_PAGE_MAX
+} gui_lv_page_id_t;
 
 /*=================================== END ====================================*/
 #ifdef   __cplusplus
 }
 #endif
-#endif /* __GUI_SCENE_ID_H__ */
+#endif /* __GUI_LV_SCENE_ID_H__ */

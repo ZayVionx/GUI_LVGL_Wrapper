@@ -39,8 +39,8 @@
 #endif
 
 #ifdef __RTE_Acceleration_GUI_LVGL_Scene%Instance%__
-#   include <gui_scene_%Instance%.h>
-#   include <gui_scene_task_%Instance%.h>
+#   include <gui_lv_scene_%Instance%.h>
+#   include <gui_lv_scene_task_%Instance%.h>
 #endif
 
 /*============================ MACROS ========================================*/
@@ -65,17 +65,9 @@ typedef struct {
 } gui_scene_t;
 
 /*============================ LOCAL VARIABLES ===============================*/
-static gui_scene_t s_tScene;
+static gui_scene_t s_tGUI;
 
 /*============================ PROTOTYPES ====================================*/
-static void __on_scene%Instance%_draw(lv_obj_t *ptRoot);
-static void __on_scene%Instance%_load(lv_obj_t *ptRoot);
-static void __on_scene%Instance%_depose(void);
-
-#if GUI_LV_SCENE_TIMER_NUM
-static void __on_scene%Instance%_timer0_cb(lv_timer_t *ptTimer);
-#endif
-
 /*============================ IMPLEMENTATION ================================*/
 #if GUI_LV_SCENE_TIMER_NUM
 static void __on_scene%Instance%_timer0_cb(lv_timer_t *ptTimer)
@@ -90,18 +82,21 @@ static void __on_scene%Instance%_timer0_cb(lv_timer_t *ptTimer)
  */
 static void __on_scene%Instance%_draw(lv_obj_t *ptRoot)
 {
-    s_tScene.ptRoot         = ptRoot;
+    s_tGUI.ptRoot           = ptRoot;
     gui_lv_language_t eLang = gui_lv_get_current_lang();
 
     /*------------------------- draw the scene begin -------------------------*/
 
 
     /*------------------------- draw the scene end   -------------------------*/
-    __on_scene%Instance%_load(ptRoot);
+    // __on_scene%Instance%_load(ptRoot);
+    // __on_scene%Instance%_bind();
+    GUI_LV_INVOKE_RT_VOID(__on_scene%Instance%_load, ptRoot);
+    GUI_LV_INVOKE_RT_VOID(__on_scene%Instance%_bind, ptRoot);
 
 #if GUI_LV_SCENE_TIMER_NUM
-    GUI_LV_TIMER_SET(s_tScene.ptTimer[0], __on_scene%Instance%_timer0_cb, 1000, NULL);
-    GUI_LV_TIMER_ALL_STOP(s_tScene.ptTimer, GUI_LV_SCENE_TIMER_NUM);
+    GUI_LV_TIMER_SET(s_tGUI.ptTimer[0], __on_scene%Instance%_timer0_cb, 1000, NULL);
+    GUI_LV_TIMER_ALL_STOP(s_tGUI.ptTimer, GUI_LV_SCENE_TIMER_NUM);
 #endif
 }
 
@@ -117,6 +112,18 @@ static void __on_scene%Instance%_load(lv_obj_t *ptRoot)
 
 
     /*------------------------- load the scene end   -------------------------*/
+}
+
+/*! 
+ * \brief Application layer data binding.
+ */
+static void __on_scene%Instance%_bind(void)
+{
+    GUI_LV_UNUSED(0);
+
+    /*------------------------- bind the scene begin -------------------------*/
+
+    /*------------------------- bind the scene end   -------------------------*/
 }
 
 /*! 
@@ -137,20 +144,22 @@ static void __on_scene%Instance%_depose(void)
  */
 void gui_lv_scene_%Instance%_init(void)
 {
-    static gui_scene_ex_t s_tSceneEX; 
-    s_tSceneEX.u8GroupNum   = GUI_LV_SCENE_GROUP_NUM;
-    s_tSceneEX.u8TimerNum   = GUI_LV_SCENE_TIMER_NUM;
-    s_tSceneEX.ptSceneGroup = GUI_LV_SCENE_GROUP_NUM ? s_tScene.ptGroup 
+    static gui_lv_scene_ex_t s_tGUIEX; 
+    s_tGUIEX.u8GroupNum   = GUI_LV_SCENE_GROUP_NUM;
+    s_tGUIEX.u8TimerNum   = GUI_LV_SCENE_TIMER_NUM;
+    s_tGUIEX.ptGroup      = GUI_LV_SCENE_GROUP_NUM ? s_tGUI.ptGroup 
                                                      : NULL;
-    s_tSceneEX.ptSceneTimer = GUI_LV_SCENE_TIMER_NUM ? s_tScene.ptTimer 
+    s_tGUIEX.ptTimer      = GUI_LV_SCENE_TIMER_NUM ? s_tGUI.ptTimer 
                                                      : NULL;
 
     /* ------------ initialize members of scene begin ------------ */
-    const gui_scene_cfg_t c_tCFG = {
-        .eId      = GUI_SCENE_<NAME>,
-        .ptEx     = &s_tSceneEX,
-        .pfInit   = __on_scene%Instance%_draw,
-        .pfDeinit = __on_scene%Instance%_depose,
+    static gui_lv_scene_cfg_t c_tCFG = {
+        .eId       = GUI_LV_SCENE_<NAME>,
+        .ptEx      = &s_tGUIEX,
+        .pfnDraw   = __on_scene%Instance%_draw,
+        .pfnLoad   = __on_scene%Instance%_load,
+        .pfnBind   = __on_scene%Instance%_bind, 
+        .pfnDepose = __on_scene%Instance%_depose,
     };
     /* ------------ initialize members of scene end -------------- */
 
