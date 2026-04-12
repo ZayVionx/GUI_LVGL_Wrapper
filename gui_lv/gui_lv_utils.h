@@ -43,6 +43,26 @@
 #   include "lv_port_indev_template.h"
 #endif
 
+
+// #undef __IS_SUPPORTED_ARM_ARCH__
+// #if (__ARM_ARCH_PROFILE == 'M') || defined(__TARGET_PROFILE_M)
+// #   define __IS_SUPPORTED_ARM_ARCH__        1
+// #else
+// #   define __IS_SUPPORTED_ARM_ARCH__        0
+// #endif
+
+// /*! \note arm-2d relies on CMSIS 5.8.0 and above.
+//  */
+// #if __IS_SUPPORTED_ARM_ARCH__
+
+// #   include "cmsis_compiler.h"
+// #   include "cmsis_version.h"
+
+// #else
+// #   include "platform/gui_lv_user_arch_port.h"
+// #endif
+
+
 #ifdef   __cplusplus
 extern "C" {
 #endif
@@ -744,7 +764,7 @@ extern int64_t gui_lv_helper_convert_ticks_to_ms(int64_t lTick);
 			__VA_ARGS__                                                        \
 		};
 
-#elif defined(__GUI_LV_IMPL__)
+#elif defined(__GUI_LV_IMPL__) || defined(__IS_COMPILER_ARM_COMPILER_5__) || defined(__IS_COMPILER_ARM_COMPILER_6__)
 
 #   define GUI_LV_PRIVATE(...)                                                 \
 		struct {                                                               \

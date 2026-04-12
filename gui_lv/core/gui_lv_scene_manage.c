@@ -25,6 +25,34 @@
 #include <stdint.h>
 #include "core/gui_lv_scene_manage.h"
 
+#if defined(__clang__)
+#   pragma clang diagnostic push
+#   pragma clang diagnostic ignored "-Wunknown-warning-option"
+#   pragma clang diagnostic ignored "-Wreserved-identifier"
+#   pragma clang diagnostic ignored "-Wdeclaration-after-statement"
+#   pragma clang diagnostic ignored "-Wsign-conversion"
+#   pragma clang diagnostic ignored "-Wpadded"
+#   pragma clang diagnostic ignored "-Wcast-qual"
+#   pragma clang diagnostic ignored "-Wcast-align"
+#   pragma clang diagnostic ignored "-Wmissing-field-initializers"
+#   pragma clang diagnostic ignored "-Wgnu-zero-variadic-macro-arguments"
+#   pragma clang diagnostic ignored "-Wmissing-braces"
+#   pragma clang diagnostic ignored "-Wunused-const-variable"
+#   pragma clang diagnostic ignored "-Wimplicit-fallthrough"
+#   pragma clang diagnostic ignored "-Wgnu-statement-expression"
+#   pragma clang diagnostic ignored "-Wimplicit-int-conversion"
+#   pragma clang diagnostic ignored "-Wmissing-prototypes"
+#   pragma clang diagnostic ignored "-Wpedantic"
+#   pragma clang diagnostic ignored "-Wtautological-pointer-compare"
+#   pragma clang diagnostic ignored "-Wtautological-constant-out-of-range-compare"
+#   pragma clang diagnostic ignored "-Wswitch-default"
+#elif defined(__IS_COMPILER_GCC__)
+#   pragma GCC diagnostic push
+#   pragma GCC diagnostic ignored "-Wstrict-aliasing"
+#   pragma GCC diagnostic ignored "-Wunused-value"
+
+#endif
+
 /*================================== MACROS ==================================*/
 #undef this
 #define this        (*ptThis)
@@ -178,7 +206,7 @@ void gui_lv_scene_register(gui_lv_scene_cfg_t *ptThis)
             *pFocus = 0;
         }
     }
-    else
+    else  
     {
         ptThis->pchFocusIndex = NULL;
     }
@@ -203,10 +231,10 @@ void gui_lv_scene_switch(gui_lv_scene_id_t eId)
     do {
         if(emb_list_is_empty(&s_tPageHead)) break;
 
-        emb_list_t        *ptNode = &s_tPageHead.prev;
+        emb_list_t        *ptNode = s_tPageHead.prev;
         gui_lv_page_cfg_t *ptCFG  = EMB_LIST_ENTRY( ptNode, 
                                                     gui_lv_page_cfg_t, 
-                                                    tSceneNode);
+                                                    tPageNode);
         emb_list_del(ptNode);
         GUI_LV_INVOKE_RT_VOID(ptCFG->pfnDepose);
         __gui_lv_extend_depose(ptCFG->ptEx);
@@ -215,7 +243,7 @@ void gui_lv_scene_switch(gui_lv_scene_id_t eId)
     /***************************
      *   Setup the new scene   *
      ***************************/
-    if(s_tScenePools[eId].ptCFG->tSceneNode != s_tSceneHead.prev)
+    if(&(s_tScenePools[eId].ptCFG->tSceneNode) != s_tSceneHead.prev)
     {
         emb_list_add_tail(&(s_tScenePools[eId].ptCFG->tSceneNode), 
                       &s_tSceneHead);
@@ -260,10 +288,10 @@ void gui_lv_scene_switch_with_anim(gui_lv_scene_id_t eId,
     do {
         if(emb_list_is_empty(&s_tPageHead)) break;
 
-        emb_list_t        *ptNode = &s_tPageHead.prev;
+        emb_list_t        *ptNode = s_tPageHead.prev;
         gui_lv_page_cfg_t *ptCFG  = EMB_LIST_ENTRY( ptNode, 
                                                     gui_lv_page_cfg_t, 
-                                                    tSceneNode);
+                                                    tPageNode);
         emb_list_del(ptNode);
         GUI_LV_INVOKE_RT_VOID(ptCFG->pfnDepose);
         __gui_lv_extend_depose(ptCFG->ptEx);
@@ -272,7 +300,7 @@ void gui_lv_scene_switch_with_anim(gui_lv_scene_id_t eId,
     /***************************
      *   Setup the new scene   *
      ***************************/
-    if(s_tScenePools[eId].ptCFG->tSceneNode != s_tSceneHead.prev)
+    if(&(s_tScenePools[eId].ptCFG->tSceneNode) != s_tSceneHead.prev)
     {
         emb_list_add_tail(&(s_tScenePools[eId].ptCFG->tSceneNode), 
                       &s_tSceneHead);
@@ -358,13 +386,21 @@ void gui_lv_page_back_with_anim(gui_lv_switch_anim_mode_t eAnimMode)
  *----------------------------------------------------------------------------*/
 gui_lv_scene_id_t gui_lv_get_scene_id(void)
 {
-
+    emb_list_t        *ptNode = s_tSceneHead.prev;
+    gui_lv_scene_cfg_t *ptCFG  = EMB_LIST_ENTRY( ptNode, 
+                                                gui_lv_scene_cfg_t, 
+                                                tSceneNode);
+    return ptCFG->eId;
 }
 
 
 gui_lv_page_id_t gui_lv_get_page_id(void)
 {
-    
+    emb_list_t        *ptNode = s_tPageHead.prev;
+    gui_lv_page_cfg_t *ptCFG  = EMB_LIST_ENTRY( ptNode, 
+                                                gui_lv_page_cfg_t, 
+                                                tPageNode);
+    return ptCFG->eId;
 }
 
 
@@ -378,21 +414,21 @@ static void __gui_lv_extend_create(gui_lv_extend_t *ptEx)
 
     /* Create groups */
     gui_lv_foreach(lv_group_t*, 
-                   ptEx->ptGroup, 
+                   (lv_group_t*)ptEx->ptGroup, 
                    ptEx->u8GroupNum, 
-                   group) 
+                   pGroup) 
     {
-        if(!*group) *group = lv_group_create();
+        if(!pGroup) pGroup = lv_group_create();
     }
 
     /* Create timers */
     gui_lv_foreach(lv_timer_t*, 
-                   ptEx->ptTimer, 
+                   (lv_timer_t*)ptEx->ptTimer, 
                    ptEx->u8TimerNum, 
-                   timer) 
+                   pTimer) 
     {
-        if(!*timer) *timer = lv_timer_create(NULL, 500, NULL);
-        GUI_LV_TIMER_STOP(*timer);
+        if(!pTimer) pTimer = lv_timer_create(NULL, 500, NULL);
+        GUI_LV_TIMER_STOP(pTimer);
     }
 }
 
@@ -405,20 +441,20 @@ static void __gui_lv_extend_depose(gui_lv_extend_t *ptEx)
     
     /* Destroy groups */
     gui_lv_foreach(lv_group_t*, 
-                   ptEx->ptGroup, 
+                   (lv_group_t*)ptEx->ptGroup, 
                    ptEx->u8GroupNum, 
-                   group) 
+                   pGroup) 
     {
-        if(*group) GUI_LV_GROUP_DESTROY(*group);
+        if(pGroup) GUI_LV_GROUP_DESTROY(pGroup);
     }
 
     /* Destroy timers */
     gui_lv_foreach(lv_timer_t*, 
-                   ptEx->ptTimer, 
+                   (lv_timer_t*)ptEx->ptTimer, 
                    ptEx->u8TimerNum, 
-                   timer) 
+                   pTimer) 
     {
-        if(*timer) GUI_LV_TIMER_DESTROY(*timer);
+        if(pTimer) GUI_LV_TIMER_DESTROY(pTimer);
     }
 }
 

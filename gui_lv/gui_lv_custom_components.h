@@ -28,7 +28,7 @@
 #   undef __GUI_LV_CUSTOM_INHERIT__
 #   define __GUI_LV_INHERIT__
 #endif
-#include "gui_lv_utils.h"
+#include "core/gui_lv_common.h"
 
 #ifdef   __cplusplus
 extern "C" {

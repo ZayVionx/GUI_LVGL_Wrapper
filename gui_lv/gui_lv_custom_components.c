@@ -18,9 +18,8 @@
 
 /*================================= INCLUDES =================================*/
 #define __GUI_LV_CUSTOM_IMPLEMENT__
-
 #include "gui_lv_custom_components.h"
-#include "core/gui_lv_common.h"
+
 
 /*================================== MACROS ==================================*/
 #define BATT_BLINK_PERIOD_MS    500                  //!< the blink period in millisecond

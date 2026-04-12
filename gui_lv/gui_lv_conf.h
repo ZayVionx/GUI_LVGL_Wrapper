@@ -51,7 +51,7 @@ extern "C" {
     #   define MY_DISP_VER_RES              240
     #endif
     // <o> Display buffer size in pixels 
-	// <1-273,373,156>
+	// <1-273373156>
     #ifndef __BUF_PX_SIZE__
     #   define __BUF_PX_SIZE__              19200
     #endif
