@@ -315,8 +315,8 @@ void gui_lv_scene_switch_with_anim(gui_lv_scene_id_t eId,
     s_tScenePools[eId].ptRoot = ptRoot;
     __gui_lv_extend_create(s_tScenePools[eId].ptCFG->ptEx);
     GUI_LV_INVOKE_RT_VOID(s_tScenePools[eId].ptCFG->pfnDraw, ptRoot);
-    GUI_LV_INVOKE_RT_VOID(s_tScenePools[eId].ptCFG->pfnLoad, ptRoot);
-    GUI_LV_INVOKE_RT_VOID(s_tScenePools[eId].ptCFG->pfnBind);
+    // GUI_LV_INVOKE_RT_VOID(s_tScenePools[eId].ptCFG->pfnLoad, ptRoot);
+    // GUI_LV_INVOKE_RT_VOID(s_tScenePools[eId].ptCFG->pfnBind);
 
     uint32_t           u32AnimTime  = eAnimMode.u32AnimTime ;         
     uint32_t           u32AnimDelay = eAnimMode.u32AnimDelay;

@@ -46,6 +46,10 @@
 #   include "gui_lv_custom_components.h"
 #endif
 
+#ifdef __GUI_LV_RESOURCE_DECLARE__ 
+#include "gui_lv_resource.h"
+#endif
+
 #ifdef   __cplusplus
 extern "C" {
 #endif

@@ -650,11 +650,15 @@ def _write_ui_resource_header(ptHeaderPath: Path,
                               lchFontNames: Sequence[str],
                               lchImgNames: Sequence[str]) -> None:
     lchLines: List[str] = [
-        "#ifndef __UI_RESOURCE_H__",
-        "#define __UI_RESOURCE_H__",
+        "#ifndef __GUI_LV_RESOURCE_H__",
+        "#define __GUI_LV_RESOURCE_H__",
         "",
         "/*================================= INCLUDES "
         "=================================*/",
+        "",
+        "#ifndef __GUI_LV_RESOURCE_DECLARE__",
+        "#  define __GUI_LV_RESOURCE_DECLARE__    1",
+        "#endif",   
         "",
         "#ifdef   __cplusplus",
         "extern \"C\" {",
@@ -688,7 +692,7 @@ def _write_ui_resource_header(ptHeaderPath: Path,
         "#ifdef   __cplusplus",
         "}",
         "#endif",
-        "#endif  /* __UI_RESOURCE_H__ */",
+        "#endif  /* __GUI_LV_RESOURCE_H__ */",
         "",
     ])
 
@@ -734,7 +738,7 @@ def _build_parser(ptDefaultResourceDir: Path) -> argparse.ArgumentParser:
     ptDefaultGeneratedDir: Path = ptDefaultResourceDir / "generated"
 
     tParser = argparse.ArgumentParser(
-        description="Generate LVGL fonts/images and sync ui_resource.h",
+        description="Generate LVGL fonts/images and sync gui_lv_resource.h",
     )
     tParser.add_argument("--font", action="store_true", help="Generate fonts")
     tParser.add_argument("--img", action="store_true", help="Generate images")
@@ -760,8 +764,8 @@ def _build_parser(ptDefaultResourceDir: Path) -> argparse.ArgumentParser:
     )
     tParser.add_argument(
         "--header",
-        default=str(ptDefaultGeneratedDir / "ui_resource.h"),
-        help="ui_resource.h path",
+        default=str(ptDefaultGeneratedDir / "gui_lv_resource.h"),
+        help="gui_lv_resource.h path",
     )
     return tParser
 

@@ -4,7 +4,7 @@
  */
 
 /*Copy this file as "lv_port_indev.c" and set this value to "1" to enable content*/
-#if 1
+#if 0
 
 /*********************
  *      INCLUDES
@@ -340,6 +340,13 @@ static void keypad_init(void)
     /*Your code comes here*/
 }
 
+GUI_LV_WEAK uint8_t key_get_value(void)
+{
+    GUI_LV_UNUSED(0);
+    /*Your code comes here*/
+    return 0;
+}
+    
 /*Will be called by the library to read the keypad*/
 static void keypad_read(lv_indev_drv_t * indev_drv, lv_indev_data_t * data)
 {    
@@ -361,13 +368,6 @@ static void keypad_read(lv_indev_drv_t * indev_drv, lv_indev_data_t * data)
         data->key   = g_key_mode_map[g_key_mode][u8KeyId][u8KeyState];
         data->state = LV_INDEV_STATE_PR;
     }
-}
-
-GUI_LV_WEAK uint8_t key_get_value(void)
-{
-    GUI_LV_UNUSED(0);
-    /*Your code comes here*/
-    return 0;
 }
 
 /* Set the keyboard operation mode */

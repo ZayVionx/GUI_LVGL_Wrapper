@@ -1,7 +1,11 @@
-#ifndef __UI_RESOURCE_H__
-#define __UI_RESOURCE_H__
+#ifndef __GUI_LV_RESOURCE_H__
+#define __GUI_LV_RESOURCE_H__
 
 /*================================= INCLUDES =================================*/
+
+#ifndef __GUI_LV_RESOURCE_DECLARE__
+#  define __GUI_LV_RESOURCE_DECLARE__    1
+#endif
 
 #ifdef   __cplusplus
 extern "C" {
@@ -30,4 +34,4 @@ LV_IMG_DECLARE(lv_img_sys_set)
 #ifdef   __cplusplus
 }
 #endif
-#endif  /* __UI_RESOURCE_H__ */
+#endif  /* __GUI_LV_RESOURCE_H__ */
