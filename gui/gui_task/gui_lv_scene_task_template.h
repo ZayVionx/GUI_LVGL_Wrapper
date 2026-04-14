@@ -16,26 +16,15 @@
 *                                                                           *
 ****************************************************************************/
 
-/* ----------------------------------------------------------------------
- * Project:      GUI (LVGL)
- * Title:        gui_scene_template.h
- * Description:  GUI scene template
- *
- * NOTE:
- * - `<NAME>`     ---> Scene name in uppercase (e.g. "MAIN_MENU")
- * - `%Instance%` ---> Scene name in scene id  (e.g. "0/1/2/...")
- * 
- * - `GUI_SCENE_<NAME>` need to be defined in the "gui_scene_id.h" file,
- * 
- * - Do NOT compile this template file directly. For non-RTE usage, replace
- *   `_<name>` manually (and rename files/symbols as needed).
- * --------------------------------------------------------------------
- */
-
-#ifndef __GUI_SCENE_<NAME>_H__
-#define __GUI_SCENE_<NAME>_H__
+#ifndef __GUI_LV_SCENE_TASK_<NAME>_H__
+#define __GUI_LV_SCENE_TASK_<NAME>_H__
 
 /*================================= INCLUDES =================================*/
+#ifdef __GUI_LVGL_WRAPPER_CONF__
+#   include <gui_lvgl.h>
+#else
+#   include "gui_lvgl.h"
+#endif
 
 #ifdef   __cplusplus
 extern "C" {
@@ -46,17 +35,15 @@ extern "C" {
 /*============================= GLOBAL VARIABLES =============================*/
 /*============================== LOCAL VARIABLES =============================*/
 /*================================ PROTOTYPES ================================*/
-/*! 
- * \brief Register/init GUI scene <name>.
- *
- * \note The scene ID should be defined in your enum as GUI_SCENE_<NAME>.
+/*!
+ * \brief GUI scene <NAME> task implementation.
  */
 extern
-void gui_lv_scene_%Instance%_init(void);
+void gui_lv_scene_task_<name>(lv_event_t *e);
 
 /*============================== IMPLEMENTATION ==============================*/
 /*=================================== END ====================================*/
 #ifdef   __cplusplus
 }
 #endif
-#endif /* __GUI_SCENE_<NAME>_H__ */
+#endif /* __GUI_LV_SCENE_TASK_<NAME>_H__ */

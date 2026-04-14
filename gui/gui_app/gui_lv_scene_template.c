@@ -18,18 +18,16 @@
 
 /* ----------------------------------------------------------------------
  * Project:      GUI (LVGL)
- * Title:        gui_scene_template.c
- * Description:  GUI scene template
+ * Title:        gui_scene.c
+ * Description:  GUI scene template (CMSIS-Pack/RTE instance-based)
  *
  * NOTE:
- * - `<name>`     ---> Scene name in lowercase (e.g. "main_menu")
  * - `<NAME>`     ---> Scene name in uppercase (e.g. "MAIN_MENU")
- * - `%Instance%` ---> Scene name in scene id  (e.g. "0/1/2/...")
  * 
  * - `GUI_SCENE_<NAME>` need to be defined in the "gui_scene_id.h" file,
  * 
  * - Do NOT compile this template file directly. For non-RTE usage, replace
- *   `_<name>` manually (and rename files/symbols as needed).
+ *   `<name>` manually (and rename files/symbols as needed).
  * --------------------------------------------------------------------
  */
 
@@ -40,7 +38,9 @@
 #   include "gui_lvgl.h"
 #endif
 
-#include "gui_scene_<name>.h"
+#include <gui_lv_scene_<name>.h>
+#include <gui_lv_scene_task_<name>.h>
+
 
 /*============================ MACROS ========================================*/
 /*!
@@ -54,27 +54,19 @@
 /*============================ TYPES =========================================*/
 typedef struct {
     lv_obj_t   *ptRoot;                                 /*!< Scene root container */
-    
+
     /* -- insert your members begin -- */
 
     /* -- insert your members end -- */
 
-    lv_group_t *ptGroup[GUI_LV_SCENE_GROUP_NUM];        /*!< Input device groups */
-    lv_timer_t *ptTimer[GUI_LV_SCENE_TIMER_NUM];        /*!< Scene timers */
+    lv_group_t *ptGroup[GUI_LV_SCENE_GROUP_NUM];           /*!< Input device groups (optional) */
+    lv_timer_t *ptTimer[GUI_LV_SCENE_TIMER_NUM];           /*!< Scene timers (optional) */
 } gui_scene_t;
 
 /*============================ LOCAL VARIABLES ===============================*/
-static gui_scene_t s_tScene;
+static gui_scene_t s_tGUI;
 
 /*============================ PROTOTYPES ====================================*/
-static void __on_scene_<name>_draw(lv_obj_t *ptRoot);
-static void __on_scene_<name>_load(lv_obj_t *ptRoot);
-static void __on_scene_<name>_depose(void);
-
-#if GUI_LV_SCENE_TIMER_NUM
-static void __on_scene_<name>_timer0_cb(lv_timer_t *ptTimer);
-#endif
-
 /*============================ IMPLEMENTATION ================================*/
 #if GUI_LV_SCENE_TIMER_NUM
 static void __on_scene_<name>_timer0_cb(lv_timer_t *ptTimer)
@@ -89,18 +81,22 @@ static void __on_scene_<name>_timer0_cb(lv_timer_t *ptTimer)
  */
 static void __on_scene_<name>_draw(lv_obj_t *ptRoot)
 {
-    s_tScene.ptRoot = ptRoot;
+    s_tGUI.ptRoot           = ptRoot;
+    gui_lv_style_apply(ptRoot, &ptContDefStyle, 0);
     gui_lv_language_t eLang = gui_lv_get_current_lang();
 
     /*------------------------- draw the scene begin -------------------------*/
 
 
     /*------------------------- draw the scene end   -------------------------*/
-    __on_scene_<name>_load(ptRoot);
+    // __on_scene<name>_load(ptRoot);
+    // __on_scene<name>_bind();
+    GUI_LV_INVOKE_RT_VOID(__on_scene_<name>_load, ptRoot);
+    GUI_LV_INVOKE_RT_VOID(__on_scene_<name>_bind, ptRoot);
 
 #if GUI_LV_SCENE_TIMER_NUM
-    GUI_LV_TIMER_SET(s_tScene.ptTimer[0], __on_scene_<name>_timer0_cb, 1000, NULL);
-    GUI_LV_TIMER_ALL_STOP(s_tScene.ptTimer, GUI_LV_SCENE_TIMER_NUM);
+    GUI_LV_TIMER_SET(s_tGUI.ptTimer[0], __on_scene_<name>_timer0_cb, 1000, NULL);
+    GUI_LV_TIMER_ALL_STOP(s_tGUI.ptTimer, GUI_LV_SCENE_TIMER_NUM);
 #endif
 }
 
@@ -119,11 +115,23 @@ static void __on_scene_<name>_load(lv_obj_t *ptRoot)
 }
 
 /*! 
+ * \brief Application layer data binding.
+ */
+static void __on_scene_<name>_bind(void)
+{
+    GUI_LV_UNUSED(0);
+
+    /*------------------------- bind the scene begin -------------------------*/
+
+    /*------------------------- bind the scene end   -------------------------*/
+}
+
+/*! 
  * \brief Scene resource dispose callback.
  */
 static void __on_scene_<name>_depose(void)
 {
-    GUI_LV_UNUSED(ptRoot);
+    GUI_LV_UNUSED(0);
 
     /*--------------------- insert your depose code begin --------------------*/
 
@@ -131,29 +139,34 @@ static void __on_scene_<name>_depose(void)
     /*--------------------- insert your depose code end  ---------------------*/
 }
 
+
 /*! 
  * \brief Register GUI scene <name>.
+ *
+ * \note  ID should be defined in your enum as GUI_SCENE_<NAME>.
  */
-void gui_lv_scene_%Instance%_init(void)
+void gui_lv_scene_<name>_init(void)
 {
-    static gui_scene_ex_t s_tSceneEX; 
-    s_tSceneEX.u8GroupNum   = GUI_LV_SCENE_GROUP_NUM;
-    s_tSceneEX.u8TimerNum   = GUI_LV_SCENE_TIMER_NUM;
-    s_tSceneEX.ptSceneGroup = GUI_LV_SCENE_GROUP_NUM ? s_tScene.ptGroup 
-                                                     : NULL;
-    s_tSceneEX.ptSceneTimer = GUI_LV_SCENE_TIMER_NUM ? s_tScene.ptTimer 
-                                                     : NULL;
+    static gui_lv_scene_ex_t s_tGUIEX; 
+    s_tGUIEX.u8GroupNum = GUI_LV_SCENE_GROUP_NUM;
+    s_tGUIEX.u8TimerNum = GUI_LV_SCENE_TIMER_NUM;
+    s_tGUIEX.ptGroup    = GUI_LV_SCENE_GROUP_NUM ? s_tGUI.ptGroup 
+                                                 : NULL;
+    s_tGUIEX.ptTimer    = GUI_LV_SCENE_TIMER_NUM ? s_tGUI.ptTimer 
+                                                 : NULL;
 
     /* ------------ initialize members of scene begin ------------ */
-    const gui_scene_cfg_t c_tCFG = {
-        .eId      = GUI_SCENE_<NAME>,
-        .ptEx     = &s_tSceneEX,
-        .pfInit   = __on_scene_<name>_draw,
-        .pfDeinit = __on_scene_<name>_depose,
+    static gui_lv_scene_cfg_t s_tCFG = {
+        .eId       = GUI_LV_SCENE_<NAME>,
+        .ptEx      = &s_tGUIEX,
+        .pfnDraw   = __on_scene_<name>_draw,
+        .pfnLoad   = __on_scene_<name>_load,
+        .pfnBind   = __on_scene_<name>_bind, 
+        .pfnDepose = __on_scene_<name>_depose,
     };
     /* ------------ initialize members of scene end -------------- */
 
-    gui_lv_scene_register(&c_tCFG);
+    gui_lv_scene_register(&s_tCFG);
 }
 
 /*============================ END OF FILE ===================================*/

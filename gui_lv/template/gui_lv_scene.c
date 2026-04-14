@@ -83,6 +83,7 @@ static void __on_scene%Instance%_timer0_cb(lv_timer_t *ptTimer)
 static void __on_scene%Instance%_draw(lv_obj_t *ptRoot)
 {
     s_tGUI.ptRoot           = ptRoot;
+    gui_lv_style_apply(ptRoot, &ptContDefStyle, 0);
     gui_lv_language_t eLang = gui_lv_get_current_lang();
 
     /*------------------------- draw the scene begin -------------------------*/
@@ -145,12 +146,12 @@ static void __on_scene%Instance%_depose(void)
 void gui_lv_scene_%Instance%_init(void)
 {
     static gui_lv_scene_ex_t s_tGUIEX; 
-    s_tGUIEX.u8GroupNum   = GUI_LV_SCENE_GROUP_NUM;
-    s_tGUIEX.u8TimerNum   = GUI_LV_SCENE_TIMER_NUM;
-    s_tGUIEX.ptGroup      = GUI_LV_SCENE_GROUP_NUM ? s_tGUI.ptGroup 
-                                                     : NULL;
-    s_tGUIEX.ptTimer      = GUI_LV_SCENE_TIMER_NUM ? s_tGUI.ptTimer 
-                                                     : NULL;
+    s_tGUIEX.u8GroupNum = GUI_LV_SCENE_GROUP_NUM;
+    s_tGUIEX.u8TimerNum = GUI_LV_SCENE_TIMER_NUM;
+    s_tGUIEX.ptGroup    = GUI_LV_SCENE_GROUP_NUM ? s_tGUI.ptGroup 
+                                                 : NULL;
+    s_tGUIEX.ptTimer    = GUI_LV_SCENE_TIMER_NUM ? s_tGUI.ptTimer 
+                                                 : NULL;
 
     /* ------------ initialize members of scene begin ------------ */
     static gui_lv_scene_cfg_t c_tCFG = {

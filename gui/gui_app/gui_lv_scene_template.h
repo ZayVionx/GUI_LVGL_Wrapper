@@ -18,22 +18,19 @@
 
 /* ----------------------------------------------------------------------
  * Project:      GUI (LVGL)
- * Title:        gui_scene_template.h
- * Description:  GUI scene template
+ * Title:        gui_scene.h
+ * Description:  GUI scene template (CMSIS-Pack/RTE instance-based)
  *
  * NOTE:
- * - `<NAME>`     ---> Scene name in uppercase (e.g. "MAIN_MENU")
- * - `%Instance%` ---> Scene name in scene id  (e.g. "0/1/2/...")
- * 
  * - `GUI_SCENE_<NAME>` need to be defined in the "gui_scene_id.h" file,
  * 
  * - Do NOT compile this template file directly. For non-RTE usage, replace
- *   `_<name>` manually (and rename files/symbols as needed).
+ *   `%Instance%` manually (and rename files/symbols as needed).
  * --------------------------------------------------------------------
  */
 
-#ifndef __GUI_SCENE_<NAME>_H__
-#define __GUI_SCENE_<NAME>_H__
+#ifndef __GUI_LV_SCENE_<NAME>_H__
+#define __GUI_LV_SCENE_<NAME>_H__
 
 /*================================= INCLUDES =================================*/
 
@@ -52,11 +49,11 @@ extern "C" {
  * \note The scene ID should be defined in your enum as GUI_SCENE_<NAME>.
  */
 extern
-void gui_lv_scene_%Instance%_init(void);
+void gui_lv_scene_<name>_init(void);
 
 /*============================== IMPLEMENTATION ==============================*/
 /*=================================== END ====================================*/
 #ifdef   __cplusplus
 }
 #endif
-#endif /* __GUI_SCENE_<NAME>_H__ */
+#endif /* __GUI_LV_SCENE_<NAME>_H__ */

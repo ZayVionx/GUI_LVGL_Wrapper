@@ -16,47 +16,36 @@
 *                                                                           *
 ****************************************************************************/
 
-/* ----------------------------------------------------------------------
- * Project:      GUI (LVGL)
- * Title:        gui_scene_template.h
- * Description:  GUI scene template
- *
- * NOTE:
- * - `<NAME>`     ---> Scene name in uppercase (e.g. "MAIN_MENU")
- * - `%Instance%` ---> Scene name in scene id  (e.g. "0/1/2/...")
- * 
- * - `GUI_SCENE_<NAME>` need to be defined in the "gui_scene_id.h" file,
- * 
- * - Do NOT compile this template file directly. For non-RTE usage, replace
- *   `_<name>` manually (and rename files/symbols as needed).
- * --------------------------------------------------------------------
- */
-
-#ifndef __GUI_SCENE_<NAME>_H__
-#define __GUI_SCENE_<NAME>_H__
-
 /*================================= INCLUDES =================================*/
+#include <gui_lv_scene_task_<name>.h>
+#include <gui_lv_scene_<name>.h>
 
-#ifdef   __cplusplus
-extern "C" {
-#endif
 /*================================== MACROS ==================================*/
 /*============================ MACROFIED FUNCTIONS ===========================*/
 /*================================== TYPES ===================================*/
 /*============================= GLOBAL VARIABLES =============================*/
 /*============================== LOCAL VARIABLES =============================*/
 /*================================ PROTOTYPES ================================*/
-/*! 
- * \brief Register/init GUI scene <name>.
- *
- * \note The scene ID should be defined in your enum as GUI_SCENE_<NAME>.
- */
-extern
-void gui_lv_scene_%Instance%_init(void);
-
 /*============================== IMPLEMENTATION ==============================*/
-/*=================================== END ====================================*/
-#ifdef   __cplusplus
+    
+/*!
+ * \brief GUI scene <name> task implementation.
+ */
+void gui_lv_scene_task_<name>(lv_event_t *e)
+{
+    if(lv_event_get_code(e) != LV_EVENT_KEY)    return;
+    uint32_t u32Key = lv_indev_get_key(LV_INDEV_KEYPAD);
+
+    switch(u32Key)
+    {
+        // case LV_KEY_UP:    break;
+        // case LV_KEY_DOWN:  break;
+        // case LV_KEY_LEFT:  break;
+        // case LV_KEY_RIGHT: break;
+        // case LV_KEY_ESC:   break;
+        // case LV_KEY_ENTER: break;
+    }
+
 }
-#endif
-#endif /* __GUI_SCENE_<NAME>_H__ */
+
+/*==================================== END ===================================*/

@@ -16,8 +16,8 @@
 *                                                                           *
 ****************************************************************************/
 
-#ifndef __GUI_SCENE_TASK_%Instance%_H__
-#define __GUI_SCENE_TASK_%Instance%_H__
+#ifndef __GUI_LV_SCENE_TASK_%Instance%_H__
+#define __GUI_LV_SCENE_TASK_%Instance%_H__
 
 /*================================= INCLUDES =================================*/
 #ifdef __GUI_LVGL_WRAPPER_CONF__
@@ -39,11 +39,11 @@ extern "C" {
  * \brief GUI scene <NAME> task implementation.
  */
 extern
-void gui_scene_task_%Instance%(lv_event_t *e);
+void gui_lv_scene_task_%Instance%(lv_event_t *e);
 
 /*============================== IMPLEMENTATION ==============================*/
 /*=================================== END ====================================*/
 #ifdef   __cplusplus
 }
 #endif
-#endif /* __GUI_SCENE_TASK_%Instance%_H__ */
+#endif /* __GUI_LV_SCENE_TASK_%Instance%_H__ */
