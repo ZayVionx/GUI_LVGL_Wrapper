@@ -50,10 +50,11 @@ extern "C" {
 #include "core/gui_lv_common.h"
 
 /*================================== MACROS ==================================*/
+void __gui_lv_scene_list_init(void);
 /*!
  * \note do NOT use this macro directly
  */
-#define __GUI_LV_SCENE_LIST_INIT()      __gui_lv_scend_list_init()
+#define __GUI_LV_SCENE_LIST_INIT()      __gui_lv_scene_list_init()
 
 /*============================ MACROFIED FUNCTIONS ===========================*/
 /*================================== TYPES ===================================*/

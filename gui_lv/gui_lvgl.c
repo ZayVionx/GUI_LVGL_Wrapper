@@ -140,8 +140,7 @@ void gui_lv_init(void)
     /* initialize members of scene end */
     
     gui_lv_scene_switch( 
-            gui_lv_get_boot_scene_id()
-        );
+        gui_lv_get_boot_scene_id());
 
     lv_timer_handler();
 }

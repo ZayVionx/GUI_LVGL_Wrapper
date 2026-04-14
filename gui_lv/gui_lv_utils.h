@@ -187,30 +187,6 @@ extern "C" {
 #define GUI_LV_SCREEN_WIDTH         lv_disp_get_hor_res(lv_disp_get_default())
 #define GUI_LV_SCREEN_HEIGHT        lv_disp_get_ver_res(lv_disp_get_default())
 
-#define GUI_LV_CONTAINER_SET_BG_COLOR(_container, _color)                      \
-	do {                                                                       \
-		if ((_container) != NULL) {                                            \
-			lv_obj_set_style_bg_color((_container), (_color), 0);              \
-		}                                                                      \
-	} while (0)
-
-/*----------------------------------------------------------------------------*
- * Label macro func                                                           *
- *----------------------------------------------------------------------------*/
-#define GUI_LV_LABEL_SET_TEXT(_label, _text)                                   \
-	do {                                                                       \
-		if ((_label) != NULL) {                                                \
-			lv_label_set_text((_label), (_text));                              \
-		}                                                                      \
-	} while (0)
-
-#define GUI_LV_LABEL_SET_TEXT_FMT(_label, _fmt, ...)                           \
-	do {                                                                       \
-		if ((_label) != NULL) {                                                \
-			lv_label_set_text_fmt((_label), (_fmt), __VA_ARGS__);              \
-		}                                                                      \
-	} while (0)
-
 /*----------------------------------------------------------------------------*
  * Image macro func                                                           *
  *----------------------------------------------------------------------------*/
@@ -219,16 +195,6 @@ extern "C" {
 		if ((_img) != NULL) {                                                  \
 			lv_img_set_src((_img), (_src));                                    \
 			lv_obj_set_size((_img), (_width), (_height));                      \
-		}                                                                      \
-	} while (0)
-
-/*----------------------------------------------------------------------------*
- * Bar macro func                                                             *
- *----------------------------------------------------------------------------*/
-#define GUI_LV_BAR_SET_VALUE(_bar, _value, _is_anim)                           \
-	do {                                                                       \
-		if ((_bar) != NULL) {                                                  \
-			lv_bar_set_value((_bar), (_value), (lv_anim_enable_t)(_is_anim));  \
 		}                                                                      \
 	} while (0)
 
@@ -322,36 +288,6 @@ extern "C" {
 			lv_group_remove_all_objs((_group));                                \
 			lv_group_del((_group));                                            \
 			(_group) = NULL;                                                   \
-		}                                                                      \
-	} while (0)
-
-/*----------------------------------------------------------------------------*
- * Common macro func                                                          *
- *----------------------------------------------------------------------------*/
-#define GUI_LV_DISP_LOAD_SCR(_scr)                                             \
-	do {                                                                       \
-		if ((_scr) != NULL) {                                                  \
-			if(lv_scr_act() != NULL) {                                         \
-				lv_scr_load_anim((_scr), LV_SCR_LOAD_ANIM_NONE,0,0,true);      \
-			} else {                                                           \
-				lv_disp_load_scr((_scr));                                      \
-			}                                                                  \
-		}                                                                      \
-	} while (0)
-
-#define GUI_LV_SET_ALIGN(_obj, _align, _ofs_x, _ofs_y)                         \
-	do {                                                                       \
-		if ((_obj) != NULL) {                                                  \
-			lv_obj_align((_obj), (_align),                                     \
-						 (int16_t)(_ofs_x), (int16_t)(_ofs_y));                \
-		}                                                                      \
-	} while (0)
-
-#define GUI_LV_SET_ALIGN_TO(_obj, _base, _align, _ofs_x, _ofs_y)               \
-	do {                                                                       \
-		if ((_obj) != NULL) {                                                  \
-			lv_obj_align_to((_obj), (_base), (_align),                         \
-							(int16_t)(_ofs_x), (int16_t)(_ofs_y));             \
 		}                                                                      \
 	} while (0)
 
@@ -466,38 +402,38 @@ void gui_lv_label_display_event_cb(lv_event_t *e)
 /*!
  * \note do NOT use this macro directly
  */
-#define __GUI_LV_USING1(__declare)                                                 \
-            for (__declare, *GUI_LV_CONNECT3(__GUI_LV_USING_, __LINE__,_ptr) = NULL;  \
-                 GUI_LV_CONNECT3(__GUI_LV_USING_, __LINE__,_ptr)++ == NULL;           \
+#define __GUI_LV_USING1(__declare)                                                      \
+            for (__declare, *GUI_LV_CONNECT3(__GUI_LV_USING_, __LINE__,_ptr) = NULL;    \
+                 GUI_LV_CONNECT3(__GUI_LV_USING_, __LINE__,_ptr)++ == NULL;             \
                 )
 
 /*!
  * \note do NOT use this macro directly
  */
-#define __GUI_LV_USING2(__declare, __on_leave_expr)                                \
-            for (__declare, *GUI_LV_CONNECT3(__GUI_LV_USING_, __LINE__,_ptr) = NULL;  \
-                 GUI_LV_CONNECT3(__GUI_LV_USING_, __LINE__,_ptr)++ == NULL;           \
-                 (__on_leave_expr)                                              \
+#define __GUI_LV_USING2(__declare, __on_leave_expr)                                     \
+            for (__declare, *GUI_LV_CONNECT3(__GUI_LV_USING_, __LINE__,_ptr) = NULL;    \
+                 GUI_LV_CONNECT3(__GUI_LV_USING_, __LINE__,_ptr)++ == NULL;             \
+                 (__on_leave_expr)                                                      \
                 )
 
 /*!
  * \note do NOT use this macro directly
  */
-#define __GUI_LV_USING3(__declare, __on_enter_expr, __on_leave_expr)               \
-            for (__declare, *GUI_LV_CONNECT3(__GUI_LV_USING_, __LINE__,_ptr) = NULL;  \
-                 GUI_LV_CONNECT3(__GUI_LV_USING_, __LINE__,_ptr)++ == NULL ?          \
-                    ((__on_enter_expr),1) : 0;                                  \
-                 (__on_leave_expr)                                              \
+#define __GUI_LV_USING3(__declare, __on_enter_expr, __on_leave_expr)                    \
+            for (__declare, *GUI_LV_CONNECT3(__GUI_LV_USING_, __LINE__,_ptr) = NULL;    \
+                 GUI_LV_CONNECT3(__GUI_LV_USING_, __LINE__,_ptr)++ == NULL ?            \
+                    ((__on_enter_expr),1) : 0;                                          \
+                 (__on_leave_expr)                                                      \
                 )
 
 /*!
  * \note do NOT use this macro directly
  */
-#define __GUI_LV_USING4(__dcl1, __dcl2, __on_enter_expr, __on_leave_expr)          \
-            for (__dcl1,__dcl2,*GUI_LV_CONNECT3(__GUI_LV_USING_, __LINE__,_ptr)= NULL;\
-                 GUI_LV_CONNECT3(__GUI_LV_USING_, __LINE__,_ptr)++ == NULL ?          \
-                    ((__on_enter_expr),1) : 0;                                  \
-                 (__on_leave_expr)                                              \
+#define __GUI_LV_USING4(__dcl1, __dcl2, __on_enter_expr, __on_leave_expr)               \
+            for (__dcl1,__dcl2,*GUI_LV_CONNECT3(__GUI_LV_USING_, __LINE__,_ptr)= NULL;  \
+                 GUI_LV_CONNECT3(__GUI_LV_USING_, __LINE__,_ptr)++ == NULL ?            \
+                    ((__on_enter_expr),1) : 0;                                          \
+                 (__on_leave_expr)                                                      \
                 )
 
 /*!
@@ -538,11 +474,11 @@ void gui_lv_label_display_event_cb(lv_event_t *e)
  * \param __array the target array
  * \note you can use "_" as the current object (iterator)
  */
-#define GUI_LV_FOREACH1(__array)                                                   \
-            gui_lv_using(typeof(__array[0]) *_ = __array)                          \
-            for (   uint_fast32_t GUI_LV_CONNECT2(count,__LINE__) = dimof(__array);\
-                    GUI_LV_CONNECT2(count,__LINE__) > 0;                           \
-                    _++, GUI_LV_CONNECT2(count,__LINE__)--                         \
+#define GUI_LV_FOREACH1(__array)                                                        \
+            gui_lv_using(typeof(__array[0]) *_ = __array)                               \
+            for (   uint_fast32_t GUI_LV_CONNECT2(count,__LINE__) = dimof(__array);     \
+                    GUI_LV_CONNECT2(count,__LINE__) > 0;                                \
+                    _++, GUI_LV_CONNECT2(count,__LINE__)--                              \
                 )
 
 /*!
@@ -551,11 +487,11 @@ void gui_lv_label_display_event_cb(lv_event_t *e)
  * \param __array the target array
  * \note you can use "_" as the current object (iterator)
  */
-#define GUI_LV_FOREACH2(__type, __array)                                           \
-            gui_lv_using(__type *_ = __array)                                      \
-            for (   uint_fast32_t GUI_LV_CONNECT2(count,__LINE__) = dimof(__array);\
-                    GUI_LV_CONNECT2(count,__LINE__) > 0;                           \
-                    _++, GUI_LV_CONNECT2(count,__LINE__)--                         \
+#define GUI_LV_FOREACH2(__type, __array)                                                \
+            gui_lv_using(__type *_ = __array)                                           \
+            for (   uint_fast32_t GUI_LV_CONNECT2(count,__LINE__) = dimof(__array);     \
+                    GUI_LV_CONNECT2(count,__LINE__) > 0;                                \
+                    _++, GUI_LV_CONNECT2(count,__LINE__)--                              \
                 )
 
 /*!
@@ -563,13 +499,10 @@ void gui_lv_label_display_event_cb(lv_event_t *e)
  * \param __type the type of the array
  * \param __array the target array
  * \param __item a name for the current item (iterator)
+ * \note __item is a pointer to the current element
  */
-#define GUI_LV_FOREACH3(__type, __array, __item)                                   \
-            gui_lv_using(__type *_ = __array, *__item = _, (void)_, (void)0 )      \
-            for (   uint_fast32_t GUI_LV_CONNECT2(count,__LINE__) = dimof(__array);\
-                    GUI_LV_CONNECT2(count,__LINE__) > 0;                           \
-                    _++, __item = _, GUI_LV_CONNECT2(count,__LINE__)--             \
-                )
+#define GUI_LV_FOREACH3(__type, __array, __item)                               \
+			GUI_LV_FOREACH4(__type, __array, dimof(__array), __item)
 
 /*!
  * \brief access each items in a given array
@@ -577,19 +510,25 @@ void gui_lv_label_display_event_cb(lv_event_t *e)
  * \param __array the target array or the pointer of an memory block
  * \param __count number of items in the array/memory block
  * \param __item a name for the current item (iterator)
+ * \note __item is a pointer to the current element; for pointer arrays,
+ *       use one more dereference to access the stored pointer
  */
 #define GUI_LV_FOREACH4(__type, __array, __count, __item)                      \
-            gui_lv_using(__type *_ = __array, *__item = _, (void)_, (void)0)   \
-            for (   uint_fast32_t GUI_LV_CONNECT2(count,__LINE__) = (__count); \
-                    GUI_LV_CONNECT2(count,__LINE__) > 0;                       \
-                    _++, __item = _, GUI_LV_CONNECT2(count,__LINE__)--         \
-                )
+			gui_lv_using(                                                      \
+				uint_fast32_t GUI_LV_CONNECT2(count,__LINE__) = (__count)      \
+			)                                                                  \
+			gui_lv_using(__type *(__item) = NULL)                              \
+			for (   __type *_ = (__array);                                     \
+					GUI_LV_CONNECT2(count,__LINE__) > 0;                       \
+					_++, (__item) = NULL, GUI_LV_CONNECT2(count,__LINE__)--    \
+				)                                                              \
+				if (((__item) = _), 1)
 
 /*!
  * \brief access each items in a given array
  * \note there are 4 prototypes, please refer to GUI_LV_FOREACH1/2/3/4 for details
  */
-#define gui_lv_foreach(...)                                                        \
+#define gui_lv_foreach(...)                                                    \
             GUI_LV_CONNECT2(GUI_LV_FOREACH, __GUI_LV_VA_NUM_ARGS(__VA_ARGS__))(__VA_ARGS__)
 
             

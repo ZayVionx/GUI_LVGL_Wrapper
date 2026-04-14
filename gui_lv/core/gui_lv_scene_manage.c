@@ -168,7 +168,7 @@ static void __gui_lv_indev_bind_group(gui_lv_extend_t *ptEx);
 /*!
  * \brief Initialize the scene and page lists
  */
-void __gui_lv_scend_list_init(void)
+void __gui_lv_scene_list_init(void)
 {
     emb_list_init(&s_tSceneHead);
     emb_list_init(&s_tPageHead) ;
@@ -258,8 +258,6 @@ void gui_lv_scene_switch(gui_lv_scene_id_t eId)
     s_tScenePools[eId].ptRoot = ptRoot;
     __gui_lv_extend_create(s_tScenePools[eId].ptCFG->ptEx);
     GUI_LV_INVOKE_RT_VOID(s_tScenePools[eId].ptCFG->pfnDraw, ptRoot);
-    // GUI_LV_INVOKE_RT_VOID(s_tScenePools[eId].ptCFG->pfnLoad, ptRoot);
-    // GUI_LV_INVOKE_RT_VOID(s_tScenePools[eId].ptCFG->pfnBind);
 
     lv_scr_load_anim(ptRoot, LV_SCR_LOAD_ANIM_NONE, 0, 0, true);
     
@@ -315,8 +313,6 @@ void gui_lv_scene_switch_with_anim(gui_lv_scene_id_t eId,
     s_tScenePools[eId].ptRoot = ptRoot;
     __gui_lv_extend_create(s_tScenePools[eId].ptCFG->ptEx);
     GUI_LV_INVOKE_RT_VOID(s_tScenePools[eId].ptCFG->pfnDraw, ptRoot);
-    // GUI_LV_INVOKE_RT_VOID(s_tScenePools[eId].ptCFG->pfnLoad, ptRoot);
-    // GUI_LV_INVOKE_RT_VOID(s_tScenePools[eId].ptCFG->pfnBind);
 
     uint32_t           u32AnimTime  = eAnimMode.u32AnimTime ;         
     uint32_t           u32AnimDelay = eAnimMode.u32AnimDelay;
@@ -414,21 +410,27 @@ static void __gui_lv_extend_create(gui_lv_extend_t *ptEx)
 
     /* Create groups */
     gui_lv_foreach(lv_group_t*, 
-                   (lv_group_t*)ptEx->ptGroup, 
+                   ptEx->ptGroup, 
                    ptEx->u8GroupNum, 
-                   pGroup) 
+                   pptGroup) 
     {
-        if(!pGroup) pGroup = lv_group_create();
+        if(*pptGroup == NULL)
+        {
+            *pptGroup = lv_group_create();
+        }
     }
 
     /* Create timers */
     gui_lv_foreach(lv_timer_t*, 
-                   (lv_timer_t*)ptEx->ptTimer, 
+                   ptEx->ptTimer, 
                    ptEx->u8TimerNum, 
-                   pTimer) 
+                   pptTimer) 
     {
-        if(!pTimer) pTimer = lv_timer_create(NULL, 500, NULL);
-        GUI_LV_TIMER_STOP(pTimer);
+        if(*pptTimer == NULL)
+        {
+            *pptTimer = lv_timer_create(NULL, 500, NULL);
+        }
+        GUI_LV_TIMER_STOP(*pptTimer);
     }
 }
 
@@ -441,20 +443,26 @@ static void __gui_lv_extend_depose(gui_lv_extend_t *ptEx)
     
     /* Destroy groups */
     gui_lv_foreach(lv_group_t*, 
-                   (lv_group_t*)ptEx->ptGroup, 
+                   ptEx->ptGroup, 
                    ptEx->u8GroupNum, 
-                   pGroup) 
+                   pptGroup) 
     {
-        if(pGroup) GUI_LV_GROUP_DESTROY(pGroup);
+        if(*pptGroup != NULL)
+        {
+            GUI_LV_GROUP_DESTROY(*pptGroup);
+        }
     }
 
     /* Destroy timers */
     gui_lv_foreach(lv_timer_t*, 
-                   (lv_timer_t*)ptEx->ptTimer, 
+                   ptEx->ptTimer, 
                    ptEx->u8TimerNum, 
-                   pTimer) 
+                   pptTimer) 
     {
-        if(pTimer) GUI_LV_TIMER_DESTROY(pTimer);
+        if(*pptTimer != NULL)
+        {
+            GUI_LV_TIMER_DESTROY(*pptTimer);
+        }
     }
 }
 

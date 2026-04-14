@@ -287,8 +287,8 @@ void gui_lv_batt_draw(void)
     tBattery.BattGuage.chBattGuageW = 19;
     tBattery.BattGuage.chBattGuageH = 48;
     tBattery.BattGuage.chBattMax    = 5;
-    tBattery.BattGuage.chStartX      = 4;       /* 第一格起始X */
-    tBattery.BattGuage.chGap          = 3;       /* 格间距 */
+    tBattery.BattGuage.chStartX     = 4;       /* 第一格起始X */
+    tBattery.BattGuage.chGap        = 3;       /* 格间距 */
     tBattery.BattGuage.chBattLevel  = 3;       /* 初始电量 */
     gui_lv_custom_battery_create(&tBattery);
 }
