@@ -379,6 +379,9 @@ void gui_lv_label_display_event_cb(lv_event_t *e)
 
 #define GUI_LV_ARRAY_COLS(a)        (sizeof((a)[0]) / sizeof((a)[0][0]))
 
+#ifndef dimof
+    #define dimof(__array)          (sizeof(__array) / sizeof(__array[0]))
+#endif
 
 /*!
  * \brief A macro to safely invode a function pointer
