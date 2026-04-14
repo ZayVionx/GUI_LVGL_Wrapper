@@ -98,7 +98,7 @@ static void __on_scene%Instance%_draw(lv_obj_t *ptRoot)
     // __on_scene%Instance%_load(ptRoot);
     // __on_scene%Instance%_bind();
     GUI_LV_INVOKE_RT_VOID(__on_scene%Instance%_load, ptRoot);
-    GUI_LV_INVOKE_RT_VOID(__on_scene%Instance%_bind, ptRoot);
+    GUI_LV_INVOKE_RT_VOID(__on_scene%Instance%_bind);
 
 #if GUI_LV_SCENE_TIMER_NUM
     GUI_LV_TIMER_SET(s_tGUI.ptTimer[0], __on_scene%Instance%_timer0_cb, 1000, NULL);

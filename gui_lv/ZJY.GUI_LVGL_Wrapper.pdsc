@@ -123,11 +123,6 @@
                 <file category="sourceC" name="helper/source/gui_lv_helper_bind.c"/>
                 
             </files>
-            <Pre_Include_Global_h>
-#define __GUI_LVGL_WRAPPER__        1
-#define __LVGL_CONF_SKIP_HEADER___
-            </Pre_Include_Global_h>
-
             <!-- Inject RTE_Components_h macro so code can detect the pack -->
             <RTE_Components_h>
 #define __GUI_LVGL_WRAPPER_HELPER__ 1
@@ -161,8 +156,7 @@
 
             </files>
             <Pre_Include_Global_h>
-#define __GUI_LVGL_WRAPPER__        1
-#define __LVGL_CONF_SKIP_HEADER___
+#define __GUI_LVGL_WRAPPER_CONF__   1
             </Pre_Include_Global_h>
 
             <!-- Inject RTE_Components_h macro so code can detect the pack -->
@@ -196,8 +190,12 @@
 
             <RTE_Components_h>
 #define __RTE_Acceleration_GUI_LVGL_SCENE__    1
-#define __RTE_Acceleration_GUI_LVGL_Scene%Instance%__
             </RTE_Components_h>
+
+            <Pre_Include_Global_h>
+#define __RTE_Acceleration_GUI_LVGL_SCENE__    1
+#define __RTE_Acceleration_GUI_LVGL_Scene%Instance%__
+            </Pre_Include_Global_h>
         </component>
 
         <component Cclass="GUI_LVGL_Wrapper"  Cgroup="Template"

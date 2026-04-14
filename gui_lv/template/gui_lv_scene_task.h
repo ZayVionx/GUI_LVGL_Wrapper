@@ -20,6 +20,9 @@
 #define __GUI_LV_SCENE_TASK_%Instance%_H__
 
 /*================================= INCLUDES =================================*/
+#ifdef _RTE_
+#   include "RTE_Components.h"
+#endif
 #ifdef __GUI_LVGL_WRAPPER_CONF__
 #   include <gui_lvgl.h>
 #else
