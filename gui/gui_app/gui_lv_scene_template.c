@@ -67,6 +67,11 @@ typedef struct {
 static gui_scene_t s_tGUI;
 
 /*============================ PROTOTYPES ====================================*/
+static void __on_scene_<name>_draw(lv_obj_t *ptRoot);
+static void __on_scene_<name>_load(lv_obj_t *ptRoot);
+static void __on_scene_<name>_bind(void);
+static void __on_scene_<name>_depose(void);
+
 /*============================ IMPLEMENTATION ================================*/
 #if GUI_LV_SCENE_TIMER_NUM
 static void __on_scene_<name>_timer0_cb(lv_timer_t *ptTimer)

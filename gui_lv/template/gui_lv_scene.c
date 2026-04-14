@@ -68,6 +68,11 @@ typedef struct {
 static gui_scene_t s_tGUI;
 
 /*============================ PROTOTYPES ====================================*/
+static void __on_scene%Instance%_draw(lv_obj_t *ptRoot);
+static void __on_scene%Instance%_load(lv_obj_t *ptRoot);
+static void __on_scene%Instance%_bind(void);
+static void __on_scene%Instance%_depose(void);
+
 /*============================ IMPLEMENTATION ================================*/
 #if GUI_LV_SCENE_TIMER_NUM
 static void __on_scene%Instance%_timer0_cb(lv_timer_t *ptTimer)
@@ -145,7 +150,7 @@ static void __on_scene%Instance%_depose(void)
  */
 void gui_lv_scene_%Instance%_init(void)
 {
-    static gui_lv_scene_ex_t s_tGUIEX; 
+    static gui_lv_extend_t s_tGUIEX; 
     s_tGUIEX.u8GroupNum = GUI_LV_SCENE_GROUP_NUM;
     s_tGUIEX.u8TimerNum = GUI_LV_SCENE_TIMER_NUM;
     s_tGUIEX.ptGroup    = GUI_LV_SCENE_GROUP_NUM ? s_tGUI.ptGroup 
