@@ -53,15 +53,17 @@ void gui_lv_custom_battery_create(gui_lv_custom_battery_t *ptBattery)
     uint32_t u32ImgSize   = ((const lv_img_dsc_t *)ptThis->pImgScr)->header.w; 
     uint32_t u32ImgHeight = ((const lv_img_dsc_t *)ptThis->pImgScr)->header.h; 
 
-    /* 创建电池外框图像对象 */
-    ptThis->ptFrameImg = gui_lv_img_init(ptThis->ptParent,
-                                           0, 0,
-                                           u32ImgSize, u32ImgHeight,
-                                           ptThis->pImgScr);
+    /* step1: Create an image object for the battery frame */
+    ptThis->ptFrameImg = gui_lv_img_init( ptThis->ptParent,
+                                          0, 
+                                          0,
+                                          u32ImgSize, 
+                                          u32ImgHeight,
+                                          ptThis->pImgScr);
     lv_obj_align(ptThis->ptFrameImg, ptThis->chAlign, ptThis->i16X, ptThis->i16Y);
     ptThis->tAnim.pCurrentImgScr = ptThis->pImgScr;
     
-    /* 创建电量格对象 */
+    /* step2: Create gauge objects */
     uint16_t u16GaugeW  = ptThis->BattGuage.chBattGuageW;
     uint8_t  chStartX   = ptThis->BattGuage.chStartX;
     uint8_t  chGap      = ptThis->BattGuage.chGap;
@@ -83,17 +85,17 @@ void gui_lv_custom_battery_create(gui_lv_custom_battery_t *ptBattery)
         lv_obj_clear_flag(ptGuage, LV_OBJ_FLAG_SCROLLABLE);
     }
 
-    /* 初始化动画状态 */
+    /* step3: Initialize animation state */
     ptThis->tAnim.bBlinkVisible  = false;
     ptThis->tAnim.bIsCharging    = false;
     ptThis->tAnim.bPendingUpdate = false;
     ptThis->tAnim.chDisplayLevel = ptThis->BattGuage.chBattLevel;
 
-    /* 创建闪烁定时器（初始为停止状态） */
+    /* step4: Create blink timer (initially stopped) */
     ptThis->tAnim.ptTimer = lv_timer_create(__gui_lv_battery_timer_cb, BATT_BLINK_PERIOD_MS, ptBattery);
     GUI_LV_TIMER_STOP(ptThis->tAnim.ptTimer);
 
-    /* 初始显示 */
+    /* step5: Initial display */
     __gui_lv_battery_refresh_display(ptThis);
 }
 
@@ -159,11 +161,14 @@ void gui_lv_custom_battery_set_level(gui_lv_custom_battery_t *ptBattery,
 
     ptBattery->BattGuage.chBattLevel = chBattLevel;
 
-    if (ptBattery->tAnim.bIsCharging) {
-        /* 充电中：标记待更新，等闪烁周期结束后同步 */
+    if (ptBattery->tAnim.bIsCharging) 
+    {
+        /* Charge Mode: mark pending update, will sync after current blink cycle */
         ptBattery->tAnim.bPendingUpdate = true;
-    } else {
-        /* 空闲模式：直接更新显示 */
+    } 
+    else 
+    {
+        /* IDLE Mode: immediately refresh display */
         ptBattery->tAnim.chDisplayLevel = chBattLevel;
         __gui_lv_battery_refresh_display(ptBattery);
     }
@@ -231,19 +236,22 @@ void __gui_lv_battery_refresh_display(gui_lv_custom_battery_t *ptBattery)
             continue;
         }
 
-        if (i < chDisplayLevel) {
-            /* 已确认的电量格：显示 */
+        if (i < chDisplayLevel)
+        {
+            /* Confirmed gauge: display */
             lv_obj_set_style_bg_color(ptGuage, tColor, 0);
             lv_obj_clear_flag(ptGuage, LV_OBJ_FLAG_HIDDEN);
         }
-        else if (bIsCharging && (i == chDisplayLevel) && (chDisplayLevel < ptBattery->BattGuage.chBattMax)) {
-            /* 闪烁格：充电模式下，下一格做闪烁 */
+        else if (bIsCharging && (i == chDisplayLevel) && (chDisplayLevel < ptBattery->BattGuage.chBattMax)) 
+        {
+            /* Blinking gauge: in charging mode, the next gauge blinks */
             lv_obj_set_style_bg_color(ptGuage, BATT_COLOR_CHARGING, 0);
             if (bBlinkVisible)  lv_obj_clear_flag(ptGuage, LV_OBJ_FLAG_HIDDEN);
             else                lv_obj_add_flag(ptGuage, LV_OBJ_FLAG_HIDDEN);
         }
-        else {
-            /* 超出电量范围：隐藏 */
+        else 
+        {
+            /* Out of range: hide */
             lv_obj_add_flag(ptGuage, LV_OBJ_FLAG_HIDDEN);
         }
     }
@@ -260,11 +268,13 @@ static void __gui_lv_battery_timer_cb(lv_timer_t *ptTimer)
 {
     gui_lv_custom_battery_t *ptBattery = (gui_lv_custom_battery_t *)ptTimer->user_data;
 
-    /* 切换闪烁状态 */
+    /* Step1: Toggle blink visibility */
     ptBattery->tAnim.bBlinkVisible = !ptBattery->tAnim.bBlinkVisible;
 
-    /* 从 可见→不可见 时，是一个完整闪烁周期结束点，检查是否需要同步电量 */
-    if (!ptBattery->tAnim.bBlinkVisible && ptBattery->tAnim.bPendingUpdate) {
+    /* Step2: Check if a full blink cycle has completed 
+              and synchronize battery level if needed.   */
+    if (!ptBattery->tAnim.bBlinkVisible && ptBattery->tAnim.bPendingUpdate) 
+    {
         ptBattery->tAnim.bPendingUpdate = false;
         ptBattery->tAnim.chDisplayLevel = ptBattery->BattGuage.chBattLevel;
     }

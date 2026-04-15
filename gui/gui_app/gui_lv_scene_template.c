@@ -94,8 +94,6 @@ static void __on_scene_<name>_draw(lv_obj_t *ptRoot)
 
 
     /*------------------------- draw the scene end   -------------------------*/
-    // __on_scene<name>_load(ptRoot);
-    // __on_scene<name>_bind();
     GUI_LV_INVOKE_RT_VOID(__on_scene_<name>_load, ptRoot);
     GUI_LV_INVOKE_RT_VOID(__on_scene_<name>_bind);
 

@@ -23,7 +23,6 @@
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
-#include "platform/gui_lv_user_arch_port.h"
 
 #ifdef _RTE_
 #   include "RTE_Components.h"
@@ -31,8 +30,10 @@
 
 #if __GUI_LVGL_WRAPPER_CONF__
 #   include <gui_lv_conf.h>
+#   include <platform/gui_lv_user_arch_port.h>
 #else  
 #   include "gui_lv_conf.h"
+#   include "platform/gui_lv_user_arch_port.h"
 #endif
 
 #ifdef _WIN64

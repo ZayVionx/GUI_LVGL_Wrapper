@@ -54,14 +54,14 @@
 
 /*============================ TYPES =========================================*/
 typedef struct {
-    lv_obj_t   *ptRoot;                                 /*!< Scene root container */
+    lv_obj_t   *ptRoot;                                                         /*!< Scene root container */
 
     /* -- insert your members begin -- */
 
-    /* -- insert your members end -- */
+    /* -- insert your members end ---- */
 
-    lv_group_t *ptGroup[GUI_LV_SCENE_GROUP_NUM];           /*!< Input device groups (optional) */
-    lv_timer_t *ptTimer[GUI_LV_SCENE_TIMER_NUM];           /*!< Scene timers (optional) */
+    lv_group_t *ptGroup[GUI_LV_SCENE_GROUP_NUM];                                /*!< Input device groups (optional) */
+    lv_timer_t *ptTimer[GUI_LV_SCENE_TIMER_NUM];                                /*!< Scene timers (optional) */
 } gui_scene_t;
 
 /*============================ LOCAL VARIABLES ===============================*/
@@ -95,10 +95,6 @@ static void __on_scene%Instance%_draw(lv_obj_t *ptRoot)
 
 
     /*------------------------- draw the scene end   -------------------------*/
-    // __on_scene%Instance%_load(ptRoot);
-    // __on_scene%Instance%_bind();
-    GUI_LV_INVOKE_RT_VOID(__on_scene%Instance%_load, ptRoot);
-    GUI_LV_INVOKE_RT_VOID(__on_scene%Instance%_bind);
 
 #if GUI_LV_SCENE_TIMER_NUM
     GUI_LV_TIMER_SET(s_tGUI.ptTimer[0], __on_scene%Instance%_timer0_cb, 1000, NULL);
@@ -137,7 +133,7 @@ static void __on_scene%Instance%_bind(void)
  */
 static void __on_scene%Instance%_depose(void)
 {
-    GUI_LV_UNUSED(0);
+    s_tGUI.ptRoot = NULL;
 
     /*--------------------- insert your depose code begin --------------------*/
 
