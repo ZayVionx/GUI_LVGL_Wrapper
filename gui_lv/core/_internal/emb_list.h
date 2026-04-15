@@ -57,23 +57,64 @@ typedef struct emb_list_t {
 
 
 /*================================ PROTOTYPES ================================*/
-/** @brief  Initialize a list head (points to itself = empty). */
-static inline void emb_list_init(emb_list_t *list)
+/** 
+ * @brief  Initialize a list head (points to itself = empty). 
+ * @param[in] list  The list head to initialize
+ */
+static inline 
+void emb_list_init(emb_list_t *list)
 {
     GUI_LV_ASSERT(list != NULL);
     list->prev = list;
     list->next = list;
 }
 
-/** @brief  Check if list is empty. */
-static inline bool emb_list_is_empty(const emb_list_t *head)
+/** 
+ * @brief  Check if list is empty. 
+ * @param[in] head  The list head
+ * @return true if the list is empty, false otherwise
+ */
+static inline 
+bool emb_list_is_empty(const emb_list_t *head)
 {
     GUI_LV_ASSERT(head != NULL);
     return (head->next == head);
 }
 
-/** @brief  Insert ptNew before ptAt (add_tail: ptAt = ptHead). */
-static inline void emb_list_add_tail(emb_list_t *list, emb_list_t *head)
+/**
+ * @brief  Check if a node is detached (not in any list).
+ * @param[in] node  The node to check
+ */
+static inline 
+bool emb_list_is_detached(const emb_list_t *node)
+{
+    GUI_LV_ASSERT(node != NULL);
+    return (node->next == node) && (node->prev == node);
+}
+
+/**
+ * @brief  Add a new node after the specified head (add to front).
+ * @param[in] list  The new node to add (must be detached)
+ */
+static inline 
+void emb_list_add(emb_list_t *list, emb_list_t *head)
+{
+    EMB_LIST_CHECK_NODE(head);
+    GUI_LV_ASSERT(list != NULL);
+    GUI_LV_ASSERT(emb_list_is_detached(list));
+    list->next       = head->next;
+    list->prev       = head;
+    head->next->prev = list;
+    head->next       = list;
+}
+
+/** 
+ * @brief  Insert ptNew before ptAt (add_tail: ptAt = ptHead).
+ * @param[in] list  The new node to add (must be detached)
+ * @param[in] head  The list head
+ */
+static inline 
+void emb_list_add_tail(emb_list_t *list, emb_list_t *head)
 {
     EMB_LIST_CHECK_NODE(head);
     GUI_LV_ASSERT(list != NULL);
@@ -83,8 +124,12 @@ static inline void emb_list_add_tail(emb_list_t *list, emb_list_t *head)
     head->prev         = list;
 }
 
-/** @brief  Remove ptNode from its list. */
-static inline void emb_list_del(emb_list_t *list)
+/** 
+ * @brief  Remove ptNode from its list. 
+ * @param[in] list  The node to remove
+ */
+static inline 
+void emb_list_del(emb_list_t *list)
 {
     EMB_LIST_CHECK_NODE(list);
     list->prev->next = list->next;
@@ -93,8 +138,13 @@ static inline void emb_list_del(emb_list_t *list)
     list->prev       = list;
 }
 
-/** @brief  Get the last (tail) node, or NULL if empty. */
-static inline emb_list_t *emb_list_get_tail(const emb_list_t *head)
+/** 
+ * @brief  Get the last (tail) node, or NULL if empty.
+ * @param[in] head  The list head
+ * @return The last node, or NULL if the list is empty
+ */
+static inline 
+emb_list_t *emb_list_get_tail(const emb_list_t *head)
 {
     if(emb_list_is_empty(head)) return NULL;
     return head->prev;

@@ -319,18 +319,18 @@ typedef enum {
 static inline
 void gui_lv_label_display_event_cb(lv_event_t *e)
 {
-    lv_msg_t *ptMsg       = lv_event_get_msg(e);
-    lv_obj_t *ptLabel     = lv_event_get_target(e);
+    lv_msg_t   *ptMsg     = lv_event_get_msg(e);
+    lv_obj_t   *ptLabel   = lv_event_get_target(e);
     const char *pchFmt    = lv_msg_get_user_data(ptMsg);
     const void *pvPayload = lv_msg_get_payload(ptMsg);
-    uintptr_t type        = (uintptr_t)lv_event_get_user_data(e);
+    uintptr_t   type      = (uintptr_t)lv_event_get_user_data(e);
 
     switch((gui_lv_msg_type_t)type)
     {
         case MSG_INT:    lv_label_set_text_fmt(ptLabel,pchFmt,*(const int*)pvPayload );     break;
         case MSG_FLOAT:  lv_label_set_text_fmt(ptLabel,pchFmt,*(const float*)pvPayload );   break;
         case MSG_DOUBLE: lv_label_set_text_fmt(ptLabel,pchFmt,*(const double*)pvPayload );  break;
-        case MSG_STR:    lv_label_set_text_fmt(ptLabel,pchFmt,*(const char**)pvPayload );   break;
+        case MSG_STR:    lv_label_set_text_fmt(ptLabel,pchFmt, (const char*)pvPayload );    break;
         case MSG_U8:     lv_label_set_text_fmt(ptLabel,pchFmt,*(const uint8_t*)pvPayload ); break;
         case MSG_U16:    lv_label_set_text_fmt(ptLabel,pchFmt,*(const uint16_t*)pvPayload );break;
         case MSG_U32:    lv_label_set_text_fmt(ptLabel,pchFmt,*(const uint32_t*)pvPayload );break;

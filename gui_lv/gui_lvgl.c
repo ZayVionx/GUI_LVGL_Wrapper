@@ -108,8 +108,12 @@ static void gui_all_scene_init(void)
      */
 
     /*-------------------- user code end  : scene register --------------------*/
-
 #endif
+
+    /************************************
+     *    Set the default home scene    *
+     ************************************/
+    gui_lv_scene_set_home( (gui_lv_scene_id_t)(0) );
 }
 
 

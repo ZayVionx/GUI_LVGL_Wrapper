@@ -115,32 +115,32 @@ gui_lv_switch_anim_mode_t GUI_LV_SWITCH_MODE_MOVE_BOTTOM = {
     .eLoadAnim    = LV_SCR_LOAD_ANIM_MOVE_BOTTOM,
 };
 gui_lv_switch_anim_mode_t GUI_LV_SWITCH_MODE_FADE_IN     = {
-    .u32AnimTime  = 200,
+    .u32AnimTime  = 150,
     .u32AnimDelay = 0,
     .eLoadAnim    = LV_SCR_LOAD_ANIM_FADE_IN,
 };
 gui_lv_switch_anim_mode_t GUI_LV_SWITCH_MODE_FADE_OUT    = {
-    .u32AnimTime  = 200,
+    .u32AnimTime  = 150,
     .u32AnimDelay = 0,
     .eLoadAnim    = LV_SCR_LOAD_ANIM_FADE_OUT,
 };
 gui_lv_switch_anim_mode_t GUI_LV_SWITCH_MODE_OUT_LEFT    = {
-    .u32AnimTime  = 200,
+    .u32AnimTime  = 180,
     .u32AnimDelay = 0,
     .eLoadAnim    = LV_SCR_LOAD_ANIM_OUT_LEFT,
 };
 gui_lv_switch_anim_mode_t GUI_LV_SWITCH_MODE_OUT_RIGHT   = {
-    .u32AnimTime  = 200,
+    .u32AnimTime  = 180,
     .u32AnimDelay = 0,
     .eLoadAnim    = LV_SCR_LOAD_ANIM_OUT_RIGHT,
 };
 gui_lv_switch_anim_mode_t GUI_LV_SWITCH_MODE_OUT_TOP     = {
-    .u32AnimTime  = 200,
+    .u32AnimTime  = 180,
     .u32AnimDelay = 0,
     .eLoadAnim    = LV_SCR_LOAD_ANIM_OUT_TOP,
 };
 gui_lv_switch_anim_mode_t GUI_LV_SWITCH_MODE_OUT_BOTTOM  = {
-    .u32AnimTime  = 200,
+    .u32AnimTime  = 180,
     .u32AnimDelay = 0,
     .eLoadAnim    = LV_SCR_LOAD_ANIM_OUT_BOTTOM,
 };
@@ -171,7 +171,63 @@ static void __gui_lv_indev_bind_group(gui_lv_extend_t *ptEx);
 void __gui_lv_scene_list_init(void)
 {
     emb_list_init(&s_tSceneHead);
-    emb_list_init(&s_tPageHead) ;
+    emb_list_init(&s_tPageHead );
+}
+
+/*!
+ * \brief Set the home scene
+ * \param[in] eId the scene id to set as home
+ */
+void gui_lv_scene_set_home(gui_lv_scene_id_t eId)
+{
+    if(eId >= GUI_LV_SCENE_MAX) return;
+    GUI_LV_ASSERT(s_tScenePools[eId].ptCFG != NULL);
+
+    /* Move the home scene to the head of the list */
+    if(&(s_tScenePools[eId].ptCFG->tSceneNode) != s_tSceneHead.next)
+    {
+        emb_list_add(&(s_tScenePools[eId].ptCFG->tSceneNode), 
+                     &s_tSceneHead);
+    }
+}
+
+/*!
+ * \brief Switch to the home scene
+ */
+void gui_lv_scene_switch_to_home(void)
+{
+    if(emb_list_is_empty(&s_tSceneHead)) return;
+
+    /**************************
+     *     Clear the page     *
+     **************************/
+    while(!emb_list_is_empty(&s_tPageHead))
+    {
+        gui_lv_page_cfg_t *ptPageCFG = EMB_LIST_ENTRY( s_tPageHead.prev,
+                                                       gui_lv_page_cfg_t,
+                                                       tPageNode);
+        emb_list_del(&ptPageCFG->tPageNode);
+        GUI_LV_INVOKE_RT_VOID(ptPageCFG->pfnDepose);
+        __gui_lv_extend_depose(ptPageCFG->ptEx);
+    }
+
+    /**************************
+     * Pop scenes until home *
+     **************************/
+    while(s_tSceneHead.prev != s_tSceneHead.next)
+    {
+        gui_lv_scene_cfg_t *ptSceneCFG = EMB_LIST_ENTRY( s_tSceneHead.prev,
+                                                         gui_lv_scene_cfg_t,
+                                                         tSceneNode);
+        emb_list_del(&ptSceneCFG->tSceneNode);
+        GUI_LV_INVOKE_RT_VOID(ptSceneCFG->pfnDepose);
+        __gui_lv_extend_depose(ptSceneCFG->ptEx);
+    }
+
+    gui_lv_scene_cfg_t *ptHomeCFG = EMB_LIST_ENTRY( s_tSceneHead.next,
+                                                    gui_lv_scene_cfg_t,
+                                                    tSceneNode);
+    gui_lv_scene_switch(ptHomeCFG->eId);
 }
 
 /*----------------------------------------------------------------------------*
@@ -189,6 +245,7 @@ void gui_lv_scene_register(gui_lv_scene_cfg_t *ptThis)
     gui_lv_scene_id_t  eId    = ptThis->eId;
     s_tScenePools[eId].ptCFG  = ptThis;
     s_tScenePools[eId].ptRoot = NULL;
+    emb_list_init(&ptThis->tSceneNode);
 
     /* Initialize focus indices */
     uint8_t chGroupNum = ptThis->ptEx->u8GroupNum;
@@ -201,9 +258,9 @@ void gui_lv_scene_register(gui_lv_scene_cfg_t *ptThis)
         gui_lv_foreach(uint8_t,
                        ptThis->pchFocusIndex,
                        chGroupNum,
-                       pFocus)
+                       pchFocus)
         {
-            *pFocus = 0;
+            *pchFocus = 0;
         }
     }
     else  
@@ -220,9 +277,9 @@ void gui_lv_scene_switch(gui_lv_scene_id_t eId)
 {
     if(eId >= GUI_LV_SCENE_MAX)    return;
     GUI_LV_ASSERT(s_tScenePools[eId].ptCFG != NULL);
-    GUI_LV_ASSERT(s_tScenePools[eId].ptCFG->pfnDraw != NULL);
-    GUI_LV_ASSERT(s_tScenePools[eId].ptCFG->pfnLoad != NULL);
-    GUI_LV_ASSERT(s_tScenePools[eId].ptCFG->pfnBind != NULL);
+    GUI_LV_ASSERT(s_tScenePools[eId].ptCFG->pfnDraw   != NULL);
+    GUI_LV_ASSERT(s_tScenePools[eId].ptCFG->pfnLoad   != NULL);
+    GUI_LV_ASSERT(s_tScenePools[eId].ptCFG->pfnBind   != NULL);
     GUI_LV_ASSERT(s_tScenePools[eId].ptCFG->pfnDepose != NULL);
 
     /**************************
@@ -231,14 +288,27 @@ void gui_lv_scene_switch(gui_lv_scene_id_t eId)
     do {
         if(emb_list_is_empty(&s_tPageHead)) break;
 
-        emb_list_t        *ptNode = s_tPageHead.prev;
-        gui_lv_page_cfg_t *ptCFG  = EMB_LIST_ENTRY( ptNode, 
+        gui_lv_page_cfg_t *ptCFG  = EMB_LIST_ENTRY( s_tPageHead.prev, 
                                                     gui_lv_page_cfg_t, 
                                                     tPageNode);
-        emb_list_del(ptNode);
+        emb_list_del(&ptCFG->tPageNode);
         GUI_LV_INVOKE_RT_VOID(ptCFG->pfnDepose);
         __gui_lv_extend_depose(ptCFG->ptEx);
     } while(true);
+
+    /**************************
+     *  Clear the prev scene  *
+     **************************/
+    do {
+        if(s_tSceneHead.next->next == &s_tSceneHead) break;
+        
+        gui_lv_scene_cfg_t *ptCFG  = EMB_LIST_ENTRY( s_tSceneHead.prev, 
+                                                     gui_lv_scene_cfg_t, 
+                                                     tSceneNode);
+        if(ptCFG->eId == eId)   break;
+        GUI_LV_INVOKE_RT_VOID(ptCFG->pfnDepose);
+        __gui_lv_extend_depose(ptCFG->ptEx);
+    } while(0);
 
     /***************************
      *   Setup the new scene   *
@@ -246,7 +316,7 @@ void gui_lv_scene_switch(gui_lv_scene_id_t eId)
     if(&(s_tScenePools[eId].ptCFG->tSceneNode) != s_tSceneHead.prev)
     {
         emb_list_add_tail(&(s_tScenePools[eId].ptCFG->tSceneNode), 
-                      &s_tSceneHead);
+                          &s_tSceneHead);
     }
     
     lv_obj_t *ptRoot = gui_lv_container_init(NULL, 
@@ -286,14 +356,27 @@ void gui_lv_scene_switch_with_anim(gui_lv_scene_id_t eId,
     do {
         if(emb_list_is_empty(&s_tPageHead)) break;
 
-        emb_list_t        *ptNode = s_tPageHead.prev;
-        gui_lv_page_cfg_t *ptCFG  = EMB_LIST_ENTRY( ptNode, 
+        gui_lv_page_cfg_t *ptCFG  = EMB_LIST_ENTRY( s_tPageHead.prev, 
                                                     gui_lv_page_cfg_t, 
                                                     tPageNode);
-        emb_list_del(ptNode);
+        emb_list_del(&ptCFG->tPageNode);
         GUI_LV_INVOKE_RT_VOID(ptCFG->pfnDepose);
         __gui_lv_extend_depose(ptCFG->ptEx);
     } while(true);
+
+    /**************************
+     *  Clear the prev scene  *
+     **************************/
+    do {
+        if(s_tSceneHead.next->next == &s_tSceneHead) break;
+        
+        gui_lv_scene_cfg_t *ptCFG  = EMB_LIST_ENTRY( s_tSceneHead.prev, 
+                                                     gui_lv_scene_cfg_t, 
+                                                     tSceneNode);
+        if(ptCFG->eId == eId)   break;
+        GUI_LV_INVOKE_RT_VOID(ptCFG->pfnDepose);
+        __gui_lv_extend_depose(ptCFG->ptEx);
+    } while(0);
 
     /***************************
      *   Setup the new scene   *
@@ -327,7 +410,60 @@ void gui_lv_scene_switch_with_anim(gui_lv_scene_id_t eId,
  */
 void gui_lv_scene_back(void)
 {
+    if(s_tSceneHead.next->next == &s_tSceneHead) return;
 
+    /**************************
+     *     Clear the page     *
+     **************************/
+    do {
+        if(emb_list_is_empty(&s_tPageHead)) break;
+
+        emb_list_t        *ptNode = s_tPageHead.prev;
+        gui_lv_page_cfg_t *ptCFG  = EMB_LIST_ENTRY( ptNode, 
+                                                    gui_lv_page_cfg_t, 
+                                                    tPageNode);
+        emb_list_del(ptNode);
+        GUI_LV_INVOKE_RT_VOID(ptCFG->pfnDepose);
+        __gui_lv_extend_depose(ptCFG->ptEx);
+    } while(true);
+
+    /**************************
+     * Clear the current scene*
+     **************************/
+    do {
+        if(s_tSceneHead.next->next == &s_tSceneHead) break;
+        
+        emb_list_t         *ptNode = s_tSceneHead.prev;
+        gui_lv_scene_cfg_t *ptCFG  = EMB_LIST_ENTRY( ptNode, 
+                                                     gui_lv_scene_cfg_t, 
+                                                     tSceneNode);
+        emb_list_del(ptNode);
+        GUI_LV_INVOKE_RT_VOID(ptCFG->pfnDepose);
+        __gui_lv_extend_depose(ptCFG->ptEx);
+    } while(0);
+
+    /**************************
+     *     Load the page      *
+     **************************/
+    do {
+        emb_list_t         *ptNode = s_tSceneHead.prev;
+        gui_lv_scene_cfg_t *ptCFG  = EMB_LIST_ENTRY( ptNode, 
+                                                     gui_lv_scene_cfg_t, 
+                                                     tSceneNode);
+        lv_obj_t *ptRoot = gui_lv_container_init(NULL, 
+                                             0, 
+                                             0,
+                                             GUI_LV_SCREEN_WIDTH, 
+                                             GUI_LV_SCREEN_HEIGHT,
+                                             rgb(0, 0, 0), false);
+        s_tScenePools[ptCFG->eId].ptRoot = ptRoot;
+        __gui_lv_extend_create(s_tScenePools[ptCFG->eId].ptCFG->ptEx);
+        GUI_LV_INVOKE_RT_VOID(s_tScenePools[ptCFG->eId].ptCFG->pfnDraw, ptRoot);
+
+        lv_scr_load_anim(ptRoot, LV_SCR_LOAD_ANIM_NONE, 0, 0, true);
+    
+        __gui_lv_indev_bind_group(s_tScenePools[ptCFG->eId].ptCFG->ptEx);
+    } while(0);
 }
 
 /*!
@@ -336,7 +472,63 @@ void gui_lv_scene_back(void)
  */
 void gui_lv_scene_back_with_anim(gui_lv_switch_anim_mode_t eAnimMode)
 {
+    if(s_tSceneHead.next->next == &s_tSceneHead) return;
 
+    /**************************
+     *     Clear the page     *
+     **************************/
+    do {
+        if(emb_list_is_empty(&s_tPageHead)) break;
+
+        emb_list_t        *ptNode = s_tPageHead.prev;
+        gui_lv_page_cfg_t *ptCFG  = EMB_LIST_ENTRY( ptNode, 
+                                                    gui_lv_page_cfg_t, 
+                                                    tPageNode);
+        emb_list_del(ptNode);
+        GUI_LV_INVOKE_RT_VOID(ptCFG->pfnDepose);
+        __gui_lv_extend_depose(ptCFG->ptEx);
+    } while(true);
+
+    /**************************
+     * Clear the current scene*
+     **************************/
+    do {
+        if(s_tSceneHead.next->next == &s_tSceneHead) break;
+        
+        emb_list_t         *ptNode = s_tSceneHead.prev;
+        gui_lv_scene_cfg_t *ptCFG  = EMB_LIST_ENTRY( ptNode, 
+                                                     gui_lv_scene_cfg_t, 
+                                                     tSceneNode);
+        emb_list_del(ptNode);
+        GUI_LV_INVOKE_RT_VOID(ptCFG->pfnDepose);
+        __gui_lv_extend_depose(ptCFG->ptEx);
+    } while(0);
+
+    /**************************
+     *     Load the page      *
+     **************************/
+    do {
+        emb_list_t         *ptNode = s_tSceneHead.prev;
+        gui_lv_scene_cfg_t *ptCFG  = EMB_LIST_ENTRY( ptNode, 
+                                                     gui_lv_scene_cfg_t, 
+                                                     tSceneNode);
+        lv_obj_t *ptRoot = gui_lv_container_init(NULL, 
+                                             0, 
+                                             0,
+                                             GUI_LV_SCREEN_WIDTH, 
+                                             GUI_LV_SCREEN_HEIGHT,
+                                             rgb(0, 0, 0), false);
+        s_tScenePools[ptCFG->eId].ptRoot = ptRoot;
+        __gui_lv_extend_create(s_tScenePools[ptCFG->eId].ptCFG->ptEx);
+        GUI_LV_INVOKE_RT_VOID(s_tScenePools[ptCFG->eId].ptCFG->pfnDraw, ptRoot);
+
+        uint32_t           u32AnimTime  = eAnimMode.u32AnimTime ;         
+        uint32_t           u32AnimDelay = eAnimMode.u32AnimDelay;
+        lv_scr_load_anim_t eLoadAnim    = eAnimMode.eLoadAnim   ;
+        lv_scr_load_anim(ptRoot, eLoadAnim, u32AnimTime, u32AnimDelay, true);
+
+        __gui_lv_indev_bind_group(ptCFG->ptEx);
+    } while(0);
 }
 
 
@@ -380,27 +572,31 @@ void gui_lv_page_back_with_anim(gui_lv_switch_anim_mode_t eAnimMode)
 /*----------------------------------------------------------------------------*
  * Utility Functions                                                          *
  *----------------------------------------------------------------------------*/
+/*!
+ * \brief Get the current active scene id
+ * \return the current active scene id
+ */
 gui_lv_scene_id_t gui_lv_get_scene_id(void)
 {
-    emb_list_t        *ptNode = s_tSceneHead.prev;
-    gui_lv_scene_cfg_t *ptCFG  = EMB_LIST_ENTRY( ptNode, 
-                                                gui_lv_scene_cfg_t, 
-                                                tSceneNode);
+    gui_lv_scene_cfg_t *ptCFG  = EMB_LIST_ENTRY( s_tSceneHead.prev, 
+                                                 gui_lv_scene_cfg_t, 
+                                                 tSceneNode);
     return ptCFG->eId;
 }
 
-
+/*!
+ * \brief Get the current active page id
+ * \return the current active page id
+ */
 gui_lv_page_id_t gui_lv_get_page_id(void)
 {
-    emb_list_t        *ptNode = s_tPageHead.prev;
-    gui_lv_page_cfg_t *ptCFG  = EMB_LIST_ENTRY( ptNode, 
+    gui_lv_page_cfg_t *ptCFG  = EMB_LIST_ENTRY( s_tPageHead.prev, 
                                                 gui_lv_page_cfg_t, 
                                                 tPageNode);
     return ptCFG->eId;
 }
 
-
-
+/*=========================== LOCAL IMPLEMENTATION ===========================*/
 GUI_LV_NONNULL(1)
 static void __gui_lv_extend_create(gui_lv_extend_t *ptEx)
 {
@@ -414,10 +610,8 @@ static void __gui_lv_extend_create(gui_lv_extend_t *ptEx)
                    ptEx->u8GroupNum, 
                    pptGroup) 
     {
-        if(*pptGroup == NULL)
-        {
-            *pptGroup = lv_group_create();
-        }
+        if(*pptGroup == NULL)   *pptGroup = lv_group_create();
+        
     }
 
     /* Create timers */
@@ -426,10 +620,7 @@ static void __gui_lv_extend_create(gui_lv_extend_t *ptEx)
                    ptEx->u8TimerNum, 
                    pptTimer) 
     {
-        if(*pptTimer == NULL)
-        {
-            *pptTimer = lv_timer_create(NULL, 500, NULL);
-        }
+        if(*pptTimer == NULL)   *pptTimer = lv_timer_create(NULL, 500, NULL);
         GUI_LV_TIMER_STOP(*pptTimer);
     }
 }
@@ -447,10 +638,7 @@ static void __gui_lv_extend_depose(gui_lv_extend_t *ptEx)
                    ptEx->u8GroupNum, 
                    pptGroup) 
     {
-        if(*pptGroup != NULL)
-        {
-            GUI_LV_GROUP_DESTROY(*pptGroup);
-        }
+        if(*pptGroup != NULL)   GUI_LV_GROUP_DESTROY(*pptGroup);
     }
 
     /* Destroy timers */
@@ -459,10 +647,7 @@ static void __gui_lv_extend_depose(gui_lv_extend_t *ptEx)
                    ptEx->u8TimerNum, 
                    pptTimer) 
     {
-        if(*pptTimer != NULL)
-        {
-            GUI_LV_TIMER_DESTROY(*pptTimer);
-        }
+        if(*pptTimer != NULL)   GUI_LV_TIMER_DESTROY(*pptTimer);
     }
 }
 
@@ -472,7 +657,6 @@ static void __gui_lv_indev_bind_group(gui_lv_extend_t *ptEx)
     GUI_LV_ASSERT(ptEx != NULL);
     GUI_LV_ASSERT(!(ptEx->u8GroupNum > 0 && ptEx->ptGroup == NULL));
     GUI_LV_ASSERT(!(ptEx->u8TimerNum > 0 && ptEx->ptTimer == NULL));
-
     if(ptEx->u8GroupNum == 0)   return;
 
     GUI_LV_INDEV_BIND_GROUP(ptEx->ptGroup[0]);

@@ -167,6 +167,19 @@ gui_lv_switch_anim_mode_t GUI_LV_SWITCH_MODE_OUT_BOTTOM;
 
 /*============================== LOCAL VARIABLES =============================*/
 /*================================ PROTOTYPES ================================*/
+/*!
+ * \brief Set the home scene
+ * \param[in] eId the scene id to set as home
+ */
+extern
+void gui_lv_scene_set_home(gui_lv_scene_id_t eId);
+
+/*!
+ * \brief Switch to a different scene
+ * \param[in] eId the target scene id
+ */
+extern
+void gui_lv_scene_switch_to_home(void);
 
 /*----------------------------------------------------------------------------*
  * Scene Management                                                           *
@@ -283,7 +296,6 @@ gui_lv_scene_id_t gui_lv_get_scene_id(void);
 extern
 gui_lv_page_id_t gui_lv_get_page_id(void);
 
-/*============================== IMPLEMENTATION ==============================*/
 /*============================== IMPLEMENTATION ==============================*/
 /*=================================== END ====================================*/
 #ifdef   __cplusplus

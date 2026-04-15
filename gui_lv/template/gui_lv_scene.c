@@ -133,7 +133,7 @@ static void __on_scene%Instance%_bind(void)
 }
 
 /*! 
- * \brief Scene resource dispose callback.
+ * \brief Scene resource depose callback.
  */
 static void __on_scene%Instance%_depose(void)
 {
