@@ -118,6 +118,7 @@ void emb_list_add_tail(emb_list_t *list, emb_list_t *head)
 {
     EMB_LIST_CHECK_NODE(head);
     GUI_LV_ASSERT(list != NULL);
+    GUI_LV_ASSERT(emb_list_is_detached(list));
     list->next         = head;
     list->prev         = head->prev;
     head->prev->next   = list;

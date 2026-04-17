@@ -59,6 +59,7 @@ gui_lv_style_t ptContDefStyle = {
         GUI_LV_STYLE_BORDER_WIDTH(0),
         GUI_LV_STYLE_PAD_ALL(0),
         GUI_LV_STYLE_BG_COLOR(BG_COLOR_CONT_NORMAL),
+        GUI_LV_STYLE_BG_OPA(LV_OPA_TRANSP)
     },
 };
 
