@@ -87,15 +87,12 @@ static void __on_scene_<name>_timer0_cb(lv_timer_t *ptTimer)
 static void __on_scene_<name>_draw(lv_obj_t *ptRoot)
 {
     s_tGUI.ptRoot           = ptRoot;
-    gui_lv_style_apply(ptRoot, &ptContDefStyle, 0);
     gui_lv_language_t eLang = gui_lv_get_current_lang();
 
     /*------------------------- draw the scene begin -------------------------*/
 
 
     /*------------------------- draw the scene end   -------------------------*/
-    GUI_LV_INVOKE_RT_VOID(__on_scene_<name>_load, ptRoot);
-    GUI_LV_INVOKE_RT_VOID(__on_scene_<name>_bind);
 
 #if GUI_LV_SCENE_TIMER_NUM
     GUI_LV_TIMER_SET(s_tGUI.ptTimer[0], __on_scene_<name>_timer0_cb, 1000, NULL);
@@ -160,8 +157,8 @@ void gui_lv_scene_<name>_init(void)
 
     /* ------------ initialize members of scene begin ------------ */
     static gui_lv_scene_cfg_t s_tCFG = {
-        .eId       = GUI_LV_SCENE_<NAME>,
-        .ptEx      = &s_tGUIEX,
+        .eSceneId  = GUI_LV_SCENE_<NAME>,
+        .ptExtend  = &s_tGUIEX,
         .pfnDraw   = __on_scene_<name>_draw,
         .pfnLoad   = __on_scene_<name>_load,
         .pfnBind   = __on_scene_<name>_bind, 

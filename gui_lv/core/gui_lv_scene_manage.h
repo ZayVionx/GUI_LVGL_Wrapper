@@ -86,7 +86,7 @@ typedef struct {
 typedef struct {
 
     gui_lv_scene_id_t  eSceneId;            //!< Scene identifier            
-    gui_lv_extend_t   *ptExend;             //!< Extended scene data (opt.)  
+    gui_lv_extend_t   *ptExtend;            //!< Extended scene data (opt.)  
 
     void (*pfnDraw  )(lv_obj_t *ptRoot);    //!< Scene init callback         
     void (*pfnLoad  )(lv_obj_t *ptRoot);    //!< Scene load callback         
@@ -107,7 +107,7 @@ GUI_LV_PRIVATE(
 typedef struct {
     
     gui_lv_page_id_t  ePageId ;             //!< Page identifier            
-    gui_lv_extend_t  *ptExend;              //!< Extended scene data (opt.)  
+    gui_lv_extend_t  *ptExtend;             //!< Extended scene data (opt.)  
 
     void (*pfnDraw  )(lv_obj_t *ptRoot);    //!< Page init callback         
     void (*pfnLoad  )(lv_obj_t *ptRoot);    //!< Page load callback         
