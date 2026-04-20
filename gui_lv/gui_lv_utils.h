@@ -116,17 +116,17 @@ extern "C" {
 						((uint16_t)((b) >> 3))))
 	#else
 		#define RGB(r, g, b) \
-			{.full = ((uint16_t)(((uint16_t)((g) >> 5) << 13) | \
+			.full = ((uint16_t)(((uint16_t)((g) >> 5) << 13) | \
 						((uint16_t)((r) >> 3) << 8) | \
 						((uint16_t)((b) >> 3) << 3) | \
-						((uint16_t)((g) >> 2) & 0x07)))}
+						((uint16_t)((g) >> 2) & 0x07)))
 	#endif
 #elif LV_COLOR_DEPTH == 32
 	#define RGB(r, g, b) \
-		{.full = ((uint32_t)((uint32_t)(b) | \
+		.full = ((uint32_t)((uint32_t)(b) | \
 					((uint32_t)(g) << 8) | \
 					((uint32_t)(r) << 16) | \
-					(0xFFUL << 24)))}
+					(0xFFUL << 24)))
 #else
 	#error "Unsupported LV_COLOR_DEPTH"
 #endif
