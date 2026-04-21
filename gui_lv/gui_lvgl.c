@@ -16,24 +16,19 @@
 *                                                                           *
 ****************************************************************************/
 
-/* ----------------------------------------------------------------------
+/*----------------------------------------------------------------------
  * Project:      GUI LVGL Wrapper
  * Title:        gui_lvgl.c
- * Description:  LVGL wrapper bring-up entry (LVGL core/port + user hooks)
+ * Description:  LVGL wrapper initialization entry
+ *               (LVGL core / port / user config / scene register)
  *
- * NOTE:
- * - This file provides the stable entry point: gui_lv_init().
- * - Application integration should normally only edit the regions explicitly
- *   marked as "user code begin/end".
- * - Typical user tasks:
- *   1) Set language / boot scene id in __gui_sys_data_init().
- *   2) Define shared styles (e.g. ptContDefStyle) and initialise them in
- *      __gui_common_style_init().
- *   3) Register scenes in __gui_all_scene_init() for non-RTE builds.
- * - In CMSIS-Pack/RTE builds (defined(__RTE_GUI_LVGL_WRAPPER__)), scenes are
- *   auto-initialised by __GUI_LV_ALL_SCENE_INIT().
- * --------------------------------------------------------------------
- */
+ * Note:
+ * - GUI initialization entry: gui_lv_init()
+ * - User can modify:
+ *    1. System data (language, boot scene)
+ *    2. Common global style
+ *    3. Scene register (non-RTE version)
+ *--------------------------------------------------------------------*/
 
 /*================================= INCLUDES =================================*/
 #if defined(__GUI_LVGL_WRAPPER__)
@@ -72,9 +67,8 @@ gui_lv_style_t ptContDefStyle = {
 static void gui_sys_data_init(void)
 {
     /*---------------------- user code begin: sys data ----------------------*/
-    /* Override defaults (language/boot scene/etc.) for your application. */
     gui_lv_set_lang(GUI_LV_LANGUAGE_TC);
-    gui_lv_set_boot_scene_id( (gui_lv_scene_id_t)(0) );
+    gui_lv_set_boot_scene_id( (gui_lv_scene_id_t)0);
     /*---------------------- user code end  : sys data ----------------------*/
 }
 
@@ -86,7 +80,6 @@ static void gui_common_style_init(void)
 {
     /*------------------- user code begin: common style -------------------*/
     gui_lv_style_init(&ptContDefStyle);
-    
     /*------------------- user code end  : common style -------------------*/
 }
 
@@ -105,16 +98,14 @@ static void gui_all_scene_init(void)
     /*-------------------- user code begin: scene register --------------------*/
     /* Example:
      *   gui_lv_scene_0_init();
-     *   gui_lv_scene_1_init();
      */
-
     /*-------------------- user code end  : scene register --------------------*/
 #endif
 
     /************************************
      *    Set the default home scene    *
      ************************************/
-    gui_lv_scene_set_home( (gui_lv_scene_id_t)(0) );
+    gui_lv_scene_set_home((gui_lv_scene_id_t)0);
 }
 
 
@@ -122,12 +113,8 @@ static void gui_all_scene_init(void)
  * Public API                                                                 *
  *----------------------------------------------------------------------------*/
 /*!
- * \brief Initialise the GUI module (LVGL core/port + user hooks)
- *
- * \note This API defines a single, stable entry point for GUI bring-up.
- *       The implementation intentionally separates platform-specific LVGL
- *       initialisation from user extension hooks, so application code stays
- *       portable and testable.
+ * \brief  GUI system total initialization entry
+ * \note   LVGL init + display/indev port + helper + user config + scene load
  */
 void gui_lv_init(void)
 {
@@ -138,12 +125,12 @@ void gui_lv_init(void)
 #endif
     __gui_lv_helper_init();
 
-    /* initialize members of scene begin */
+    /* User configuration */
     gui_sys_data_init();
     gui_common_style_init();
     gui_all_scene_init();
-    /* initialize members of scene end */
     
+    /* Load boot scene */
     gui_lv_scene_switch( 
         gui_lv_get_boot_scene_id());
 

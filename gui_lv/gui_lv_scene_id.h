@@ -31,22 +31,24 @@ extern "C" {
 #endif
 /*================================== TYPES ===================================*/
 typedef enum {
-    PLACEHOLDER0,   /* Placeholder */
+    /* 占位枚举（请勿使用） */
+    PLACEHOLDER0,
 
-    /* scene id to begin */
+    /* ---------- Scene ID Begin ---------- */
 
-    /* scene id to end   */
+    /* ----------- Scene ID End ----------- */
 
     GUI_LV_SCENE_MAX
 } gui_lv_scene_id_t;
 
 
 typedef enum {
-    PLACEHOLDER1,   /* Placeholder */
+    /* 占位枚举（请勿使用） */
+    PLACEHOLDER1,
     
-    /* page id to begin */
+    /* ----------- Page ID Begin ---------- */
     
-    /* page id to end   */
+    /* ----------- Page ID End ------------ */
 
     GUI_LV_PAGE_MAX
 } gui_lv_page_id_t;

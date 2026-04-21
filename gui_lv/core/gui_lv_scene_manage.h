@@ -96,6 +96,7 @@ typedef struct {
 GUI_LV_PRIVATE(
     emb_list_t  tSceneNode;                 //!< Scene list node    
     uint8_t    *pchFocusIndex;              //!< Focus index array pointer
+    bool        bIsInitExtend;              //!< Whether the extended data has been initialized
 )
 
 } gui_lv_scene_cfg_t;
@@ -117,6 +118,7 @@ typedef struct {
 GUI_LV_PRIVATE(
     emb_list_t  tPageNode;                  //!< Page list node  
     uint8_t    *pchFocusIndex;              //!< Focus index array pointer
+    bool        bIsInitExtend;              //!< Whether the extended data has been initialized
 )
 
 } gui_lv_page_cfg_t;

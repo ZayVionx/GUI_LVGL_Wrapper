@@ -22,10 +22,8 @@
  * Description:  Public façade header for the LVGL wrapper module
  *
  * NOTE:
- * - This is a framework public header; application code should include it.
- * 
- * - To customise boot language/scene and shared styles, edit the "user code"
- *   sections in gui_lvgl.c (__gui_sys_data_init/__gui_common_style_init/...).
+ * - This is a framework public header; 
+ *   application code should include it.
  * --------------------------------------------------------------------
  */
 
@@ -62,12 +60,9 @@ extern gui_lv_style_t ptContDefStyle;
 /*============================== LOCAL VARIABLES =============================*/
 /*================================ PROTOTYPES ================================*/
 /*!
- * \brief Initialise the GUI module (LVGL core/port + user hooks)
+ * \brief Initialise the GUI module.
  *
  * \note This API defines a single, stable entry point for GUI bring-up.
- *       The implementation intentionally separates platform-specific LVGL
- *       initialisation from user extension hooks, so application code stays
- *       portable and testable.
  *
  * \note Application-specific configuration should be done in gui_lvgl.c within
  *       the marked "user code begin/end" regions.

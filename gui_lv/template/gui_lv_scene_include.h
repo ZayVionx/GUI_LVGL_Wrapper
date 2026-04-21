@@ -169,29 +169,29 @@ extern "C" {
 #endif
 
 /*============================ MACROFIED FUNCTIONS ===========================*/
-#define __GUI_LV_ALL_SCENE_INIT()     \
-    do {                                                                        \
-        __GUI_LV_SCENE_0_INIT();                                                \
-        __GUI_LV_SCENE_1_INIT();                                                \
-        __GUI_LV_SCENE_2_INIT();                                                \
-        __GUI_LV_SCENE_3_INIT();                                                \
-        __GUI_LV_SCENE_4_INIT();                                                \
-        __GUI_LV_SCENE_5_INIT();                                                \
-        __GUI_LV_SCENE_6_INIT();                                                \
-        __GUI_LV_SCENE_7_INIT();                                                \
-        __GUI_LV_SCENE_8_INIT();                                                \
-        __GUI_LV_SCENE_9_INIT();                                                \
-        __GUI_LV_SCENE_10_INIT();                                               \
-        __GUI_LV_SCENE_11_INIT();                                               \
-        __GUI_LV_SCENE_12_INIT();                                               \
-        __GUI_LV_SCENE_13_INIT();                                               \
-        __GUI_LV_SCENE_14_INIT();                                               \
-        __GUI_LV_SCENE_15_INIT();                                               \
-        __GUI_LV_SCENE_16_INIT();                                               \
-        __GUI_LV_SCENE_17_INIT();                                               \
-        __GUI_LV_SCENE_18_INIT();                                               \
-        __GUI_LV_SCENE_19_INIT();                                               \
-        __GUI_LV_SCENE_20_INIT();                                               \
+#define __GUI_LV_ALL_SCENE_INIT()                                              \
+    do {                                                                       \
+        __GUI_LV_SCENE_0_INIT();                                               \
+        __GUI_LV_SCENE_1_INIT();                                               \
+        __GUI_LV_SCENE_2_INIT();                                               \
+        __GUI_LV_SCENE_3_INIT();                                               \
+        __GUI_LV_SCENE_4_INIT();                                               \
+        __GUI_LV_SCENE_5_INIT();                                               \
+        __GUI_LV_SCENE_6_INIT();                                               \
+        __GUI_LV_SCENE_7_INIT();                                               \
+        __GUI_LV_SCENE_8_INIT();                                               \
+        __GUI_LV_SCENE_9_INIT();                                               \
+        __GUI_LV_SCENE_10_INIT();                                              \
+        __GUI_LV_SCENE_11_INIT();                                              \
+        __GUI_LV_SCENE_12_INIT();                                              \
+        __GUI_LV_SCENE_13_INIT();                                              \
+        __GUI_LV_SCENE_14_INIT();                                              \
+        __GUI_LV_SCENE_15_INIT();                                              \
+        __GUI_LV_SCENE_16_INIT();                                              \
+        __GUI_LV_SCENE_17_INIT();                                              \
+        __GUI_LV_SCENE_18_INIT();                                              \
+        __GUI_LV_SCENE_19_INIT();                                              \
+        __GUI_LV_SCENE_20_INIT();                                              \
     } while (0)
     
 /*================================== TYPES ===================================*/

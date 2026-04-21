@@ -39,7 +39,7 @@ extern "C" {
 /*============================== LOCAL VARIABLES =============================*/
 /*================================ PROTOTYPES ================================*/
 /*!
- * \brief GUI scene <NAME> task implementation.
+ * \brief GUI scene %Instance% task implementation.
  */
 extern
 void gui_lv_scene_task_%Instance%(lv_event_t *e);
