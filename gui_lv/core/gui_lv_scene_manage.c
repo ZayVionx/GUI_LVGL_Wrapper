@@ -291,6 +291,7 @@ void gui_lv_scene_register(gui_lv_scene_cfg_t *ptThis)
     }
 }
 
+#include <stdio.h>
 /*!
  * \brief Switch to a different scene
  * \param[in] eId the target scene id
@@ -318,6 +319,15 @@ void gui_lv_scene_switch(gui_lv_scene_id_t eId)
      * 2. Load the new scene with animation *
      ****************************************/
     __gui_lv_scene_list_push_stack(eId, GUI_LV_SWITCH_MODE_NONE);
+
+    emb_list_t *ptNode;
+    for(ptNode = s_tSceneHead.next; ptNode != &s_tSceneHead; ptNode = ptNode->next)
+    {
+        gui_lv_scene_cfg_t *ptSceneCFG = EMB_LIST_ENTRY( ptNode, 
+                                                         gui_lv_scene_cfg_t, 
+                                                         tSceneNode);
+        printf("Scene %d is in the stack\n", ptSceneCFG->eSceneId);
+    }
 }
 
 /*!
@@ -530,15 +540,10 @@ static void __gui_lv_scene_list_pop_stack(gui_lv_switch_anim_mode_t eAnimMode)
     GUI_LV_INVOKE_RT_VOID(ptThis->pfnBind);
     ptThis->bIsInitExtend = true;
 
-     if(eAnimMode.eLoadAnim == LV_SCR_LOAD_ANIM_NONE)
-        lv_scr_load_anim(ptRoot, LV_SCR_LOAD_ANIM_NONE, 0, 0, true);
-    else
-    {
-        uint32_t           u32AnimTime  = eAnimMode.u32AnimTime ;         
-        uint32_t           u32AnimDelay = eAnimMode.u32AnimDelay;
-        lv_scr_load_anim_t eLoadAnim    = eAnimMode.eLoadAnim   ;
-        lv_scr_load_anim(ptRoot, eLoadAnim, u32AnimTime, u32AnimDelay, true);
-    }
+    uint32_t           u32AnimTime  = eAnimMode.u32AnimTime ;         
+    uint32_t           u32AnimDelay = eAnimMode.u32AnimDelay;
+    lv_scr_load_anim_t eLoadAnim    = eAnimMode.eLoadAnim   ;
+    lv_scr_load_anim(ptRoot, eLoadAnim, u32AnimTime, u32AnimDelay, true);
 
     __gui_lv_indev_bind_group(ptThis->ptExtend);
 }
@@ -554,16 +559,16 @@ static void __gui_lv_scene_list_pop_stack(gui_lv_switch_anim_mode_t eAnimMode)
 static void __gui_lv_scene_list_push_stack(gui_lv_scene_id_t         eTargetId, 
                                            gui_lv_switch_anim_mode_t eAnimMode )
 {
-    /**************************
-     *  Clear the prev scene  *
-     **************************/
+    /* -----------------------------------------------------------------------
+     * [STEP 1] CLEAR THE PREVIOUS SCENE
+     * -----------------------------------------------------------------------*/
     do {
         // if(s_tSceneHead.next->next == &s_tSceneHead) break;
         
         gui_lv_scene_cfg_t *ptPrevScene  = EMB_LIST_ENTRY( s_tSceneHead.prev, 
                                                            gui_lv_scene_cfg_t, 
                                                            tSceneNode);
-        if(ptPrevScene->eSceneId == eTargetId)     break;
+        // if(ptPrevScene->eSceneId == eTargetId)     break;
         
         if(ptPrevScene->bIsInitExtend)
         {
@@ -571,15 +576,19 @@ static void __gui_lv_scene_list_push_stack(gui_lv_scene_id_t         eTargetId,
             GUI_LV_INVOKE_RT_VOID (ptPrevScene->pfnDepose);
             ptPrevScene->bIsInitExtend = false;
         }
+
+        if(ptPrevScene->eSceneId == eTargetId)
+            emb_list_del(&ptPrevScene->tSceneNode);
     } while(0);
 
-    /***************************
-     *   Setup the new scene   *
-     ***************************/
+    /* -----------------------------------------------------------------------
+     * [STEP 2] NEW SCENE SETUP
+     * -----------------------------------------------------------------------*/
     gui_lv_scene_cfg_t *ptThis = s_tScenePools[eTargetId].ptCFG;
     lv_obj_t           *ptRoot = NULL;
 
-    if(&(ptThis->tSceneNode) != s_tSceneHead.prev)
+    /* [ 2.1 ]  Append List and Extend Create */
+    // if(&(ptThis->tSceneNode) != s_tSceneHead.prev)
     {
         emb_list_add_tail( &(ptThis->tSceneNode), 
                            &s_tSceneHead);
@@ -589,24 +598,23 @@ static void __gui_lv_scene_list_push_stack(gui_lv_scene_id_t         eTargetId,
         __gui_lv_extend_create(ptThis->ptExtend);
         ptThis->bIsInitExtend = true;
     }
-    else
+    // else
     {
-        ptRoot = s_tScenePools[eTargetId].ptRoot;
+        // ptRoot = s_tScenePools[eTargetId].ptRoot;
     }
 
+    /* [ 2.2 ]  Draw, Load and Bind */
     GUI_LV_INVOKE_RT_VOID(ptThis->pfnDraw, ptRoot);
     GUI_LV_INVOKE_RT_VOID(ptThis->pfnLoad, ptRoot);
     GUI_LV_INVOKE_RT_VOID(ptThis->pfnBind);
 
-    if(eAnimMode.eLoadAnim == LV_SCR_LOAD_ANIM_NONE)
-        lv_scr_load_anim(ptRoot, LV_SCR_LOAD_ANIM_NONE, 0, 0, true);
-    else
-    {
-        uint32_t           u32AnimTime  = eAnimMode.u32AnimTime ;         
-        uint32_t           u32AnimDelay = eAnimMode.u32AnimDelay;
-        lv_scr_load_anim_t eLoadAnim    = eAnimMode.eLoadAnim   ;
-        lv_scr_load_anim(ptRoot, eLoadAnim, u32AnimTime, u32AnimDelay, true);
-    }
+    /* -----------------------------------------------------------------------
+     * [STEP 3] LOAD NEW SCENE WITH ANIMATION
+     * -----------------------------------------------------------------------*/
+    uint32_t           u32AnimTime  = eAnimMode.u32AnimTime ;         
+    uint32_t           u32AnimDelay = eAnimMode.u32AnimDelay;
+    lv_scr_load_anim_t eLoadAnim    = eAnimMode.eLoadAnim   ;
+    lv_scr_load_anim(ptRoot, eLoadAnim, u32AnimTime, u32AnimDelay, true);
 
     __gui_lv_indev_bind_group(ptThis->ptExtend);
 }

@@ -75,22 +75,46 @@ extern "C" {
  * Architecture Port                                                          *
  *----------------------------------------------------------------------------*/
 #if defined(_MSC_VER)
-#   define __STATIC_FORCEINLINE               static __forceinline
-#   define __STATIC_INLINE                    static __inline
-#   define __ALIGNED(__N)                     __declspec(align(__N))
-#   define __WEAK
+#   ifndef __STATIC_FORCEINLINE
+#       define __STATIC_FORCEINLINE               static __forceinline
+#   endif
+#   ifndef __STATIC_INLINE
+#       define __STATIC_INLINE                    static __inline
+#   endif
+#   ifndef __ALIGNED
+#       define __ALIGNED(__N)                     __declspec(align(__N))
+#   endif
+#   ifndef __WEAK
+#       define __WEAK
+#   endif
 #elif defined(__APPLE_CC__)
-#   define __STATIC_FORCEINLINE               static inline                    \
+#   ifndef __STATIC_FORCEINLINE
+#       define __STATIC_FORCEINLINE               static inline                    \
 											 __attribute__((always_inline))
-#   define __STATIC_INLINE                    static inline
-#   define __ALIGNED(__N)                     __attribute__((aligned(__N)))
-#   define __WEAK                             __attribute__((weak))
+#   endif
+#   ifndef __STATIC_INLINE
+#       define __STATIC_INLINE                    static inline
+#   endif
+#   ifndef __ALIGNED
+#       define __ALIGNED(__N)                     __attribute__((aligned(__N)))
+#   endif
+#   ifndef __WEAK
+#       define __WEAK                             __attribute__((weak))
+#   endif
 #else
-#   define __STATIC_FORCEINLINE               static inline                    \
+#   ifndef __STATIC_FORCEINLINE
+#       define __STATIC_FORCEINLINE               static inline                    \
 											 __attribute__((always_inline))
-#   define __STATIC_INLINE                    static inline
-#   define __ALIGNED(__N)                     __attribute__((aligned(__N)))
-#   define __WEAK                             __attribute__((weak))
+#   endif
+#   ifndef __STATIC_INLINE
+#       define __STATIC_INLINE                    static inline
+#   endif
+#   ifndef __ALIGNED
+#       define __ALIGNED(__N)                     __attribute__((aligned(__N)))
+#   endif
+#   ifndef __WEAK
+#       define __WEAK                             __attribute__((weak))
+#   endif
 #endif
 
 #ifndef GUI_LV_ALIGNOF
