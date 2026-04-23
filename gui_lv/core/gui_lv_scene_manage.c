@@ -55,28 +55,14 @@
 #endif
 
 /*================================== MACROS ==================================*/
-#undef this
+#undef  this
 #define this        (*ptThis)
-     
-gui_lv_style_t ptRootStyle = {
-    .config = {
-        GUI_LV_STYLE_RADIUS(0),
-        GUI_LV_STYLE_BORDER_WIDTH(0),
-        GUI_LV_STYLE_PAD_ALL(0),
-        GUI_LV_STYLE_BG_OPA(LV_OPA_COVER)
-    },
-};
 
 /*============================ MACROFIED FUNCTIONS ===========================*/
-#define __GUI_LV_CREATE_CONTAINER_ROOT()                        \
-({                                                              \
-    lv_obj_t *__ptRoot = gui_lv_container_init(NULL, 0, 0,      \
-                            GUI_LV_SCREEN_WIDTH,                \
-                            GUI_LV_SCREEN_HEIGHT,               \
-                            rgb(0, 0, 0), false);             \
-    gui_lv_style_apply(__ptRoot, &ptRootStyle, 0);              \
-    __ptRoot;                                                   \
-})
+#define __GUI_LV_SCENE_GET_HOME_CFG()                                       \
+    EMB_LIST_ENTRY(s_tSceneHead.next, gui_lv_scene_cfg_t, tSceneNode)
+#define __GUI_LV_SCENE_GET_CURRENT_CFG()                                    \
+    EMB_LIST_ENTRY(s_tSceneHead.prev, gui_lv_scene_cfg_t, tSceneNode)
 
 /*================================== TYPES ===================================*/
 
@@ -183,6 +169,7 @@ static gui_lv_page_t  s_tPagePools[GUI_LV_PAGE_MAX];
 
 
 /*================================ PROTOTYPES ================================*/
+static inline lv_obj_t *__gui_lv_create_container_root(void);
 static void __gui_lv_page_list_pop_stack(void);
 
 static void __gui_lv_scene_list_pop_stack (gui_lv_switch_anim_mode_t eAnimMode);
@@ -206,18 +193,22 @@ void gui_lv_scene_manage_init(void)
 /*!
  * \brief Set the home scene
  * \param[in] eId the scene id to set as home
+ * 
+ * \note Do not call this function.
+ *       Call it only before initializing the scene management system.
  */
 void gui_lv_scene_set_home(gui_lv_scene_id_t eId)
 {
-    if(eId >= GUI_LV_SCENE_MAX) return;
-    GUI_LV_ASSERT(s_tScenePools[eId].ptCFG != NULL);
+    if(eId >= GUI_LV_SCENE_MAX)     return;
+    gui_lv_scene_cfg_t *ptThis = s_tScenePools[eId].ptCFG;
+    GUI_LV_ASSERT(ptThis != NULL);
 
     /* Move the home scene to the head of the list */
-    if(&(s_tScenePools[eId].ptCFG->tSceneNode) != s_tSceneHead.next)
+    gui_lv_scene_id_t eHomeSceneID = __GUI_LV_SCENE_GET_HOME_CFG()->eSceneId;
+    if(eId != eHomeSceneID)
     {
-        emb_list_add(
-            &(s_tScenePools[eId].ptCFG->tSceneNode), 
-            &s_tSceneHead);
+        emb_list_is_linked(&ptThis->tSceneNode) ? emb_list_move(&ptThis->tSceneNode, &s_tSceneHead)
+                                                : emb_list_add( &ptThis->tSceneNode, &s_tSceneHead);
     }
 }
 
@@ -241,19 +232,18 @@ void gui_lv_scene_switch_to_home(void)
      **************************/
     while(s_tSceneHead.prev != s_tSceneHead.next)
     {
-        gui_lv_scene_cfg_t *ptSceneCFG = EMB_LIST_ENTRY( s_tSceneHead.prev,
-                                                         gui_lv_scene_cfg_t,
-                                                         tSceneNode);
-        emb_list_del(&ptSceneCFG->tSceneNode);
-        GUI_LV_INVOKE_RT_VOID(ptSceneCFG->pfnDepose);
-        __gui_lv_extend_depose(ptSceneCFG->ptExtend);
-        ptSceneCFG->bIsInitExtend = false;
+        gui_lv_scene_cfg_t *ptPrevScene = __GUI_LV_SCENE_GET_CURRENT_CFG();
+        if(ptPrevScene->bIsInitExtend)
+        {
+            __gui_lv_extend_depose(ptPrevScene->ptExtend);
+            GUI_LV_INVOKE_RT_VOID (ptPrevScene->pfnDepose);
+            ptPrevScene->bIsInitExtend = false;
+        }
+        emb_list_del(&ptPrevScene->tSceneNode);
     }
 
-    gui_lv_scene_cfg_t *ptHomeCFG = EMB_LIST_ENTRY( s_tSceneHead.next,
-                                                    gui_lv_scene_cfg_t,
-                                                    tSceneNode);
-    gui_lv_scene_switch(ptHomeCFG->eSceneId);
+    gui_lv_scene_cfg_t *ptThis = __GUI_LV_SCENE_GET_HOME_CFG();
+    gui_lv_scene_switch(ptThis->eSceneId);
 }
 
 /*----------------------------------------------------------------------------*
@@ -271,6 +261,7 @@ void gui_lv_scene_register(gui_lv_scene_cfg_t *ptThis)
     gui_lv_scene_id_t  eId    = ptThis->eSceneId;
     s_tScenePools[eId].ptCFG  = ptThis;
     s_tScenePools[eId].ptRoot = NULL;
+    s_tScenePools[eId].ptCFG->bIsInitExtend = false;
     emb_list_init(&ptThis->tSceneNode);
 
     /* Initialize focus indices */
@@ -291,7 +282,7 @@ void gui_lv_scene_register(gui_lv_scene_cfg_t *ptThis)
     }
 }
 
-#include <stdio.h>
+
 /*!
  * \brief Switch to a different scene
  * \param[in] eId the target scene id
@@ -319,15 +310,6 @@ void gui_lv_scene_switch(gui_lv_scene_id_t eId)
      * 2. Load the new scene with animation *
      ****************************************/
     __gui_lv_scene_list_push_stack(eId, GUI_LV_SWITCH_MODE_NONE);
-
-    emb_list_t *ptNode;
-    for(ptNode = s_tSceneHead.next; ptNode != &s_tSceneHead; ptNode = ptNode->next)
-    {
-        gui_lv_scene_cfg_t *ptSceneCFG = EMB_LIST_ENTRY( ptNode, 
-                                                         gui_lv_scene_cfg_t, 
-                                                         tSceneNode);
-        printf("Scene %d is in the stack\n", ptSceneCFG->eSceneId);
-    }
 }
 
 /*!
@@ -459,10 +441,8 @@ gui_lv_scene_id_t gui_lv_get_scene_id(void)
 {
     GUI_LV_ASSERT(!emb_list_is_empty(&s_tSceneHead));
 
-    gui_lv_scene_cfg_t *ptThis = EMB_LIST_ENTRY( s_tSceneHead.prev, 
-                                                 gui_lv_scene_cfg_t, 
-                                                 tSceneNode);
-    return this.eSceneId;
+    gui_lv_scene_cfg_t *ptThis = __GUI_LV_SCENE_GET_CURRENT_CFG();
+    return ptThis->eSceneId;
 }
 
 /*!
@@ -476,12 +456,31 @@ gui_lv_page_id_t gui_lv_get_page_id(void)
     gui_lv_page_cfg_t *ptThis = EMB_LIST_ENTRY( s_tPageHead.prev, 
                                                 gui_lv_page_cfg_t, 
                                                 tPageNode);
-    return this.ePageId;
+    return ptThis->ePageId;
 }
 
 
 
 /*=========================== LOCAL IMPLEMENTATION ===========================*/
+/*!
+ * \brief Create a root container for a scene
+ * \return pointer to the root container object
+ */
+static inline lv_obj_t *__gui_lv_create_container_root(void)
+{
+    lv_obj_t *ptRoot = gui_lv_container_init(NULL, 
+                                             0, 
+                                             0, 
+                                             GUI_LV_SCREEN_WIDTH, 
+                                             GUI_LV_SCREEN_HEIGHT, 
+                                           rgb(0, 0, 0), false);
+    lv_obj_set_style_radius(ptRoot, 0, 0);
+    lv_obj_set_style_pad_all(ptRoot, 0, 0);
+    lv_obj_set_style_bg_opa(ptRoot, LV_OPA_COVER, 0);
+    lv_obj_set_style_border_width(ptRoot, 0, 0);
+    return ptRoot;
+}
+
 /*!
  * \brief Pop the top page from the page stack and destroy it
  *
@@ -494,8 +493,8 @@ static void __gui_lv_page_list_pop_stack(void)
                                                  gui_lv_page_cfg_t, 
                                                  tPageNode);
     emb_list_del          (&(ptThis->tPageNode));
-    GUI_LV_INVOKE_RT_VOID (  ptThis->pfnDepose );
     __gui_lv_extend_depose(  ptThis->ptExtend  );
+    GUI_LV_INVOKE_RT_VOID (  ptThis->pfnDepose );
     ptThis->bIsInitExtend = false;
 }
 
@@ -514,25 +513,22 @@ static void __gui_lv_scene_list_pop_stack(gui_lv_switch_anim_mode_t eAnimMode)
     do {
         if(s_tSceneHead.next->next == &s_tSceneHead) break;
         
-        gui_lv_scene_cfg_t *ptCFG  = EMB_LIST_ENTRY( s_tSceneHead.prev, 
-                                                     gui_lv_scene_cfg_t, 
-                                                     tSceneNode);
-        emb_list_del(&ptCFG->tSceneNode);
-        GUI_LV_INVOKE_RT_VOID (ptCFG->pfnDepose);
+        gui_lv_scene_cfg_t *ptCFG  = __GUI_LV_SCENE_GET_CURRENT_CFG();
+        
         __gui_lv_extend_depose(ptCFG->ptExtend);
+        GUI_LV_INVOKE_RT_VOID (ptCFG->pfnDepose);
         ptCFG->bIsInitExtend = false;
-
+        emb_list_del(&ptCFG->tSceneNode);
+        
     } while(0);
 
     /**************************
      *     Load the Scene     *
      **************************/
-    gui_lv_scene_id_t eId  = EMB_LIST_ENTRY( s_tSceneHead.prev, 
-                                             gui_lv_scene_cfg_t, 
-                                             tSceneNode)->eSceneId;
+    gui_lv_scene_id_t eId  = __GUI_LV_SCENE_GET_CURRENT_CFG()->eSceneId;
     gui_lv_scene_cfg_t *ptThis = s_tScenePools[eId].ptCFG;
 
-    lv_obj_t *ptRoot = __GUI_LV_CREATE_CONTAINER_ROOT();
+    lv_obj_t *ptRoot = __gui_lv_create_container_root();
     s_tScenePools[eId].ptRoot = ptRoot;
     __gui_lv_extend_create(ptThis->ptExtend);
     GUI_LV_INVOKE_RT_VOID(ptThis->pfnDraw, ptRoot);
@@ -563,47 +559,38 @@ static void __gui_lv_scene_list_push_stack(gui_lv_scene_id_t         eTargetId,
      * [STEP 1] CLEAR THE PREVIOUS SCENE
      * -----------------------------------------------------------------------*/
     do {
-        // if(s_tSceneHead.next->next == &s_tSceneHead) break;
-        
-        gui_lv_scene_cfg_t *ptPrevScene  = EMB_LIST_ENTRY( s_tSceneHead.prev, 
-                                                           gui_lv_scene_cfg_t, 
-                                                           tSceneNode);
-        // if(ptPrevScene->eSceneId == eTargetId)     break;
-        
+        if(s_tSceneHead.prev == &s_tSceneHead) break;
+
+        gui_lv_scene_cfg_t *ptPrevScene  = __GUI_LV_SCENE_GET_CURRENT_CFG();
         if(ptPrevScene->bIsInitExtend)
         {
             __gui_lv_extend_depose(ptPrevScene->ptExtend);
             GUI_LV_INVOKE_RT_VOID (ptPrevScene->pfnDepose);
             ptPrevScene->bIsInitExtend = false;
         }
-
-        if(ptPrevScene->eSceneId == eTargetId)
-            emb_list_del(&ptPrevScene->tSceneNode);
     } while(0);
 
     /* -----------------------------------------------------------------------
      * [STEP 2] NEW SCENE SETUP
      * -----------------------------------------------------------------------*/
-    gui_lv_scene_cfg_t *ptThis = s_tScenePools[eTargetId].ptCFG;
     lv_obj_t           *ptRoot = NULL;
-
-    /* [ 2.1 ]  Append List and Extend Create */
-    // if(&(ptThis->tSceneNode) != s_tSceneHead.prev)
+    gui_lv_scene_cfg_t *ptThis = s_tScenePools[eTargetId].ptCFG;
+    emb_list_t         *ptNode = &(ptThis->tSceneNode);
+    
+    /* [ 2.1 ]  Handle Scene List */
+    if(ptNode != s_tSceneHead.prev)
     {
-        emb_list_add_tail( &(ptThis->tSceneNode), 
-                           &s_tSceneHead);
-                           
-        ptRoot = __GUI_LV_CREATE_CONTAINER_ROOT();
-        s_tScenePools[eTargetId].ptRoot = ptRoot;
-        __gui_lv_extend_create(ptThis->ptExtend);
-        ptThis->bIsInitExtend = true;
+        emb_list_is_linked(ptNode) ? emb_list_move_tail(ptNode, &s_tSceneHead)
+                                   : emb_list_add_tail (ptNode, &s_tSceneHead);
     }
-    // else
-    {
-        // ptRoot = s_tScenePools[eTargetId].ptRoot;
-    }
+    
+    /* [ 2.2 ]  Create Root and Extend */
+    ptRoot = __gui_lv_create_container_root();
+    s_tScenePools[eTargetId].ptRoot = ptRoot;
+    __gui_lv_extend_create(ptThis->ptExtend);
+    ptThis->bIsInitExtend = true;
 
-    /* [ 2.2 ]  Draw, Load and Bind */
+    /* [ 2.3 ]  Draw, Load and Bind */
     GUI_LV_INVOKE_RT_VOID(ptThis->pfnDraw, ptRoot);
     GUI_LV_INVOKE_RT_VOID(ptThis->pfnLoad, ptRoot);
     GUI_LV_INVOKE_RT_VOID(ptThis->pfnBind);

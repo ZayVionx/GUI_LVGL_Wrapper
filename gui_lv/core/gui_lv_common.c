@@ -28,7 +28,7 @@
 /*============================ GLOBAL VARIABLES ==============================*/
 /*============================ LOCAL VARIABLES ===============================*/
 /*============================ PROTOTYPES ====================================*/
-/*============================== IMPLEMENTATION ==============================*/
+/*============================ IMPLEMENTATION ================================*/
 
 lv_obj_t *gui_lv_container_init(lv_obj_t *parent, int16_t x, int16_t y, uint16_t width, uint16_t height, 
                                         lv_color_t bg_color, bool bIsClearStyle)
@@ -129,7 +129,7 @@ lv_timer_t *gui_lv_timer_init(lv_timer_cb_t timer_cb, uint32_t period, void *use
 
 
 
-/*================================== UNTILS ==================================*/
+/*================================== UTILS ===================================*/
 
 /**
  * @brief  Grid navigation on LVGL group — one call handles everything.
