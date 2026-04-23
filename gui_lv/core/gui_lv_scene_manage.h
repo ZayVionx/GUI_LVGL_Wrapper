@@ -1,5 +1,5 @@
 /****************************************************************************
-*  Copyright 2025 ZJY (Email:3102196558@qq.com)                             *
+*  Copyright 2025 ZJY (Email:zhujinyuan818@gemail.com)                      *
 *                                                                           *
 *  Licensed under the Apache License, Version 2.0 (the "License");          *
 *  you may not use this file except in compliance with the License.         *
@@ -50,11 +50,7 @@ extern "C" {
 #include "core/gui_lv_common.h"
 
 /*================================== MACROS ==================================*/
-void __gui_lv_scene_list_init(void);
-/*!
- * \note do NOT use this macro directly
- */
-#define __GUI_LV_SCENE_LIST_INIT()      __gui_lv_scene_list_init()
+
 
 /*============================ MACROFIED FUNCTIONS ===========================*/
 /*================================== TYPES ===================================*/
@@ -186,6 +182,13 @@ void gui_lv_scene_switch_to_home(void);
 /*----------------------------------------------------------------------------*
  * Scene Management                                                           *
  *----------------------------------------------------------------------------*/
+/*!
+ * \brief Initialize the scene management system
+ */
+extern
+void gui_lv_scene_manage_init(void);
+
+
 /*!
  * \brief Register a set of scenes to a scene player
  * \param[in] ptThis the target scene player

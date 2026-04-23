@@ -1,5 +1,5 @@
 /****************************************************************************
-*  Copyright 2025 ZJY <3102196558@qq.com>                                   *
+*  Copyright 2025 ZJY <Email:zhujinyuan818@gemail.com>                      *
 *                                                                           *
 *  Licensed under the Apache License, Version 2.0 (the "License");          *
 *  you may not use this file except in compliance with the License.         *
@@ -43,26 +43,6 @@
 #   include "lv_port_disp_template.h"
 #   include "lv_port_indev_template.h"
 #endif
-
-
-// #undef __IS_SUPPORTED_ARM_ARCH__
-// #if (__ARM_ARCH_PROFILE == 'M') || defined(__TARGET_PROFILE_M)
-// #   define __IS_SUPPORTED_ARM_ARCH__        1
-// #else
-// #   define __IS_SUPPORTED_ARM_ARCH__        0
-// #endif
-
-// /*! \note arm-2d relies on CMSIS 5.8.0 and above.
-//  */
-// #if __IS_SUPPORTED_ARM_ARCH__
-
-// #   include "cmsis_compiler.h"
-// #   include "cmsis_version.h"
-
-// #else
-// #   include "platform/gui_lv_user_arch_port.h"
-// #endif
-
 
 #ifdef   __cplusplus
 extern "C" {

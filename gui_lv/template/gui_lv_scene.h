@@ -1,5 +1,5 @@
 /****************************************************************************
-*  Copyright 2025 ZJY <3102196558@qq.com>                                   *
+*  Copyright 2025 ZJY <Email:zhujinyuan818@gemail.com>                      *
 *                                                                           *
 *  Licensed under the Apache License, Version 2.0 (the "License");          *
 *  you may not use this file except in compliance with the License.         *
@@ -15,19 +15,6 @@
 *  limitations under the License.                                           *
 *                                                                           *
 ****************************************************************************/
-
-/* ----------------------------------------------------------------------
- * Project:      GUI (LVGL)
- * Title:        gui_scene.h
- * Description:  GUI scene template (CMSIS-Pack/RTE instance-based)
- *
- * NOTE:
- * - `GUI_SCENE_<NAME>` need to be defined in the "gui_scene_id.h" file,
- * 
- * - Do NOT compile this template file directly. For non-RTE usage, replace
- *   `%Instance%` manually (and rename files/symbols as needed).
- * --------------------------------------------------------------------
- */
 
 #ifndef __GUI_LV_SCENE_%Instance%_H__
 #define __GUI_LV_SCENE_%Instance%_H__

@@ -1,5 +1,5 @@
 /****************************************************************************
-*  Copyright 2025 ZJY <3102196558@qq.com>                                   *
+*  Copyright 2025 ZJY <Email:zhujinyuan818@gemail.com>                      *
 *                                                                           *
 *  Licensed under the Apache License, Version 2.0 (the "License");          *
 *  you may not use this file except in compliance with the License.         *
@@ -15,20 +15,6 @@
 *  limitations under the License.                                           *
 *                                                                           *
 ****************************************************************************/
-
-/*----------------------------------------------------------------------
- * Project:      GUI LVGL Wrapper
- * Title:        gui_lvgl.c
- * Description:  LVGL wrapper initialization entry
- *               (LVGL core / port / user config / scene register)
- *
- * Note:
- * - GUI initialization entry: gui_lv_init()
- * - User can modify:
- *    1. System data (language, boot scene)
- *    2. Common global style
- *    3. Scene register (non-RTE version)
- *--------------------------------------------------------------------*/
 
 /*================================= INCLUDES =================================*/
 #if defined(__GUI_LVGL_WRAPPER__)
@@ -90,7 +76,7 @@ static void gui_common_style_init(void)
  */
 static void gui_all_scene_init(void)
 {
-    __GUI_LV_SCENE_LIST_INIT();
+    gui_lv_scene_manage_init();
 
 #if defined(__RTE_Acceleration_GUI_LVGL_SCENE__)
     __GUI_LV_ALL_SCENE_INIT();
@@ -131,9 +117,7 @@ void gui_lv_init(void)
     gui_all_scene_init();
     
     /* Load boot scene */
-    gui_lv_scene_switch( 
-        gui_lv_get_boot_scene_id());
-
+    gui_lv_scene_switch(gui_lv_get_boot_scene_id());
     lv_timer_handler();
 }
 

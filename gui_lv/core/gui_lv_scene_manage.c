@@ -1,5 +1,5 @@
 /****************************************************************************
-*  Copyright 2025 ZJY (Email:3102196558@qq.com)                             *
+*  Copyright 2025 ZJY (Email:zhujinyuan818@gemail.com)                      *
 *                                                                           *
 *  Licensed under the Apache License, Version 2.0 (the "License");          *
 *  you may not use this file except in compliance with the License.         *
@@ -197,7 +197,7 @@ static void __gui_lv_indev_bind_group(gui_lv_extend_t *ptExtend);
 /*!
  * \brief Initialize the scene and page lists
  */
-void __gui_lv_scene_list_init(void)
+void gui_lv_scene_manage_init(void)
 {
     emb_list_init(&s_tSceneHead);
     emb_list_init(&s_tPageHead );

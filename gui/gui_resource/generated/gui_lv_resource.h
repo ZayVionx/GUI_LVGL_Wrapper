@@ -3,10 +3,6 @@
 
 /*================================= INCLUDES =================================*/
 
-#ifndef __GUI_LV_RESOURCE_DECLARE__
-#  define __GUI_LV_RESOURCE_DECLARE__    1
-#endif
-
 #ifdef   __cplusplus
 extern "C" {
 #endif

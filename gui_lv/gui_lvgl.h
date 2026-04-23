@@ -1,5 +1,5 @@
 /****************************************************************************
-*  Copyright 2025 ZJY (Email:3102196558@qq.com)                             *
+*  Copyright 2025 ZJY <Email:zhujinyuan818@gemail.com>                      *
 *                                                                           *
 *  Licensed under the Apache License, Version 2.0 (the "License");          *
 *  you may not use this file except in compliance with the License.         *
@@ -15,17 +15,6 @@
 *  limitations under the License.                                           *
 *                                                                           *
 ****************************************************************************/
-
-/* ----------------------------------------------------------------------
- * Project:      GUI LVGL Wrapper
- * Title:        gui_lvgl.h
- * Description:  Public façade header for the LVGL wrapper module
- *
- * NOTE:
- * - This is a framework public header; 
- *   application code should include it.
- * --------------------------------------------------------------------
- */
 
 #ifndef __GUI_LVGL_H__
 #define __GUI_LVGL_H__
@@ -44,8 +33,8 @@
 #   include "gui_lv_custom_components.h"
 #endif
 
-#ifdef __GUI_LV_RESOURCE_DECLARE__ 
-#include "gui_lv_resource.h"
+#if 0
+#include "../gui/gui_resource/generated/gui_lv_resource.h"
 #endif
 
 #ifdef   __cplusplus
