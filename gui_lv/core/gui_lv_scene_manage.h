@@ -92,7 +92,8 @@ typedef struct {
 GUI_LV_PRIVATE(
     emb_list_t  tSceneNode;                 //!< Scene list node    
     uint8_t    *pchFocusIndex;              //!< Focus index array pointer
-    bool        bIsInitExtend;              //!< Whether the extended data has been initialized
+    bool        bIsRestoreFocus;            //!< Focus restore enabled flag
+    bool        bIsInitExtend;              //!< Extended data initialized flag
 )
 
 } gui_lv_scene_cfg_t;
@@ -114,7 +115,8 @@ typedef struct {
 GUI_LV_PRIVATE(
     emb_list_t  tPageNode;                  //!< Page list node  
     uint8_t    *pchFocusIndex;              //!< Focus index array pointer
-    bool        bIsInitExtend;              //!< Whether the extended data has been initialized
+    bool        bIsRestoreFocus;            //!< Focus restore enabled flag
+    bool        bIsInitExtend;              //!< Extended data initialized flag
 )
 
 } gui_lv_page_cfg_t;
@@ -303,6 +305,16 @@ gui_lv_scene_id_t gui_lv_get_scene_id(void);
  */
 extern
 gui_lv_page_id_t gui_lv_get_page_id(void);
+
+
+/*!
+ * \brief Enable or disable focus restore when switching scenes
+ * \param[in] eId the scene id of the target scene
+ * \param[in] bIsFocusRestoreEnabled true to enable focus restore, false to disable
+ */
+static inline 
+void gui_lv_scene_focus_restore_enabled(gui_lv_scene_id_t eId, 
+                                        bool bIsFocusRestoreEnabled);
 
 /*============================== IMPLEMENTATION ==============================*/
 /*=================================== END ====================================*/

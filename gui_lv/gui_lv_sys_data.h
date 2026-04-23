@@ -77,13 +77,13 @@ extern
 bool gui_lv_set_lang(gui_lv_language_t eLang);
 
 /*!
- * \brief   Set boot scene ID.
+ * \brief   Set startup scene ID.
  * \param[in] eSceneId Scene ID to set.
  * \retval  true  Success.
  * \retval  false Fail.
  */
 extern
-bool gui_lv_set_boot_scene_id(gui_lv_scene_id_t eSceneId);
+bool gui_lv_set_startup_scene_id(gui_lv_scene_id_t eSceneId);
 
 /*!
  * \brief   Set the level of the buzzer.
@@ -119,10 +119,10 @@ gui_lv_language_t gui_lv_get_current_lang(void);
 
 /*!
  * \brief   Get current boot scene ID.
- * \return  Current boot scene ID.
+ * \return  Current startup scene ID.
  */
 extern
-gui_lv_scene_id_t gui_lv_get_boot_scene_id(void);
+gui_lv_scene_id_t gui_lv_get_startup_scene_id(void);
 
 /*!
  * \brief   Get the level of the buzzer.
@@ -133,7 +133,7 @@ gui_lv_beep_level_t gui_lv_get_beep_level(void);
 
 /*!
  * \brief   Get device information.
- * \retval  Device information.
+ * \retval  Current device information.
  */
 extern
 gui_lv_device_info_t gui_lv_get_device_info(void);

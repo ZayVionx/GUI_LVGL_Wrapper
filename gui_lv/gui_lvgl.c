@@ -54,7 +54,7 @@ static void gui_sys_data_init(void)
 {
     /*---------------------- user code begin: sys data ----------------------*/
     gui_lv_set_lang(GUI_LV_LANGUAGE_TC);
-    gui_lv_set_boot_scene_id( (gui_lv_scene_id_t)0);
+    gui_lv_set_startup_scene_id( (gui_lv_scene_id_t)0);
     /*---------------------- user code end  : sys data ----------------------*/
 }
 
@@ -116,8 +116,8 @@ void gui_lv_init(void)
     gui_common_style_init();
     gui_all_scene_init();
     
-    /* Load boot scene */
-    gui_lv_scene_switch(gui_lv_get_boot_scene_id());
+    /* Load startup scene */
+    gui_lv_scene_switch(gui_lv_get_startup_scene_id());
     lv_timer_handler();
 }
 
