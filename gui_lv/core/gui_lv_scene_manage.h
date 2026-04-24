@@ -298,7 +298,6 @@ void gui_lv_page_back_with_anim(gui_lv_switch_anim_mode_t eAnimMode);
 extern
 gui_lv_scene_id_t gui_lv_get_scene_id(void);
 
-
 /*!
  * \brief Get the current page ID
  * \return The current page ID
@@ -306,14 +305,17 @@ gui_lv_scene_id_t gui_lv_get_scene_id(void);
 extern
 gui_lv_page_id_t gui_lv_get_page_id(void);
 
+/*!
+ * \brief Enable focus restore when switching scenes
+ * \param[in] eId the scene id of the target scene
+ */
+void gui_lv_scene_focus_restore_enabled(gui_lv_scene_id_t eId);
 
 /*!
- * \brief Enable or disable focus restore when switching scenes
+ * \brief Disable focus restore when switching scenes
  * \param[in] eId the scene id of the target scene
- * \param[in] bIsFocusRestoreEnabled true to enable focus restore, false to disable
  */
-void gui_lv_scene_focus_restore_enabled(gui_lv_scene_id_t eId, 
-                                        bool bIsFocusRestoreEnabled);
+void gui_lv_scene_focus_restore_disable(gui_lv_scene_id_t eId);                                      
 
 /*============================== IMPLEMENTATION ==============================*/
 /*=================================== END ====================================*/

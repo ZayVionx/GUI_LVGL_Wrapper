@@ -464,20 +464,31 @@ gui_lv_page_id_t gui_lv_get_page_id(void)
 }
 
 /*!
- * \brief Set the focus index saved flag of the current scene
- *
+ * \brief Enable focus restore when switching scenes
  * \param[in] eId the scene id of the target scene
- * \param[in] bIsFocusRestoreEnabled Is focus restore enabled
  */
-void gui_lv_scene_focus_restore_enabled(gui_lv_scene_id_t eId, 
-                                        bool bIsFocusRestoreEnabled)
+void gui_lv_scene_focus_restore_enabled(gui_lv_scene_id_t eId)
 {
     gui_lv_scene_cfg_t *ptThis = s_tScenePools[eId].ptCFG;
 
     if(emb_list_is_empty(&s_tSceneHead))    return;
     if(ptThis->ptExtend->u8GroupNum == 0)   return;
 
-    ptThis->bIsRestoreFocus = bIsFocusRestoreEnabled;
+    ptThis->bIsRestoreFocus = true;
+}
+
+/*!
+ * \brief Disable focus restore when switching scenes
+ * \param[in] eId the scene id of the target scene
+ */
+void gui_lv_scene_focus_restore_disable(gui_lv_scene_id_t eId)
+{
+    gui_lv_scene_cfg_t *ptThis = s_tScenePools[eId].ptCFG;
+
+    if(emb_list_is_empty(&s_tSceneHead))    return;
+    if(ptThis->ptExtend->u8GroupNum == 0)   return;
+
+    ptThis->bIsRestoreFocus = false;
 }
 
 /*=========================== LOCAL IMPLEMENTATION ===========================*/
