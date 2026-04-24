@@ -207,13 +207,13 @@ int16_t gui_lv_group_get_focus_index(lv_group_t *ptGroup)
 {
     if(ptGroup == NULL) return -1;
 
-    lv_obj_t *ptFocused = lv_group_get_focused(ptGroup);
-    if(ptFocused == NULL) return -1;
+    lv_obj_t *ptFocusObj = lv_group_get_focused(ptGroup);
+    if(ptFocusObj == NULL) return -1;
 
     int16_t i16Idx = 0;
     lv_obj_t **pp;
     _LV_LL_READ(&ptGroup->obj_ll, pp) {
-        if(*pp == ptFocused)
+        if(*pp == ptFocusObj)
         {
             return i16Idx;
         }
@@ -221,7 +221,40 @@ int16_t gui_lv_group_get_focus_index(lv_group_t *ptGroup)
     }
 
     return -1;
+}
 
+/*!
+ * \brief Get the object at a specific index in a group.
+ *
+ * \param ptGroup LVGL group to query.
+ * \param chIdx 0-based index of the object.
+ * 
+ * \return Pointer to the object, or NULL if not found.
+ */
+lv_obj_t *gui_lv_group_get_index_obj(lv_group_t *ptGroup, uint8_t chIdx)
+{
+    if(ptGroup == NULL) return NULL;
+
+    uint8_t chCur = 0;
+    lv_obj_t **pp;
+    _LV_LL_READ(&ptGroup->obj_ll, pp) {
+        if(chCur == chIdx)
+        {
+            /* Clear previous focus visual state */
+            if(ptGroup->obj_focus != NULL && *(ptGroup->obj_focus) != NULL)
+            {
+                lv_obj_clear_state(*(ptGroup->obj_focus),
+                                      LV_STATE_FOCUSED 
+                                    | LV_STATE_EDITED 
+                                    | LV_STATE_FOCUS_KEY);
+            }
+            ptGroup->obj_focus = pp;
+            return *pp;
+        }
+        chCur++;
+    }
+
+    return NULL;
 }
 
 /*=================================== END ====================================*/

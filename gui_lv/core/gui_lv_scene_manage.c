@@ -180,6 +180,9 @@ static void __gui_lv_extend_create   (gui_lv_extend_t *ptExtend);
 static void __gui_lv_extend_depose   (gui_lv_extend_t *ptExtend);
 static void __gui_lv_indev_bind_group(gui_lv_extend_t *ptExtend);
 
+static void __gui_lv_focus_save   (gui_lv_scene_id_t eId, gui_lv_extend_t *ptExtend);
+static void __gui_lv_focus_restore(gui_lv_scene_id_t eId, gui_lv_extend_t *ptExtend);
+
 /*============================== IMPLEMENTATION ==============================*/
 /*!
  * \brief Initialize the scene and page lists
@@ -310,7 +313,7 @@ void gui_lv_scene_switch(gui_lv_scene_id_t eId)
      * 1. Clear the prev scene              *
      * 2. Load the new scene with animation *
      ****************************************/
-    __gui_lv_scene_list_push_stack(eId, GUI_LV_SWITCH_MODE_NONE);
+    __gui_lv_scene_list_push_stack(eId, GUI_LV_SWITCH_MODE_NONE);    
 }
 
 /*!
@@ -466,7 +469,6 @@ gui_lv_page_id_t gui_lv_get_page_id(void)
  * \param[in] eId the scene id of the target scene
  * \param[in] bIsFocusRestoreEnabled Is focus restore enabled
  */
-static inline 
 void gui_lv_scene_focus_restore_enabled(gui_lv_scene_id_t eId, 
                                         bool bIsFocusRestoreEnabled)
 {
@@ -490,7 +492,8 @@ static inline lv_obj_t *__gui_lv_create_container_root(void)
                                              0, 
                                              GUI_LV_SCREEN_WIDTH, 
                                              GUI_LV_SCREEN_HEIGHT, 
-                                           rgb(0, 0, 0), false);
+                                            rgb(0, 0, 0), 
+                                             false);
     lv_obj_set_style_radius(ptRoot, 0, 0);
     lv_obj_set_style_pad_all(ptRoot, 0, 0);
     lv_obj_set_style_bg_opa(ptRoot, LV_OPA_COVER, 0);
@@ -532,6 +535,8 @@ static void __gui_lv_scene_list_pop_stack(gui_lv_switch_anim_mode_t eAnimMode)
         
         gui_lv_scene_cfg_t *ptCFG  = __GUI_LV_SCENE_GET_CURRENT_CFG();
         
+        __gui_lv_focus_save   (ptCFG->eSceneId, 
+                               ptCFG->ptExtend);
         __gui_lv_extend_depose(ptCFG->ptExtend);
         GUI_LV_INVOKE_RT_VOID (ptCFG->pfnDepose);
         ptCFG->bIsInitExtend = false;
@@ -559,6 +564,14 @@ static void __gui_lv_scene_list_pop_stack(gui_lv_switch_anim_mode_t eAnimMode)
     lv_scr_load_anim(ptRoot, eLoadAnim, u32AnimTime, u32AnimDelay, true);
 
     __gui_lv_indev_bind_group(ptThis->ptExtend);
+
+    /* -----------------------------------------------------------------------
+     * [STEP 6] RESTORE FOCUS IF ENABLED
+     * -----------------------------------------------------------------------*/
+    if(ptThis->bIsRestoreFocus)
+    {
+        __gui_lv_focus_restore(ptThis->eSceneId, ptThis->ptExtend);
+    }
 }
 
 /*!
@@ -581,6 +594,8 @@ static void __gui_lv_scene_list_push_stack(gui_lv_scene_id_t         eTargetId,
         gui_lv_scene_cfg_t *ptPrevScene  = __GUI_LV_SCENE_GET_CURRENT_CFG();
         if(ptPrevScene->bIsInitExtend)
         {
+            __gui_lv_focus_save   (ptPrevScene->eSceneId, 
+                                   ptPrevScene->ptExtend);
             __gui_lv_extend_depose(ptPrevScene->ptExtend);
             GUI_LV_INVOKE_RT_VOID (ptPrevScene->pfnDepose);
             ptPrevScene->bIsInitExtend = false;
@@ -598,32 +613,32 @@ static void __gui_lv_scene_list_push_stack(gui_lv_scene_id_t         eTargetId,
     }
 
     /* -----------------------------------------------------------------------
-     * [STEP 2] SCENE SETUP
+     * [STEP 3] SCENE SETUP
      * -----------------------------------------------------------------------*/
     lv_obj_t           *ptRoot = NULL;
     gui_lv_scene_cfg_t *ptThis = s_tScenePools[eTargetId].ptCFG;
     emb_list_t         *ptNode = &(ptThis->tSceneNode);
     
-    /* [ 2.1 ]  Handle Scene List */
+    /* [ 3.1 ]  Handle Scene List */
     if(ptNode != s_tSceneHead.prev)
     {
         emb_list_is_linked(ptNode) ? emb_list_move_tail(ptNode, &s_tSceneHead)
                                    : emb_list_add_tail (ptNode, &s_tSceneHead);
     }
     
-    /* [ 2.2 ]  Create Root and Extend */
+    /* [ 3.2 ]  Create Root and Extend */
     ptRoot = __gui_lv_create_container_root();
     s_tScenePools[eTargetId].ptRoot = ptRoot;
     __gui_lv_extend_create(ptThis->ptExtend);
     ptThis->bIsInitExtend = true;
 
-    /* [ 2.3 ]  Draw, Load and Bind */
+    /* [ 3.3 ]  Draw, Load and Bind */
     GUI_LV_INVOKE_RT_VOID(ptThis->pfnDraw, ptRoot);
     GUI_LV_INVOKE_RT_VOID(ptThis->pfnLoad, ptRoot);
     GUI_LV_INVOKE_RT_VOID(ptThis->pfnBind);
 
     /* -----------------------------------------------------------------------
-     * [STEP 3] LOAD SCENE WITH ANIMATION
+     * [STEP 4] LOAD SCENE WITH ANIMATION
      * -----------------------------------------------------------------------*/
     uint32_t           u32AnimTime  = eAnimMode.u32AnimTime ;         
     uint32_t           u32AnimDelay = eAnimMode.u32AnimDelay;
@@ -631,9 +646,17 @@ static void __gui_lv_scene_list_push_stack(gui_lv_scene_id_t         eTargetId,
     lv_scr_load_anim(ptRoot, eLoadAnim, u32AnimTime, u32AnimDelay, true);
 
     /* -----------------------------------------------------------------------
-     * [STEP 4] BIND INPUT DEVICE TO SCENE
+     * [STEP 5] BIND INPUT DEVICE TO SCENE
      * -----------------------------------------------------------------------*/
     __gui_lv_indev_bind_group(ptThis->ptExtend);
+
+    /* -----------------------------------------------------------------------
+     * [STEP 6] RESTORE FOCUS IF ENABLED
+     * -----------------------------------------------------------------------*/
+    if(ptThis->bIsRestoreFocus)
+    {
+        __gui_lv_focus_restore(ptThis->eSceneId, ptThis->ptExtend);
+    }
 }
 
 
@@ -721,7 +744,7 @@ static void __gui_lv_indev_bind_group(gui_lv_extend_t *ptExtend)
  * \param[in] eId the scene id of the target scene
  * \param[in] ptExtend the extended data of the target scene
  */
-static void __gui_lv_save_focus(gui_lv_scene_id_t eId,
+static void __gui_lv_focus_save(gui_lv_scene_id_t eId,
                                 gui_lv_extend_t *ptExtend)
 {
     if(emb_list_is_empty(&s_tSceneHead))    return;
@@ -734,7 +757,35 @@ static void __gui_lv_save_focus(gui_lv_scene_id_t eId,
         lv_group_t *ptGroup = ptExtend->ptGroup[i];
         if(ptGroup != NULL)
         {
-            ptThis->pchFocusIndex[i] = lv_group_get_focused(ptGroup);
+            ptThis->pchFocusIndex[i] = gui_lv_group_get_focus_index(ptGroup);
+        }
+    }
+}
+
+
+/*!
+ * \brief Restore the focus of each group in the current scene based on the saved focus indices
+ *
+ * \param[in] eId the scene id of the target scene
+ * \param[in] ptExtend the extended data of the target scene
+ */
+static void __gui_lv_focus_restore(gui_lv_scene_id_t eId, 
+                                   gui_lv_extend_t *ptExtend)
+{
+    if(emb_list_is_empty(&s_tSceneHead))    return;
+    if(ptExtend->u8GroupNum == 0)           return;
+
+    gui_lv_scene_cfg_t *ptThis = s_tScenePools[eId].ptCFG;
+
+    for(uint8_t i = 0; i < ptExtend->u8GroupNum; i++)
+    {
+        lv_obj_t *ptFocusObj = NULL;
+        if(ptExtend->ptGroup[i] != NULL)
+        {
+            ptFocusObj = gui_lv_group_get_index_obj(ptExtend->ptGroup[i], 
+                                                    ptThis->pchFocusIndex[i]);
+            lv_obj_add_state(ptFocusObj, LV_STATE_FOCUSED);
+            lv_group_focus_obj(ptFocusObj);
         }
     }
 }

@@ -312,7 +312,6 @@ gui_lv_page_id_t gui_lv_get_page_id(void);
  * \param[in] eId the scene id of the target scene
  * \param[in] bIsFocusRestoreEnabled true to enable focus restore, false to disable
  */
-static inline 
 void gui_lv_scene_focus_restore_enabled(gui_lv_scene_id_t eId, 
                                         bool bIsFocusRestoreEnabled);
 

@@ -72,6 +72,9 @@ int32_t gui_lv_group_focus_nav(uint8_t cols, gui_lv_navigation_t eNav, bool wrap
 extern
 int16_t gui_lv_group_get_focus_index(lv_group_t *ptGroup);
 
+extern
+lv_obj_t *gui_lv_group_get_index_obj(lv_group_t *ptGroup, uint8_t chIdx);
+
 /*============================ END ===========================================*/
 #ifdef   __cplusplus
 }
