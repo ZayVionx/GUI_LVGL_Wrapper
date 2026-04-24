@@ -25,6 +25,9 @@
 
 #if defined(__RTE_Acceleration_GUI_LVGL_SCENE__)
 #   include "template/gui_scene_include.h"
+#else
+/* User scene header includes */
+
 #endif
 
 /*================================== MACROS ==================================*/
