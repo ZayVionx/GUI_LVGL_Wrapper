@@ -69,8 +69,8 @@ typedef const struct {
  * \brief Extended scene data structure
  */
 typedef struct {
-    uint8_t      u8GroupNum;                //!< Number of groups in the scene  
-    uint8_t      u8TimerNum;                //!< Number of timers in the scene  
+    uint8_t      chGroupNum;                //!< Number of groups in the scene  
+    uint8_t      chTimerNum;                //!< Number of timers in the scene  
     lv_group_t **ptGroup;                   //!< Pointer to scene's group array 
     lv_timer_t **ptTimer;                   //!< Pointer to scene's timer array 
 } gui_lv_extend_t;

@@ -269,7 +269,7 @@ void gui_lv_scene_register(gui_lv_scene_cfg_t *ptThis)
     emb_list_init(&ptThis->tSceneNode);
 
     /* Initialize focus indices */
-    uint8_t chGroupNum = ptThis->ptExtend->u8GroupNum;
+    uint8_t chGroupNum = ptThis->ptExtend->chGroupNum;
     if(chGroupNum > 0)
     {
         ptThis->pchFocusIndex = (uint8_t*)malloc(chGroupNum);
@@ -472,7 +472,7 @@ void gui_lv_scene_focus_restore_enabled(gui_lv_scene_id_t eId)
     gui_lv_scene_cfg_t *ptThis = s_tScenePools[eId].ptCFG;
 
     if(emb_list_is_empty(&s_tSceneHead))    return;
-    if(ptThis->ptExtend->u8GroupNum == 0)   return;
+    if(ptThis->ptExtend->chGroupNum == 0)   return;
 
     ptThis->bIsRestoreFocus = true;
 }
@@ -486,7 +486,7 @@ void gui_lv_scene_focus_restore_disable(gui_lv_scene_id_t eId)
     gui_lv_scene_cfg_t *ptThis = s_tScenePools[eId].ptCFG;
 
     if(emb_list_is_empty(&s_tSceneHead))    return;
-    if(ptThis->ptExtend->u8GroupNum == 0)   return;
+    if(ptThis->ptExtend->chGroupNum == 0)   return;
 
     ptThis->bIsRestoreFocus = false;
 }
@@ -538,9 +538,9 @@ static void __gui_lv_page_list_pop_stack(void)
  */
 static void __gui_lv_scene_list_pop_stack(gui_lv_switch_anim_mode_t eAnimMode)
 {
-    /**************************
-     * Clear the current scene*
-     **************************/
+    /* -----------------------------------------------------------------------
+     * [STEP 1] CLEAR THE PREVIOUS SCENE EXTENDED & NODE DELETION
+     * -----------------------------------------------------------------------*/
     do {
         if(s_tSceneHead.next->next == &s_tSceneHead) break;
         
@@ -555,29 +555,38 @@ static void __gui_lv_scene_list_pop_stack(gui_lv_switch_anim_mode_t eAnimMode)
 
     } while(0);
 
-    /**************************
-     *     Load the Scene     *
-     **************************/
+    /* -----------------------------------------------------------------------
+     * [STEP 2] PREVIOUS SCENE SETUP
+     * -----------------------------------------------------------------------*/
     gui_lv_scene_id_t eId  = __GUI_LV_SCENE_GET_CURRENT_CFG()->eSceneId;
     gui_lv_scene_cfg_t *ptThis = s_tScenePools[eId].ptCFG;
 
+    /* [ 2.1 ]  Create Root and Extend */
     lv_obj_t *ptRoot = __gui_lv_create_container_root();
     s_tScenePools[eId].ptRoot = ptRoot;
     __gui_lv_extend_create(ptThis->ptExtend);
+    ptThis->bIsInitExtend = true;
+
+    /* [ 2.2 ]  Draw, Load and Bind */
     GUI_LV_INVOKE_RT_VOID(ptThis->pfnDraw, ptRoot);
     GUI_LV_INVOKE_RT_VOID(ptThis->pfnLoad, ptRoot);
     GUI_LV_INVOKE_RT_VOID(ptThis->pfnBind);
-    ptThis->bIsInitExtend = true;
-
+    
+    /* -----------------------------------------------------------------------
+     * [STEP 3] LOAD SCENE WITH ANIMATION
+     * -----------------------------------------------------------------------*/
     uint32_t           u32AnimTime  = eAnimMode.u32AnimTime ;         
     uint32_t           u32AnimDelay = eAnimMode.u32AnimDelay;
     lv_scr_load_anim_t eLoadAnim    = eAnimMode.eLoadAnim   ;
     lv_scr_load_anim(ptRoot, eLoadAnim, u32AnimTime, u32AnimDelay, true);
 
+    /* -----------------------------------------------------------------------
+     * [STEP 4] BIND INPUT DEVICE TO SCENE
+     * -----------------------------------------------------------------------*/
     __gui_lv_indev_bind_group(ptThis->ptExtend);
 
     /* -----------------------------------------------------------------------
-     * [STEP 6] RESTORE FOCUS IF ENABLED
+     * [STEP 5] RESTORE FOCUS IF ENABLED
      * -----------------------------------------------------------------------*/
     if(ptThis->bIsRestoreFocus)
     {
@@ -679,13 +688,13 @@ GUI_LV_NONNULL(1)
 static void __gui_lv_extend_create(gui_lv_extend_t *ptExtend)
 {
     GUI_LV_ASSERT(ptExtend != NULL);
-    GUI_LV_ASSERT(!(ptExtend->u8GroupNum > 0 && ptExtend->ptGroup == NULL));
-    GUI_LV_ASSERT(!(ptExtend->u8TimerNum > 0 && ptExtend->ptTimer == NULL));
+    GUI_LV_ASSERT(!(ptExtend->chGroupNum > 0 && ptExtend->ptGroup == NULL));
+    GUI_LV_ASSERT(!(ptExtend->chTimerNum > 0 && ptExtend->ptTimer == NULL));
 
     /* Create groups */
     gui_lv_foreach(lv_group_t*, 
                    ptExtend->ptGroup, 
-                   ptExtend->u8GroupNum, 
+                   ptExtend->chGroupNum, 
                    pptGroup) 
     {
         if(*pptGroup == NULL)   *pptGroup = lv_group_create();
@@ -694,7 +703,7 @@ static void __gui_lv_extend_create(gui_lv_extend_t *ptExtend)
     /* Create timers */
     gui_lv_foreach(lv_timer_t*, 
                    ptExtend->ptTimer, 
-                   ptExtend->u8TimerNum, 
+                   ptExtend->chTimerNum, 
                    pptTimer) 
     {
         if(*pptTimer == NULL)   *pptTimer = lv_timer_create(NULL, 500, NULL);
@@ -711,13 +720,13 @@ GUI_LV_NONNULL(1)
 static void __gui_lv_extend_depose(gui_lv_extend_t *ptExtend)
 {
     GUI_LV_ASSERT(ptExtend != NULL);
-    GUI_LV_ASSERT(!(ptExtend->u8GroupNum > 0 && ptExtend->ptGroup == NULL));
-    GUI_LV_ASSERT(!(ptExtend->u8TimerNum > 0 && ptExtend->ptTimer == NULL));
+    GUI_LV_ASSERT(!(ptExtend->chGroupNum > 0 && ptExtend->ptGroup == NULL));
+    GUI_LV_ASSERT(!(ptExtend->chTimerNum > 0 && ptExtend->ptTimer == NULL));
     
     /* Destroy groups */
     gui_lv_foreach(lv_group_t*, 
                    ptExtend->ptGroup, 
-                   ptExtend->u8GroupNum, 
+                   ptExtend->chGroupNum, 
                    pptGroup) 
     {
         if(*pptGroup != NULL)   GUI_LV_GROUP_DESTROY(*pptGroup);
@@ -726,7 +735,7 @@ static void __gui_lv_extend_depose(gui_lv_extend_t *ptExtend)
     /* Destroy timers */
     gui_lv_foreach(lv_timer_t*, 
                    ptExtend->ptTimer, 
-                   ptExtend->u8TimerNum, 
+                   ptExtend->chTimerNum, 
                    pptTimer) 
     {
         if(*pptTimer != NULL)   GUI_LV_TIMER_DESTROY(*pptTimer);
@@ -742,9 +751,9 @@ GUI_LV_NONNULL(1)
 static void __gui_lv_indev_bind_group(gui_lv_extend_t *ptExtend)
 {
     GUI_LV_ASSERT(ptExtend != NULL);
-    GUI_LV_ASSERT(!(ptExtend->u8GroupNum > 0 && ptExtend->ptGroup == NULL));
-    GUI_LV_ASSERT(!(ptExtend->u8TimerNum > 0 && ptExtend->ptTimer == NULL));
-    if(ptExtend->u8GroupNum == 0)   return;
+    GUI_LV_ASSERT(!(ptExtend->chGroupNum > 0 && ptExtend->ptGroup == NULL));
+    GUI_LV_ASSERT(!(ptExtend->chTimerNum > 0 && ptExtend->ptTimer == NULL));
+    if(ptExtend->chGroupNum == 0)   return;
 
     GUI_LV_INDEV_BIND_GROUP(ptExtend->ptGroup[0]);
 }
@@ -759,16 +768,19 @@ static void __gui_lv_focus_save(gui_lv_scene_id_t eId,
                                 gui_lv_extend_t *ptExtend)
 {
     if(emb_list_is_empty(&s_tSceneHead))    return;
-    if(ptExtend->u8GroupNum == 0)           return;
+    if(ptExtend->chGroupNum == 0)           return;
 
     gui_lv_scene_cfg_t *ptThis = s_tScenePools[eId].ptCFG;
 
-    for(uint8_t i = 0; i < ptExtend->u8GroupNum; i++)
+    gui_lv_foreach(lv_group_t*,
+                   ptExtend->ptGroup,
+                   ptExtend->chGroupNum,
+                   pptGroup)
     {
-        lv_group_t *ptGroup = ptExtend->ptGroup[i];
-        if(ptGroup != NULL)
+        if(*pptGroup != NULL)
         {
-            ptThis->pchFocusIndex[i] = gui_lv_group_get_focus_index(ptGroup);
+            ptThis->pchFocusIndex[pptGroup - ptExtend->ptGroup] =
+                                        gui_lv_group_get_focus_index(*pptGroup);
         }
     }
 }
@@ -784,17 +796,19 @@ static void __gui_lv_focus_restore(gui_lv_scene_id_t eId,
                                    gui_lv_extend_t *ptExtend)
 {
     if(emb_list_is_empty(&s_tSceneHead))    return;
-    if(ptExtend->u8GroupNum == 0)           return;
+    if(ptExtend->chGroupNum == 0)           return;
 
     gui_lv_scene_cfg_t *ptThis = s_tScenePools[eId].ptCFG;
 
-    for(uint8_t i = 0; i < ptExtend->u8GroupNum; i++)
+    gui_lv_foreach(lv_group_t*,
+                   ptExtend->ptGroup,
+                   ptExtend->chGroupNum,
+                   pptGroup)
     {
-        lv_obj_t *ptFocusObj = NULL;
-        if(ptExtend->ptGroup[i] != NULL)
+        if(*pptGroup != NULL)
         {
-            ptFocusObj = gui_lv_group_get_index_obj(ptExtend->ptGroup[i], 
-                                                    ptThis->pchFocusIndex[i]);
+            lv_obj_t *ptFocusObj = gui_lv_group_get_index_obj(*pptGroup, 
+                                         ptThis->pchFocusIndex[pptGroup - ptExtend->ptGroup]);
             lv_obj_add_state(ptFocusObj, LV_STATE_FOCUSED);
             lv_group_focus_obj(ptFocusObj);
         }
