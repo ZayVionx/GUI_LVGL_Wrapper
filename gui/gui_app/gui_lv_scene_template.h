@@ -16,19 +16,6 @@
 *                                                                           *
 ****************************************************************************/
 
-/* ----------------------------------------------------------------------
- * Project:      GUI (LVGL)
- * Title:        gui_scene.h
- * Description:  GUI scene template (CMSIS-Pack/RTE instance-based)
- *
- * NOTE:
- * - `GUI_SCENE_<NAME>` need to be defined in the "gui_scene_id.h" file,
- * 
- * - Do NOT compile this template file directly. For non-RTE usage, replace
- *   `%Instance%` manually (and rename files/symbols as needed).
- * --------------------------------------------------------------------
- */
-
 #ifndef __GUI_LV_SCENE_<NAME>_H__
 #define __GUI_LV_SCENE_<NAME>_H__
 
