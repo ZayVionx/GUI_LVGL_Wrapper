@@ -38,14 +38,14 @@
 
 /*============================ TYPES =========================================*/
 typedef struct {
-    lv_obj_t   *ptRoot;                                 /*!< Scene root container */
+    lv_obj_t   *ptRoot;                                                         /*!< Scene root container */
 
     /* -- insert your members begin -- */
 
-    /* -- insert your members end -- */
+    /* -- insert your members end ---- */
 
-    lv_group_t *ptGroup[GUI_LV_SCENE_GROUP_NUM];           /*!< Input device groups (optional) */
-    lv_timer_t *ptTimer[GUI_LV_SCENE_TIMER_NUM];           /*!< Scene timers (optional) */
+    lv_group_t *ptGroup[GUI_LV_SCENE_GROUP_NUM];                                /*!< Input device groups (optional) */
+    lv_timer_t *ptTimer[GUI_LV_SCENE_TIMER_NUM];                                /*!< Scene timers (optional) */
 } gui_scene_t;
 
 /*============================ LOCAL VARIABLES ===============================*/
@@ -128,11 +128,11 @@ static void __on_scene_<name>_depose(void)
 /*! 
  * \brief Register GUI scene <name>.
  *
- * \note  ID should be defined in your enum as GUI_SCENE_<NAME>.
+ * \note  ID should be defined in your enum as GUI_LV_SCENE_<NAME>.
  */
 void gui_lv_scene_<name>_init(void)
 {
-    static gui_lv_scene_ex_t s_tGUIEX; 
+    static gui_lv_extend_t s_tGUIEX; 
     s_tGUIEX.chGroupNum = GUI_LV_SCENE_GROUP_NUM;
     s_tGUIEX.chTimerNum = GUI_LV_SCENE_TIMER_NUM;
     s_tGUIEX.ptGroup    = GUI_LV_SCENE_GROUP_NUM ? s_tGUI.ptGroup 
