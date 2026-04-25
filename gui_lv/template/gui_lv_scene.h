@@ -33,7 +33,7 @@ extern "C" {
 /*! 
  * \brief Register/init GUI scene <name>.
  *
- * \note The scene ID should be defined in your enum as GUI_SCENE_<NAME>.
+ * \note The scene ID should be defined in your enum as GUI_LV_SCENE_<NAME>.
  */
 extern
 void gui_lv_scene_%Instance%_init(void);
