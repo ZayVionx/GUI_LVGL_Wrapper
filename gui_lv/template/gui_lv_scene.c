@@ -17,16 +17,18 @@
 ****************************************************************************/
 
 /*============================ INCLUDES ======================================*/
+#ifdef __RTE_Acceleration_GUI_LVGL_Scene%Instance%__
+#   include <gui_lv_scene_%Instance%.h>
+#   include <gui_lv_scene_task_%Instance%.h>
+
+
 #ifdef __GUI_LVGL_WRAPPER_CONF__
 #   include <gui_lvgl.h>
 #else
 #   include "gui_lvgl.h"
 #endif
 
-#ifdef __RTE_Acceleration_GUI_LVGL_Scene%Instance%__
-#   include <gui_lv_scene_%Instance%.h>
-#   include <gui_lv_scene_task_%Instance%.h>
-#endif
+
 
 /*============================ MACROS ========================================*/
 /*!
@@ -153,3 +155,5 @@ void gui_lv_scene_%Instance%_init(void)
 }
 
 /*============================ END OF FILE ===================================*/
+
+#endif /* __RTE_Acceleration_GUI_LVGL_Scene%Instance%__ */

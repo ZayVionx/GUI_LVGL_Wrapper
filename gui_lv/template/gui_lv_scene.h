@@ -16,6 +16,8 @@
 *                                                                           *
 ****************************************************************************/
 
+#ifdef __RTE_Acceleration_GUI_LVGL_Scene%Instance%__
+
 #ifndef __GUI_LV_SCENE_%Instance%_H__
 #define __GUI_LV_SCENE_%Instance%_H__
 
@@ -44,3 +46,5 @@ void gui_lv_scene_%Instance%_init(void);
 }
 #endif
 #endif /* __GUI_SCENE_%Instance%_H__ */
+
+#endif /* __RTE_Acceleration_GUI_LVGL_Scene%Instance%__ */

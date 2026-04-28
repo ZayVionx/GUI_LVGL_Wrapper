@@ -20,7 +20,7 @@
 #ifdef __RTE_Acceleration_GUI_LVGL_Scene%Instance%__
 #   include <gui_lv_scene_task_%Instance%.h>
 #   include <gui_lv_scene_%Instance%.h>
-#endif
+
 
 /*================================== MACROS ==================================*/
 /*============================ MACROFIED FUNCTIONS ===========================*/
@@ -51,3 +51,5 @@ void gui_lv_scene_task_%Instance%(lv_event_t *e)
 }
 
 /*==================================== END ===================================*/
+
+#endif /* __RTE_Acceleration_GUI_LVGL_Scene%Instance%__ */
