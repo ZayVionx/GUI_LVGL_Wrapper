@@ -491,6 +491,20 @@ void gui_lv_scene_focus_restore_disable(gui_lv_scene_id_t eId)
     ptThis->bIsRestoreFocus = false;
 }
 
+/*!
+ * \brief Check if focus restore is enabled for a scene
+ * \param[in] eId the scene id of the target scene
+ * 
+ * \return true : focus restore is enabled
+ *         false: focus restore is disabled
+ */
+bool gui_lv_scene_is_focus_restore(gui_lv_scene_id_t eId)
+{
+    gui_lv_scene_cfg_t *ptThis = s_tScenePools[eId].ptCFG;
+
+    return ptThis->bIsRestoreFocus;
+}
+
 /*=========================== LOCAL IMPLEMENTATION ===========================*/
 /*!
  * \brief Create a root container for a scene
@@ -805,7 +819,7 @@ static void __gui_lv_focus_restore(gui_lv_scene_id_t eId,
                    ptExtend->chGroupNum,
                    pptGroup)
     {
-        if(*pptGroup != NULL)
+        if(*pptGroup != NULL && lv_group_get_obj_count(*pptGroup) > 0)
         {
             lv_obj_t *ptFocusObj = gui_lv_group_get_index_obj(*pptGroup, 
                                          ptThis->pchFocusIndex[pptGroup - ptExtend->ptGroup]);

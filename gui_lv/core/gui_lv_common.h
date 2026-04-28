@@ -48,6 +48,9 @@ extern
 lv_obj_t *gui_lv_bar_init(lv_obj_t *parent, int16_t x, int16_t y, uint16_t width, uint16_t height, 
                                         int32_t min, int32_t max, int32_t value);
 
+extern
+lv_obj_t *gui_lv_slider_init(lv_obj_t *parent, int16_t x, int16_t y, uint16_t width, uint16_t height, 
+                                        int32_t min, int32_t max, int32_t value);
 
 #if LV_USE_SPINBOX
 
@@ -74,6 +77,52 @@ int16_t gui_lv_group_get_focus_index(lv_group_t *ptGroup);
 
 extern
 lv_obj_t *gui_lv_group_get_index_obj(lv_group_t *ptGroup, uint8_t chIdx);
+
+
+/*=============================== STATIC INLINE ==============================*/
+/*!
+ * \brief   Handle vertical key navigation for group focus.
+ * \details Maps UP/DOWN and LONG_UP/LONG_DOWN keys to previous/next group focus.
+ *          Intended for vertically arranged focusable widgets.
+ * \param   e LVGL event object.
+ */
+static inline void gui_lv_group_focus_vertical_event_cb(lv_event_t *e)
+{
+    if(lv_event_get_code(e) != LV_EVENT_KEY)    return;
+    uint32_t u32Key = lv_indev_get_key(LV_INDEV_KEYPAD);
+
+    switch(u32Key) 
+    {
+        case LV_KEY_UP:         FALL_THROUGH;
+        case LV_KEY_LONG_UP:    GUI_LV_GROUP_FOCUS_PREV(); return;
+        case LV_KEY_DOWN:       FALL_THROUGH;
+        case LV_KEY_LONG_DOWN:  GUI_LV_GROUP_FOCUS_NEXT(); return;
+		
+		default: break;
+    }
+}
+
+/*!
+ * \brief   Handle horizontal key navigation for group focus.
+ * \details Maps LEFT/RIGHT and LONG_LEFT/LONG_RIGHT keys to previous/next group focus.
+ *          Intended for horizontally arranged focusable widgets.
+ * \param   e LVGL event object.
+ */
+static inline void gui_lv_group_focus_horizontal_event_cb(lv_event_t *e)
+{
+    if(lv_event_get_code(e) != LV_EVENT_KEY)    return;
+    uint32_t u32Key = lv_indev_get_key(LV_INDEV_KEYPAD);
+
+    switch(u32Key) 
+    {
+        case LV_KEY_LEFT:       FALL_THROUGH;
+        case LV_KEY_LONG_LEFT:  GUI_LV_GROUP_FOCUS_PREV(); return;
+        case LV_KEY_RIGHT:      FALL_THROUGH;
+        case LV_KEY_LONG_RIGHT: GUI_LV_GROUP_FOCUS_NEXT(); return;
+		
+		default: break;
+    }
+}
 
 /*============================ END ===========================================*/
 #ifdef   __cplusplus

@@ -116,7 +116,7 @@ static void __on_scene_<name>_bind(void)
  */
 static void __on_scene_<name>_depose(void)
 {
-    GUI_LV_UNUSED(0);
+    s_tGUI.ptRoot = NULL;
 
     /*--------------------- insert your depose code begin --------------------*/
 

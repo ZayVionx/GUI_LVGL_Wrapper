@@ -35,10 +35,10 @@ lv_obj_t *gui_lv_container_init(lv_obj_t *parent, int16_t x, int16_t y, uint16_t
 {
     lv_obj_t *container = lv_obj_create(parent);
     if(bIsClearStyle) lv_obj_remove_style_all(container);
-    lv_obj_set_size(container, width, height);
-    lv_obj_set_pos(container, x, y);
+
+    lv_obj_set_size          (container, width, height);
+    lv_obj_set_pos           (container, x, y);
     lv_obj_set_style_bg_color(container, bg_color, 0);
-//    lv_obj_clear_flag(container, LV_OBJ_FLAG_SCROLLABLE);   // 禁用滚动条
     return container;
 }
 
@@ -47,8 +47,8 @@ lv_obj_t *gui_lv_img_init(lv_obj_t *parent, int16_t x, int16_t y, uint16_t width
 {
     lv_obj_t *img_obj = lv_img_create(parent);
     lv_obj_set_size(img_obj, width, height);
-    lv_obj_set_pos(img_obj, x, y);
-    lv_img_set_src(img_obj, (const lv_img_dsc_t *)img_scr);
+    lv_obj_set_pos (img_obj, x, y);
+    lv_img_set_src (img_obj, (const lv_img_dsc_t *)img_scr);
     return img_obj;
 }                            
 
@@ -56,12 +56,13 @@ lv_obj_t *gui_lv_label_init(lv_obj_t *parent, int16_t x, int16_t y, const char *
                                         const lv_font_t *font, lv_color_t color)
 {
     lv_obj_t *label_obj = lv_label_create(parent);
-    lv_label_set_text(label_obj, text);
+    
     if (x != 0 && y != 0) {
         lv_obj_set_pos(label_obj, x, y);
     }
-    
-    lv_obj_set_style_text_font(label_obj, font, 0);
+
+    lv_label_set_text          (label_obj, text);
+    lv_obj_set_style_text_font (label_obj, font, 0);
     lv_obj_set_style_text_color(label_obj, color, 0);
     return label_obj;
 }                              
@@ -71,8 +72,9 @@ lv_obj_t *gui_lv_btn_init(lv_obj_t *parent, int16_t x, int16_t y, uint16_t width
 {
     lv_obj_t *btn_obj = lv_btn_create(parent);
     if(bIsClearStyle) lv_obj_remove_style_all(btn_obj);
-    lv_obj_set_size(btn_obj, width, height);
-    lv_obj_set_pos(btn_obj, x, y);
+
+    lv_obj_set_size          (btn_obj, width, height);
+    lv_obj_set_pos           (btn_obj, x, y);
     lv_obj_set_style_bg_color(btn_obj, bg_color, 0);
     return btn_obj;
 }
@@ -81,12 +83,23 @@ lv_obj_t *gui_lv_bar_init(lv_obj_t *parent, int16_t x, int16_t y, uint16_t width
                                         int32_t min, int32_t max, int32_t value)
 {
     lv_obj_t *bar_obj = lv_bar_create(parent);
-    lv_obj_set_size(bar_obj, width, height);
-    lv_obj_set_pos(bar_obj, x, y);
+    lv_obj_set_size (bar_obj, width, height);
+    lv_obj_set_pos  (bar_obj, x, y);
     lv_bar_set_range(bar_obj, min, max);
     lv_bar_set_value(bar_obj, value, LV_ANIM_OFF);
     return bar_obj;
 }                                            
+
+lv_obj_t *gui_lv_slider_init(lv_obj_t *parent, int16_t x, int16_t y, uint16_t width, uint16_t height, 
+                                        int32_t min, int32_t max, int32_t value)
+{
+    lv_obj_t *slider_obj = lv_slider_create(parent);
+    lv_obj_set_size    (slider_obj, width, height);
+    lv_obj_set_pos     (slider_obj, x, y);
+    lv_slider_set_range(slider_obj, min, max);
+    lv_slider_set_value(slider_obj, value, LV_ANIM_OFF);
+    return slider_obj;
+}
 
 #if LV_USE_SPINBOX
 

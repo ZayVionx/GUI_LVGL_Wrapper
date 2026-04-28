@@ -317,6 +317,15 @@ void gui_lv_scene_focus_restore_enabled(gui_lv_scene_id_t eId);
  */
 void gui_lv_scene_focus_restore_disable(gui_lv_scene_id_t eId);                                      
 
+/*!
+ * \brief Check if focus restore is enabled for a scene
+ * \param[in] eId the scene id of the target scene
+ * 
+ * \return true : focus restore is enabled
+ *         false: focus restore is disabled
+ */
+bool gui_lv_scene_is_focus_restore(gui_lv_scene_id_t eId);
+
 /*============================== IMPLEMENTATION ==============================*/
 /*=================================== END ====================================*/
 #ifdef   __cplusplus
