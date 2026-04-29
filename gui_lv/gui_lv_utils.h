@@ -171,11 +171,13 @@ extern "C" {
 /*----------------------------------------------------------------------------*
  * Image macro func                                                           *
  *----------------------------------------------------------------------------*/
-#define GUI_LV_IMG_SET_SRC(_img, _width, _height, _src)                        \
+#define GUI_LV_IMG_SET_SRC(_img, _src)                                         \
 	do {                                                                       \
 		if ((_img) != NULL) {                                                  \
-			lv_img_set_src((_img), (_src));                                    \
-			lv_obj_set_size((_img), (_width), (_height));                      \
+            uint32_t u32ImgW = ((const lv_img_dsc_t *)(_src))->header.w;       \
+            uint32_t u32ImgH = ((const lv_img_dsc_t *)(_src))->header.h;       \
+			lv_img_set_src ((_img), (_src));                                   \
+            lv_obj_set_size((_img), u32ImgW, u32ImgH);                         \
 		}                                                                      \
 	} while (0)
 

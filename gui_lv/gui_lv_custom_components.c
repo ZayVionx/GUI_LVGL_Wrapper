@@ -192,10 +192,7 @@ void __gui_lv_battery_set_frame_img(gui_lv_custom_battery_t *ptBattery,
     if(ptBattery->tAnim.pCurrentImgScr == pImgScr)       return;
 
     ptImgDsc = (const lv_img_dsc_t *)pImgScr;
-    GUI_LV_IMG_SET_SRC( ptBattery->ptFrameImg, 
-                        ptImgDsc->header.w, 
-                        ptImgDsc->header.h, 
-                        pImgScr);
+    GUI_LV_IMG_SET_SRC( ptBattery->ptFrameImg, pImgScr);
     lv_obj_align(ptBattery->ptFrameImg, ptBattery->chAlign, ptBattery->i16X, ptBattery->i16Y);
 
     ptBattery->tAnim.pCurrentImgScr = pImgScr;
