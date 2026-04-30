@@ -41,14 +41,14 @@
 
 /*============================ TYPES =========================================*/
 typedef struct {
-    lv_obj_t   *ptRoot;                                                         /*!< Scene root container */
+    lv_obj_t   *ptRoot;                                                         //!< Scene root container
 
     /* -- insert your members begin -- */
 
     /* -- insert your members end ---- */
 
-    lv_group_t *ptGroup[GUI_LV_SCENE_GROUP_NUM];                                /*!< Input device groups (optional) */
-    lv_timer_t *ptTimer[GUI_LV_SCENE_TIMER_NUM];                                /*!< Scene timers (optional) */
+    lv_group_t *ptGroup[GUI_LV_SCENE_GROUP_NUM];                                //!< Input device groups
+    lv_timer_t *ptTimer[GUI_LV_SCENE_TIMER_NUM];                                //!< Scene timers
 } gui_scene_t;
 
 /*============================ LOCAL VARIABLES ===============================*/
