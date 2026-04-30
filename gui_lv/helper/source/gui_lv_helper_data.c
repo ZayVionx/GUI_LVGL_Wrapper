@@ -57,7 +57,7 @@ bool gui_lv_data_init(gui_lv_data_cfg_t *ptCfg)
     s_tGuiLvDataOps.ptCfg = ptCfg;
     
     /* Load system data */
-    // s_tGuiLvDataOps.ptCfg->pfDataLoad ();
+    // s_tGuiLvDataOps.ptCfg->pfnDataLoad ();
     return true;
 }
 
@@ -126,28 +126,37 @@ void gui_lv_data_set(gui_lv_data_range_t *ptRange,
 }
 
 /*******************************************************************************
- * @brief   Save parameters to flash.
+ * \brief   Save parameters to flash.
  ******************************************************************************/
 void gui_lv_data_save_to_flash(void)
 {
     if(    s_tGuiLvDataOps.ptCfg == NULL 
-        || s_tGuiLvDataOps.ptCfg->pfDataSave == NULL)  return;
+        || s_tGuiLvDataOps.ptCfg->pfnDataSave == NULL)  return;
 
-    s_tGuiLvDataOps.ptCfg->pfDataSave();
+    s_tGuiLvDataOps.ptCfg->pfnDataSave();
 }
 
 /*******************************************************************************
- * @brief   Reset parameters to default values.
+ * \brief   Reset parameters to default values.
  ******************************************************************************/
 void gui_lv_data_reset_to_default(void)
 {
     if(    s_tGuiLvDataOps.ptCfg == NULL 
-        || s_tGuiLvDataOps.ptCfg->pfDataReset == NULL)  return;
+        || s_tGuiLvDataOps.ptCfg->pfnDataReset == NULL)  return;
         
-    s_tGuiLvDataOps.ptCfg->pfDataReset();
+    s_tGuiLvDataOps.ptCfg->pfnDataReset();
 }
 
-
+/*******************************************************************************
+ * \brief   Power off the system.
+ ******************************************************************************/
+void gui_lv_system_power_off(void)
+{
+    if(    s_tGuiLvDataOps.ptCfg == NULL 
+        || s_tGuiLvDataOps.ptCfg->pfnPowerOff == NULL)  return;
+        
+    s_tGuiLvDataOps.ptCfg->pfnPowerOff();
+}
 
 /*======================= LOCAL FUNCTION IMPLEMENTATION ======================*/
 

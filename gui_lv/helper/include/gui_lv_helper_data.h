@@ -77,9 +77,10 @@ typedef struct {
 } gui_lv_data_entry_t;
 
  typedef struct {
-    bool (*pfDataLoad )(void);
-    bool (*pfDataSave )(void);
-    bool (*pfDataReset)(void);
+    bool (*pfnDataLoad )(void);
+    bool (*pfnDataSave )(void);
+    bool (*pfnDataReset)(void);
+    void (*pfnPowerOff )(void);
  } gui_lv_data_cfg_t;
 
 typedef struct {
@@ -107,17 +108,23 @@ void gui_lv_data_set(gui_lv_data_range_t *ptRange,
                      gui_lv_edit_t eDit,
                      bool bIsWrap);
 
-/**
- * @brief   Save parameters to flash.
+/*!
+ * \brief   Save parameters to flash.
  */
 extern
 void gui_lv_data_save_to_flash(void);
 
-/**
- * @brief   Reset parameters to default values.
+/*!
+ * \brief   Reset parameters to default values.
  */
 extern 
 void gui_lv_data_reset_to_default(void);
+
+/*!
+ * \brief   Power off the system.
+ */
+extern
+void gui_lv_system_power_off(void);
 
 /*=================================== END ====================================*/
 #ifdef   __cplusplus
