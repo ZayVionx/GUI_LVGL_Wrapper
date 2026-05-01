@@ -31,19 +31,17 @@
 #endif
 
 /*================================== MACROS ==================================*/
-#define BG_COLOR_CONT_NORMAL    RGB(  0,   0,   0)
-
 /*============================ MACROFIED FUNCTIONS ===========================*/
 /*================================== TYPES ===================================*/
 /*============================== LOCAL VARIABLES =============================*/
 /*============================== GLOBAL VARIABLES ============================*/
 gui_lv_style_t ptContDefStyle = {
     .config = {
-        GUI_LV_STYLE_RADIUS(0),
-        GUI_LV_STYLE_BORDER_WIDTH(0),
-        GUI_LV_STYLE_PAD_ALL(0),
-        GUI_LV_STYLE_BG_COLOR(BG_COLOR_CONT_NORMAL),
-        GUI_LV_STYLE_BG_OPA(LV_OPA_COVER)
+        GUI_LV_STYLE_RADIUS         (0),
+        GUI_LV_STYLE_PAD_ALL        (0),
+        GUI_LV_STYLE_BORDER_WIDTH   (0),
+        GUI_LV_STYLE_BG_OPA         (LV_OPA_COVER),  
+        GUI_LV_STYLE_BG_COLOR       (RGB(0, 0, 0)),
     },
 };
 
@@ -88,6 +86,7 @@ static void gui_all_scene_init(void)
     /* Example:
      *   gui_lv_scene_0_init();
      */
+    
     /*-------------------- user code end  : scene register --------------------*/
 #endif
 
