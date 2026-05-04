@@ -208,6 +208,13 @@ void gui_lv_scene_set_home(gui_lv_scene_id_t eId)
 
     /* Move the home scene to the head of the list */
     emb_list_t *ptHomeNode = &ptThis->tSceneNode;
+
+    if(emb_list_is_empty(&s_tSceneHead))
+    {
+        emb_list_add(ptHomeNode, &s_tSceneHead);
+        return;
+    }
+
     if(eId != __GUI_LV_SCENE_GET_HOME_CFG()->eSceneId)
     {
         emb_list_is_linked(ptHomeNode) ? emb_list_move(ptHomeNode, &s_tSceneHead)
