@@ -26,6 +26,10 @@
 #include <gui_lv_scene_<name>.h>
 #include <gui_lv_scene_task_<name>.h>
 
+#if !defined(__WIN64)
+/* Application layer header includes */
+
+#endif
 
 /*============================ MACROS ========================================*/
 /*!

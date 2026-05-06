@@ -21,14 +21,16 @@
 #   include <gui_lv_scene_%Instance%.h>
 #   include <gui_lv_scene_task_%Instance%.h>
 
-
 #ifdef __GUI_LVGL_WRAPPER_CONF__
 #   include <gui_lvgl.h>
 #else
 #   include "gui_lvgl.h"
 #endif
 
+#if !defined(__WIN64)
+/* Application layer header includes */
 
+#endif
 
 /*============================ MACROS ========================================*/
 /*!
@@ -43,16 +45,22 @@
 typedef struct {
     lv_obj_t   *ptRoot;                                                         //!< Scene root container
 
-    /* -- insert your members begin -- */
+    /* User-defined scene members Begin --------------------------------------*/
 
-    /* -- insert your members end ---- */
+
+    /* User-defined scene members End ----------------------------------------*/
 
     lv_group_t *ptGroup[GUI_LV_SCENE_GROUP_NUM];                                //!< Input device groups
     lv_timer_t *ptTimer[GUI_LV_SCENE_TIMER_NUM];                                //!< Scene timers
 } gui_scene_t;
 
+typedef struct {
+
+} gui_data_t;
+
 /*============================ LOCAL VARIABLES ===============================*/
 static gui_scene_t s_tGUI;
+static gui_data_t  s_tData;
 
 /*============================ PROTOTYPES ====================================*/
 static void __on_scene%Instance%_draw(lv_obj_t *ptRoot);
@@ -61,73 +69,7 @@ static void __on_scene%Instance%_bind(void);
 static void __on_scene%Instance%_depose(void);
 
 /*============================ IMPLEMENTATION ================================*/
-#if GUI_LV_SCENE_TIMER_NUM
-static void __on_scene%Instance%_timer0_cb(lv_timer_t *ptTimer)
-{
-    GUI_LV_UNUSED(ptTimer);
-}
-#endif
-
-/*! 
- * \brief Scene build callback (create widgets/layout).
- * \param[in] ptRoot The root container of this scene.
- */
-static void __on_scene%Instance%_draw(lv_obj_t *ptRoot)
-{
-    s_tGUI.ptRoot           = ptRoot;
-    gui_lv_language_t eLang = gui_lv_get_current_lang();
-
-    /*------------------------- draw the scene begin -------------------------*/
-
-
-    /*------------------------- draw the scene end   -------------------------*/
-
-#if GUI_LV_SCENE_TIMER_NUM
-    GUI_LV_TIMER_SET(s_tGUI.ptTimer[0], __on_scene%Instance%_timer0_cb, 1000, NULL);
-    GUI_LV_TIMER_ALL_STOP(s_tGUI.ptTimer, GUI_LV_SCENE_TIMER_NUM);
-#endif
-}
-
-/*! 
- * \brief Scene resource loading callback.
- * \param[in] ptRoot The root container of this scene.
- */
-static void __on_scene%Instance%_load(lv_obj_t *ptRoot)
-{
-    GUI_LV_UNUSED(ptRoot);
-
-    /*------------------------- load the scene begin -------------------------*/
-
-
-    /*------------------------- load the scene end   -------------------------*/
-}
-
-/*! 
- * \brief Application layer data binding.
- */
-static void __on_scene%Instance%_bind(void)
-{
-    GUI_LV_UNUSED(0);
-
-    /*------------------------- bind the scene begin -------------------------*/
-
-    /*------------------------- bind the scene end   -------------------------*/
-}
-
-/*! 
- * \brief Scene resource depose callback.
- */
-static void __on_scene%Instance%_depose(void)
-{
-    s_tGUI.ptRoot = NULL;
-
-    /*--------------------- insert your depose code begin --------------------*/
-
-
-    /*--------------------- insert your depose code end  ---------------------*/
-}
-
-/*! 
+/**
  * \brief Register GUI scene <NAME>.
  */
 void gui_lv_scene_%Instance%_init(void)
@@ -140,7 +82,7 @@ void gui_lv_scene_%Instance%_init(void)
     s_tGUIEX.ptTimer    = GUI_LV_SCENE_TIMER_NUM ? s_tGUI.ptTimer 
                                                  : NULL;
 
-    /* ------------ initialize members of scene begin ------------ */
+    /* initialize members of scene begin -------------------------------------*/
     static gui_lv_scene_cfg_t c_tCFG = {
         .eSceneId  = GUI_LV_SCENE_<NAME>,
         .ptExtend  = &s_tGUIEX,
@@ -149,9 +91,81 @@ void gui_lv_scene_%Instance%_init(void)
         .pfnBind   = __on_scene%Instance%_bind, 
         .pfnDepose = __on_scene%Instance%_depose,
     };
-    /* ------------ initialize members of scene end -------------- */
+    /* initialize members of scene end ---------------------------------------*/
 
     gui_lv_scene_register(&c_tCFG);
+}
+
+#if GUI_LV_SCENE_TIMER_NUM
+/**
+ * @brief Scene timer callback.
+ *
+ * @note  Multiple scene timers may follow this callback pattern.
+ * @note  Create and start each timer in the scene draw callback.
+ */
+static void __on_scene%Instance%_timer0_cb(lv_timer_t *ptTimer)
+{
+    GUI_LV_UNUSED(ptTimer);
+}
+#endif
+
+/**
+ * @brief Scene build callback (create widgets/layout).
+ * @param[in] ptRoot The root container of this scene.
+ */
+static void __on_scene%Instance%_draw(lv_obj_t *ptRoot)
+{
+    s_tGUI.ptRoot           = ptRoot;
+    gui_lv_language_t eLang = gui_lv_get_current_lang();
+
+    /* draw the scene begin --------------------------------------------------*/
+
+
+    /* draw the scene end   --------------------------------------------------*/
+
+#if GUI_LV_SCENE_TIMER_NUM
+    GUI_LV_TIMER_SET(s_tGUI.ptTimer[0], __on_scene%Instance%_timer0_cb, 1000, NULL);
+    GUI_LV_TIMER_ALL_STOP(s_tGUI.ptTimer, GUI_LV_SCENE_TIMER_NUM);
+#endif
+}
+
+/**
+ * @brief Scene resource loading callback.
+ * @param[in] ptRoot The root container of this scene.
+ */
+static void __on_scene%Instance%_load(lv_obj_t *ptRoot)
+{
+    GUI_LV_UNUSED(ptRoot);
+
+    /* load the scene begin --------------------------------------------------*/
+
+
+    /* load the scene end ----------------------------------------------------*/
+}
+
+/**
+ * @brief Application layer data binding.
+ */
+static void __on_scene%Instance%_bind(void)
+{
+    GUI_LV_UNUSED(0);
+
+    /* bind the scene begin --------------------------------------------------*/
+
+    /* bind the scene end ----------------------------------------------------*/
+}
+
+/**
+ * @brief Scene resource depose callback.
+ */
+static void __on_scene%Instance%_depose(void)
+{
+    s_tGUI.ptRoot = NULL;
+
+    /* insert your depose code begin -----------------------------------------*/
+
+
+    /* insert your depose code end -------------------------------------------*/
 }
 
 /*============================ END OF FILE ===================================*/
