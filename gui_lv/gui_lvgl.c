@@ -35,7 +35,7 @@
 /*================================== TYPES ===================================*/
 /*============================== LOCAL VARIABLES =============================*/
 /*============================== GLOBAL VARIABLES ============================*/
-gui_lv_style_t ptContDefStyle = {
+gui_lv_style_t g_tContDefStyle = {
     .config = {
         GUI_LV_STYLE_RADIUS         (0),
         GUI_LV_STYLE_PAD_ALL        (0),
@@ -66,7 +66,7 @@ static void gui_sys_data_init(void)
 static void gui_common_style_init(void)
 {
     /*------------------- user code begin: common style -------------------*/
-    gui_lv_style_init(&ptContDefStyle);
+    gui_lv_style_init(&g_tContDefStyle);
     /*------------------- user code end  : common style -------------------*/
 }
 
