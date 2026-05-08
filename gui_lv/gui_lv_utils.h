@@ -642,6 +642,38 @@ typedef enum {
 #define GUI_LV_PT_RETURN(...)                                                  \
             (*ptPTState) = 0;                                                  \
             return __VA_ARGS__;
+/*----------------------------------------------------------------------------*
+ * Periodic PT task                                                           *
+ *----------------------------------------------------------------------------*/
+#if defined(_WIN64)
+#   define PLATFORM_ON_WIN64(...)   do { __VA_ARGS__ } while (0);
+#   define PLATFORM_ON_MCU(...)     do { } while (0);
+#else
+#   define PLATFORM_ON_WIN64(...)   do { } while (0);
+#   define PLATFORM_ON_MCU(...)     do { __VA_ARGS__ } while (0);
+#endif
+
+#define IMPL_GUI_LV_PERIODIC_PT(__NAME, __PERIOD_MS)                           \
+    static gui_lv_fsm_rt_t __NAME(void)                                        \
+    {                                                                          \
+        static uint8_t s_chGuiLvPtTaskState = 0;                               \
+        const uint32_t u32GuiLvPtTaskPeriodMs = (uint32_t)(__PERIOD_MS);       \
+                                                                               \
+        GUI_LV_PT_BEGIN(s_chGuiLvPtTaskState);                                 \
+        while (1) {                                                            \
+
+#define GUI_LV_PT_TASK_SKIP()                                                  \
+            goto gui_lv_pt_task_next_cycle
+
+#define END_IMPL_GUI_LV_PERIODIC_PT(__NAME)                                    \
+gui_lv_pt_task_next_cycle:                                                     \
+            GUI_LV_PT_DELAY_MS(u32GuiLvPtTaskPeriodMs);                        \
+        }                                                                      \
+        GUI_LV_PT_END();                                                       \
+        return gui_lv_fsm_rt_cpl;                                              \
+    }
+
+
 
 /*================================ PROTOTYPES ================================*/
 extern int64_t gui_lv_helper_get_system_timestamp(void);

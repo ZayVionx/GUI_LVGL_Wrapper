@@ -33,9 +33,8 @@ extern "C" {
 /*============================== LOCAL VARIABLES =============================*/
 /*================================ PROTOTYPES ================================*/
 /** 
- * @brief Register scene GUI_LV_SCENE_<NAME>.
- *
  * @note The scene ID should be defined in your enum as GUI_LV_SCENE_<NAME>.
+ *       Header include is in gui_lv_scene_id.h
  */
 extern
 void gui_lv_scene_%Instance%_init(void);
