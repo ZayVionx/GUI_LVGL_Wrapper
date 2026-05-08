@@ -33,22 +33,22 @@
 #endif
 
 /*============================ MACROS ========================================*/
-/*!
- * \brief Scene group/timer config.
+/**
+ * @brief Scene group/timer config.
  * 
- * \note Set to 0 to disable the feature.
+ * @note Set to 0 to disable the feature.
  */
-#define GUI_LV_SCENE_GROUP_NUM     0
-#define GUI_LV_SCENE_TIMER_NUM     0
+#define GUI_LV_SCENE_GROUP_NUM      0
+#define GUI_LV_SCENE_TIMER_NUM      0
 
 /*============================ TYPES =========================================*/
 typedef struct {
     lv_obj_t   *ptRoot;                                                         //!< Scene root container
 
-    /* User-defined scene members Begin --------------------------------------*/
+    /* User-defined scene members begin --------------------------------------*/
 
 
-    /* User-defined scene members End ----------------------------------------*/
+    /* User-defined scene members end ----------------------------------------*/
 
     lv_group_t *ptGroup[GUI_LV_SCENE_GROUP_NUM];                                //!< Input device groups
     lv_timer_t *ptTimer[GUI_LV_SCENE_TIMER_NUM];                                //!< Scene timers
@@ -69,8 +69,10 @@ static void __on_scene%Instance%_bind(void);
 static void __on_scene%Instance%_depose(void);
 
 /*============================ IMPLEMENTATION ================================*/
-/**
- * \brief Register GUI scene <NAME>.
+/*! 
+ * \brief Register scene GUI_LV_SCENE_<NAME>.
+ *
+ * \note  ID should be defined in your enum as GUI_LV_SCENE_<NAME>.
  */
 void gui_lv_scene_%Instance%_init(void)
 {
@@ -82,8 +84,8 @@ void gui_lv_scene_%Instance%_init(void)
     s_tGUIEX.ptTimer    = GUI_LV_SCENE_TIMER_NUM ? s_tGUI.ptTimer 
                                                  : NULL;
 
-    /* initialize members of scene begin -------------------------------------*/
-    static gui_lv_scene_cfg_t c_tCFG = {
+    /* Scene registration config begin ---------------------------------------*/
+    static gui_lv_scene_cfg_t s_tCFG = {
         .eSceneId  = GUI_LV_SCENE_<NAME>,
         .ptExtend  = &s_tGUIEX,
         .pfnDraw   = __on_scene%Instance%_draw,
@@ -91,9 +93,9 @@ void gui_lv_scene_%Instance%_init(void)
         .pfnBind   = __on_scene%Instance%_bind, 
         .pfnDepose = __on_scene%Instance%_depose,
     };
-    /* initialize members of scene end ---------------------------------------*/
+    /* Scene registration config end -----------------------------------------*/
 
-    gui_lv_scene_register(&c_tCFG);
+    gui_lv_scene_register(&s_tCFG);
 }
 
 #if GUI_LV_SCENE_TIMER_NUM
@@ -118,10 +120,10 @@ static void __on_scene%Instance%_draw(lv_obj_t *ptRoot)
     s_tGUI.ptRoot           = ptRoot;
     gui_lv_language_t eLang = gui_lv_get_current_lang();
 
-    /* draw the scene begin --------------------------------------------------*/
+    /* User draw code begin --------------------------------------------------*/
 
 
-    /* draw the scene end   --------------------------------------------------*/
+    /* User draw code end   --------------------------------------------------*/
 
 #if GUI_LV_SCENE_TIMER_NUM
     GUI_LV_TIMER_SET(s_tGUI.ptTimer[0], __on_scene%Instance%_timer0_cb, 1000, NULL);
@@ -137,10 +139,10 @@ static void __on_scene%Instance%_load(lv_obj_t *ptRoot)
 {
     GUI_LV_UNUSED(ptRoot);
 
-    /* load the scene begin --------------------------------------------------*/
+    /* User load code begin --------------------------------------------------*/
 
 
-    /* load the scene end ----------------------------------------------------*/
+    /* User load code end ----------------------------------------------------*/
 }
 
 /**
@@ -150,22 +152,22 @@ static void __on_scene%Instance%_bind(void)
 {
     GUI_LV_UNUSED(0);
 
-    /* bind the scene begin --------------------------------------------------*/
+    /* User bind code begin --------------------------------------------------*/
 
-    /* bind the scene end ----------------------------------------------------*/
+    /* User bind code end ----------------------------------------------------*/
 }
 
 /**
- * @brief Scene resource depose callback.
+ * @brief Scene cleanup callback.
  */
 static void __on_scene%Instance%_depose(void)
 {
     s_tGUI.ptRoot = NULL;
 
-    /* insert your depose code begin -----------------------------------------*/
+    /* User cleanup code begin -----------------------------------------------*/
 
 
-    /* insert your depose code end -------------------------------------------*/
+    /* User cleanup code end -------------------------------------------------*/
 }
 
 /*============================ END OF FILE ===================================*/

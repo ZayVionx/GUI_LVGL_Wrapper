@@ -32,28 +32,34 @@
 #endif
 
 /*============================ MACROS ========================================*/
-/*!
- * \brief Scene group/timer config.
+/**
+ * @brief Scene group/timer config.
  * 
- * \note Set to 0 to disable the feature.
+ * @note Set to 0 to disable the feature.
  */
-#define GUI_LV_SCENE_GROUP_NUM     0
-#define GUI_LV_SCENE_TIMER_NUM     0
+#define GUI_LV_SCENE_GROUP_NUM      0
+#define GUI_LV_SCENE_TIMER_NUM      0
 
 /*============================ TYPES =========================================*/
 typedef struct {
     lv_obj_t   *ptRoot;                                                         //!< Scene root container
 
-    /* -- insert your members begin -- */
+    /* User-defined scene members begin --------------------------------------*/
 
-    /* -- insert your members end ---- */
+
+    /* User-defined scene members end ----------------------------------------*/
 
     lv_group_t *ptGroup[GUI_LV_SCENE_GROUP_NUM];                                //!< Input device groups
     lv_timer_t *ptTimer[GUI_LV_SCENE_TIMER_NUM];                                //!< Scene timers
 } gui_scene_t;
 
+typedef struct {
+
+} gui_data_t;
+
 /*============================ LOCAL VARIABLES ===============================*/
 static gui_scene_t s_tGUI;
+static gui_data_t  s_tData;
 
 /*============================ PROTOTYPES ====================================*/
 static void __on_scene_<name>_draw(lv_obj_t *ptRoot);
@@ -62,7 +68,43 @@ static void __on_scene_<name>_bind(void);
 static void __on_scene_<name>_depose(void);
 
 /*============================ IMPLEMENTATION ================================*/
+/*! 
+ * \brief Register scene GUI_LV_SCENE_<NAME>.
+ *
+ * \note  ID should be defined in your enum as GUI_LV_SCENE_<NAME>.
+ */
+void gui_lv_scene_<name>_init(void)
+{
+    static gui_lv_extend_t s_tGUIEX; 
+    s_tGUIEX.chGroupNum = GUI_LV_SCENE_GROUP_NUM;
+    s_tGUIEX.chTimerNum = GUI_LV_SCENE_TIMER_NUM;
+    s_tGUIEX.ptGroup    = GUI_LV_SCENE_GROUP_NUM ? s_tGUI.ptGroup 
+                                                 : NULL;
+    s_tGUIEX.ptTimer    = GUI_LV_SCENE_TIMER_NUM ? s_tGUI.ptTimer 
+                                                 : NULL;
+
+    /* Scene registration config begin ---------------------------------------*/
+    static gui_lv_scene_cfg_t s_tCFG = {
+        .eSceneId  = GUI_LV_SCENE_<NAME>,
+        .ptExtend  = &s_tGUIEX,
+        .pfnDraw   = __on_scene_<name>_draw,
+        .pfnLoad   = __on_scene_<name>_load,
+        .pfnBind   = __on_scene_<name>_bind, 
+        .pfnDepose = __on_scene_<name>_depose,
+    };
+    /* Scene registration config end -----------------------------------------*/
+
+    gui_lv_scene_register(&s_tCFG);
+}
+
+
 #if GUI_LV_SCENE_TIMER_NUM
+/**
+ * @brief Scene timer callback.
+ *
+ * @note  Multiple scene timers may follow this callback pattern.
+ * @note  Create and start each timer in the scene draw callback.
+ */
 static void __on_scene_<name>_timer0_cb(lv_timer_t *ptTimer)
 {
     GUI_LV_UNUSED(ptTimer);
@@ -78,10 +120,10 @@ static void __on_scene_<name>_draw(lv_obj_t *ptRoot)
     s_tGUI.ptRoot           = ptRoot;
     gui_lv_language_t eLang = gui_lv_get_current_lang();
 
-    /*------------------------- draw the scene begin -------------------------*/
+    /* User draw code begin --------------------------------------------------*/
 
 
-    /*------------------------- draw the scene end   -------------------------*/
+    /* User draw code end   --------------------------------------------------*/
 
 #if GUI_LV_SCENE_TIMER_NUM
     GUI_LV_TIMER_SET(s_tGUI.ptTimer[0], __on_scene_<name>_timer0_cb, 1000, NULL);
@@ -97,10 +139,10 @@ static void __on_scene_<name>_load(lv_obj_t *ptRoot)
 {
     GUI_LV_UNUSED(ptRoot);
 
-    /*------------------------- load the scene begin -------------------------*/
+    /* User load code begin --------------------------------------------------*/
 
 
-    /*------------------------- load the scene end   -------------------------*/
+    /* User load code end ----------------------------------------------------*/
 }
 
 /*! 
@@ -110,9 +152,9 @@ static void __on_scene_<name>_bind(void)
 {
     GUI_LV_UNUSED(0);
 
-    /*------------------------- bind the scene begin -------------------------*/
+    /* User bind code begin --------------------------------------------------*/
 
-    /*------------------------- bind the scene end   -------------------------*/
+    /* User bind code end ----------------------------------------------------*/
 }
 
 /*! 
@@ -122,40 +164,11 @@ static void __on_scene_<name>_depose(void)
 {
     s_tGUI.ptRoot = NULL;
 
-    /*--------------------- insert your depose code begin --------------------*/
+    /* User depose code begin ------------------------------------------------*/
 
 
-    /*--------------------- insert your depose code end  ---------------------*/
+    /* User depose code end --------------------------------------------------*/
 }
 
-
-/*! 
- * \brief Register GUI scene <name>.
- *
- * \note  ID should be defined in your enum as GUI_LV_SCENE_<NAME>.
- */
-void gui_lv_scene_<name>_init(void)
-{
-    static gui_lv_extend_t s_tGUIEX; 
-    s_tGUIEX.chGroupNum = GUI_LV_SCENE_GROUP_NUM;
-    s_tGUIEX.chTimerNum = GUI_LV_SCENE_TIMER_NUM;
-    s_tGUIEX.ptGroup    = GUI_LV_SCENE_GROUP_NUM ? s_tGUI.ptGroup 
-                                                 : NULL;
-    s_tGUIEX.ptTimer    = GUI_LV_SCENE_TIMER_NUM ? s_tGUI.ptTimer 
-                                                 : NULL;
-
-    /* ------------ initialize members of scene begin ------------ */
-    static gui_lv_scene_cfg_t s_tCFG = {
-        .eSceneId  = GUI_LV_SCENE_<NAME>,
-        .ptExtend  = &s_tGUIEX,
-        .pfnDraw   = __on_scene_<name>_draw,
-        .pfnLoad   = __on_scene_<name>_load,
-        .pfnBind   = __on_scene_<name>_bind, 
-        .pfnDepose = __on_scene_<name>_depose,
-    };
-    /* ------------ initialize members of scene end -------------- */
-
-    gui_lv_scene_register(&s_tCFG);
-}
 
 /*============================ END OF FILE ===================================*/

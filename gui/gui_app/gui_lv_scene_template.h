@@ -31,7 +31,7 @@ extern "C" {
 /*============================== LOCAL VARIABLES =============================*/
 /*================================ PROTOTYPES ================================*/
 /*! 
- * \brief Register/init GUI scene <name>.
+ * \brief Register scene GUI_LV_SCENE_<NAME>.
  *
  * \note The scene ID should be defined in your enum as GUI_LV_SCENE_<NAME>.
  */
