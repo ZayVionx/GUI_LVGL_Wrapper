@@ -33,8 +33,7 @@ lv_obj_t *gui_lv_container_init(lv_obj_t *parent, int16_t x, int16_t y, uint16_t
                                         lv_color_t bg_color, bool bIsClearStyle);
 
 extern
-lv_obj_t *gui_lv_img_init(lv_obj_t *parent, int16_t x, int16_t y, uint16_t width, uint16_t height, 
-                                                            const void *img_scr);                       
+lv_obj_t *gui_lv_img_init(lv_obj_t *parent, int16_t x, int16_t y, const void *img_scr);                       
 
 extern
 lv_obj_t *gui_lv_label_init(lv_obj_t *parent, int16_t x, int16_t y, const char *text, 

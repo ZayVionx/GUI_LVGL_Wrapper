@@ -50,15 +50,10 @@ void gui_lv_custom_battery_create(gui_lv_custom_battery_t *ptBattery)
 {
     gui_lv_custom_battery_t *ptThis = ptBattery;
 
-    uint32_t u32ImgSize   = ((const lv_img_dsc_t *)ptThis->pImgScr)->header.w; 
-    uint32_t u32ImgHeight = ((const lv_img_dsc_t *)ptThis->pImgScr)->header.h; 
-
     /* step1: Create an image object for the battery frame */
     ptThis->ptFrameImg = gui_lv_img_init( ptThis->ptParent,
                                           0, 
                                           0,
-                                          u32ImgSize, 
-                                          u32ImgHeight,
                                           ptThis->pImgScr);
     lv_obj_align(ptThis->ptFrameImg, ptThis->chAlign, ptThis->i16X, ptThis->i16Y);
     ptThis->tAnim.pCurrentImgScr = ptThis->pImgScr;

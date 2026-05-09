@@ -42,13 +42,16 @@ lv_obj_t *gui_lv_container_init(lv_obj_t *parent, int16_t x, int16_t y, uint16_t
     return container;
 }
 
-lv_obj_t *gui_lv_img_init(lv_obj_t *parent, int16_t x, int16_t y, uint16_t width, uint16_t height, 
-                                                            const void *img_scr)
+lv_obj_t *gui_lv_img_init(lv_obj_t *parent, int16_t x, int16_t y, const void *img_scr)
 {
     lv_obj_t *img_obj = lv_img_create(parent);
-    lv_obj_set_size(img_obj, width, height);
     lv_obj_set_pos (img_obj, x, y);
-    lv_img_set_src (img_obj, (const lv_img_dsc_t *)img_scr);
+
+    if(img_scr != NULL) {
+        lv_img_set_src (img_obj,  (const lv_img_dsc_t *)img_scr);
+        lv_obj_set_size(img_obj, ((const lv_img_dsc_t *)img_scr)->header.w, 
+                                 ((const lv_img_dsc_t *)img_scr)->header.h);
+    }
     return img_obj;
 }                            
 
