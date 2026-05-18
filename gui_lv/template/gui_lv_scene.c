@@ -27,6 +27,9 @@
 #   include "gui_lvgl.h"
 #endif
 
+/*--------------------------*
+ * Don't Fix Include Order! *
+ *--------------------------*/
 #define __GUI_LV_IMPL__
 #   include "gui_lv_utils.h"
 
@@ -47,44 +50,38 @@ typedef struct {
     /* User-defined scene members begin --------------------------------------*/
 
 
-    /* User-defined scene members end ----------------------------------------*/
+    /*------------------------------------------------------------------------*/
 
     lv_group_t *ptGroup[GUI_LV_SCENE_GROUP_NUM];
     lv_timer_t *ptTimer[GUI_LV_SCENE_TIMER_NUM];
 
-    GUI_LV_PRIVATE(
 #if GUI_LV_SCENE_USED_DATA
-        /* application data bridge ---------------------------------------------
-         * Mirrors or adapts values from the application layer when available.
-         * If no application layer is included, this block can hold local fallback
-         * values so the scene remains buildable and testable in isolation.
-         */
+    GUI_LV_PRIVATE(
         struct {    
-            
+            /* USER: cached app data mirrored for GUI refresh ----------------*/
+
         } Data;
-#endif /* GUI_LV_SCENE_USED_DATA */
     )
+#endif
 } gui_scene%Instance%_t;
 
 /*============================ LOCAL VARIABLES ===============================*/
 static gui_scene%Instance%_t s_tGUI;
 
 /*============================ PROTOTYPES ====================================*/
-static void __on_scene%Instance%_draw(lv_obj_t *ptRoot);
-static void __on_scene%Instance%_load(lv_obj_t *ptRoot);
-static void __on_scene%Instance%_bind(void);
+static void __on_scene%Instance%_draw  (lv_obj_t *ptRoot);
+static void __on_scene%Instance%_load  (lv_obj_t *ptRoot);
+static void __on_scene%Instance%_bind  (void);
 static void __on_scene%Instance%_depose(void);
 
 #if GUI_LV_SCENE_TIMER_NUM
 static void __on_scene%Instance%_timer0_cb(lv_timer_t *ptTimer);
 #endif
 
-static gui_lv_fsm_rt_t __get_AppData_to_GuiData(void);
+static gui_lv_fsm_rt_t __scene_sync_app_data(void);
 
 /*============================ IMPLEMENTATION ================================*/
-/*----------------------------------------------------------------------------*
- * Scene registration                                                         *
- *----------------------------------------------------------------------------*/
+/*============================ SCENE REGISTRATION ============================*/
 /** 
  * @note The scene ID should be defined in your enum as GUI_LV_SCENE_<NAME>.
  *       Header include is in gui_lv_scene_id.h
@@ -114,9 +111,7 @@ void gui_lv_scene_%Instance%_init(void)
 }
 
 
-/*----------------------------------------------------------------------------*
- * Scene lifecycle callbacks                                                  *
- *----------------------------------------------------------------------------*/
+/*============================= SCENE CALLBACKS ==============================*/
 GUI_LV_NONNULL(1)
 static void __on_scene%Instance%_draw(lv_obj_t *ptRoot)
 {
@@ -166,9 +161,7 @@ static void __on_scene%Instance%_depose(void)
 }
 
 
-/*----------------------------------------------------------------------------*
- * Scene timers                                                               *
- *----------------------------------------------------------------------------*/
+/*============================ TIMER TASKS ===================================*/
 #if GUI_LV_SCENE_TIMER_NUM
 /**
  * @note  Multiple scene timers may follow this callback pattern.
@@ -177,41 +170,38 @@ static void __on_scene%Instance%_depose(void)
 GUI_LV_NONNULL(1)
 static void __on_scene%Instance%_timer0_cb(lv_timer_t *ptTimer)
 {
-    __get_AppData_to_GuiData();
+    GUI_LV_UNUSED(ptTimer);
+
+    (void)__scene_sync_app_data();
+
+    /* USER: periodic visual refresh -----------------------------------------*/
 }
 #endif
 
 
-/*----------------------------------------------------------------------------*
- * PT Task                                                                    *
- *----------------------------------------------------------------------------*/
+/*============================ DATA SYNC =====================================*/
 #if GUI_LV_SCENE_USED_DATA
-#   if(GUI_LV_SCENE_TIMER_NUM == 0)
-#   error "__get_AppData_to_GuiData() requires a timer to trigger periodic updates. "
+
+#   if (GUI_LV_SCENE_TIMER_NUM == 0)
+#   error "__scene_sync_app_data() requires a timer to trigger periodic updates."
 #   error "Please set GUI_LV_SCENE_TIMER_NUM > 0."
 #   endif
-IMPL_GUI_LV_PERIODIC_PT(__get_AppData_to_GuiData, 100)
-    /**
-     * @brief Win64-only periodic scene work.
-     *
-     * Put preview/simulator updates here, such as mock data, host bridge data,
-     * or PC-only debug state.
-     */
+
+IMPL_GUI_LV_PERIODIC_PT(__scene_sync_app_data, 100)
     PLATFORM_ON_WIN64(
-        
+        /* USER: simulator/mock/host-side data update ------------------------*/
     )
-    /**
-     * @brief MCU-only periodic scene work.
-     *
-     * Put target runtime updates here, such as AppData mapping, service state
-     * sampling, or hardware-dependent refresh.
-     */
+
     PLATFORM_ON_MCU(
-        
+        /* USER: target AppData mapping and hardware-dependent refresh -------*/
     )
-END_IMPL_GUI_LV_PERIODIC_PT(__get_AppData_to_GuiData)
+END_IMPL_GUI_LV_PERIODIC_PT(__scene_sync_app_data)
+
 #else
-    static gui_lv_fsm_rt_t __get_AppData_to_GuiData(void)  { return gui_lv_fsm_rt_cpl; }
+static gui_lv_fsm_rt_t __scene_sync_app_data(void)
+{
+    return gui_lv_fsm_rt_cpl;
+}
 #endif
 
 /*============================ END OF FILE ===================================*/

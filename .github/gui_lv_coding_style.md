@@ -34,7 +34,7 @@
 
 9) `/*============================ GLOBAL VARIABLES ==============================*/`
 
-10) `/*============================ PROTOTYPES ====================================*/`
+10) `/*=========================== PROTOTYPES ====================================*/`
 
 11) 关闭 `extern "C"`
 
@@ -222,10 +222,10 @@ void gui_lv_init(void)
 ### 6.1 对外 API 注释示例
 
 ```c
-/*!
- * \brief 初始化 GUI_LV 内核
+/**
+ * @brief 初始化 GUI_LV 内核
  *
- * \note 必须在任何 GUI_LV 绘制/任务接口之前调用。
+ * @note 必须在任何 GUI_LV 绘制/任务接口之前调用。
  */
 void gui_lv_init(void);
 ```
@@ -233,10 +233,10 @@ void gui_lv_init(void);
 ### 6.2 NULL 语义与返回值示例
 
 ```c
-/*!
- * \brief 设置默认帧缓冲
- * \param[in] ptFrameBuffer 新的帧缓冲；传 NULL 表示清空默认帧缓冲
- * \return 返回旧的默认帧缓冲指针（可能为 NULL）
+/**
+ * @brief 设置默认帧缓冲
+ * @param[in] ptFrameBuffer 新的帧缓冲；传 NULL 表示清空默认帧缓冲
+ * @return 返回旧的默认帧缓冲指针（可能为 NULL）
  */
 const gui_lv_tile_t *gui_lv_set_default_framebuffer(const gui_lv_tile_t *ptFrameBuffer);
 ```

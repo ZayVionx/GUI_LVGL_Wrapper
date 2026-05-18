@@ -16,7 +16,6 @@
 ****************************************************************************/
 
 /* ----------------------------------------------------------------------
- * Project:      GUI LVGL Wrapper
  * Title:        gui_scene_id.h
  * Description:  Canonical scene and page identifier definitions.
  * -------------------------------------------------------------------- */
@@ -36,7 +35,7 @@ typedef enum {
 
     /* ---------- Scene ID Begin ---------- */
 
-    /* ----------- Scene ID End ----------- */
+    /* ---------- Scene ID End ------------ */
 
     GUI_LV_SCENE_MAX
 } gui_lv_scene_id_t;
@@ -46,9 +45,9 @@ typedef enum {
     /* 占位枚举（请勿使用） */
     PLACEHOLDER1,
     
-    /* ----------- Page ID Begin ---------- */
+    /* ---------- Page ID Begin ----------- */
     
-    /* ----------- Page ID End ------------ */
+    /* ---------- Page ID End ------------- */
 
     GUI_LV_PAGE_MAX
 } gui_lv_page_id_t;
