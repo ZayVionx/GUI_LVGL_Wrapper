@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import shutil
 import sys
 from datetime import datetime
@@ -112,6 +113,101 @@ def read_json(path: Path) -> dict:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
+def use_color() -> bool:
+    return sys.stdout.isatty() and os.environ.get("NO_COLOR") is None
+
+
+def paint(text: object, code: str) -> str:
+    value = str(text)
+    if not use_color():
+        return value
+    return f"\033[{code}m{value}\033[0m"
+
+
+def cyan(text: object) -> str:
+    return paint(text, "36;1")
+
+
+def green(text: object) -> str:
+    return paint(text, "32;1")
+
+
+def yellow(text: object) -> str:
+    return paint(text, "33;1")
+
+
+def dim(text: object) -> str:
+    return paint(text, "2")
+
+
+def shorten_path(path: object) -> str:
+    raw = str(path)
+    try:
+        home = str(Path.home())
+        if raw.lower().startswith(home.lower()):
+            raw = "~" + raw[len(home):]
+    except OSError:
+        pass
+    return raw
+
+
+def code(text: object) -> str:
+    return f"`{text}`"
+
+
+def bold(text: object) -> str:
+    return f"**{text}**"
+
+
+def print_title(title: str, subtitle: str | None = None) -> None:
+    print()
+    print(cyan(f"## {title}"))
+    print(dim("-" * 72))
+    if subtitle:
+        print(dim(subtitle))
+
+
+def label_text(label: str, width: int = 12) -> str:
+    return f"{label:<{width}}:"
+
+
+def print_field(label: str, value: object) -> None:
+    print(f"  {dim(label_text(label))} {value}")
+
+
+def print_hint(text: str) -> None:
+    print(f"\n{yellow(bold('Hint:'))} {text}")
+
+
+def print_result(label: str, value: object, ok: bool = True) -> None:
+    tag = green(bold("[OK]")) if ok else yellow(bold("[WARN]"))
+    print(f"  {tag} {label:<10} {value}")
+
+
+def print_summary(label: str, value: object, ok: bool = True) -> None:
+    tag = green(bold("[OK]")) if ok else yellow(bold("[WARN]"))
+    print(f"{tag} {label}: {value}")
+
+
+def print_error(message: object) -> None:
+    print_title("GUI_LV Profile Error")
+    print_summary("Error", yellow(bold(message)), ok=False)
+
+
+def print_rule() -> None:
+    print(dim("-" * 72))
+
+
+def print_profile_card(project: str, mode: str, saved_at: str, path: Path) -> None:
+    profile_name = f"gui_lv_{project}"
+    mode_badge = cyan(mode.upper()) if mode != "-" else "-"
+    print()
+    print(f"- {green(bold(project))} {dim('(' + profile_name + ')')}")
+    print(f"  {label_text('Mode')} {mode_badge}")
+    print(f"  {label_text('Saved')} {saved_at}")
+    print(f"  {label_text('Path')} {code(shorten_path(path))}")
+
+
 def make_backup(target: Path, project: str, action: str) -> Path | None:
     existing = [rel for rel in CONFIG_FILES if (target / rel).is_file()]
     if not existing:
@@ -193,9 +289,15 @@ def save_project(project: str, use_rte: bool) -> None:
         },
     )
 
-    print(f"saved {project}: {src} -> {dst}")
+    print_title("GUI_LV Profile Saved")
+    print_summary("Saved", green(bold(f"gui_lv_{project}")))
+    print_field("Project", green(project))
+    print_field("Mode", "RTE" if use_rte else "source")
+    print_field("Source", code(shorten_path(src)))
+    print_field("Profile", code(shorten_path(dst)))
+    print_field("Files", len(CONFIG_FILES))
     if backup:
-        print(f"previous profile backup: {backup}")
+        print_field("Backup", code(shorten_path(backup)))
 
 
 def write_project(project: str, use_rte: bool) -> None:
@@ -222,9 +324,14 @@ def write_project(project: str, use_rte: bool) -> None:
         },
     )
 
-    print(f"wrote {project}: {src} -> {dst}")
+    print_title("GUI_LV Profile Written")
+    print_summary("Written", green(bold(project)))
+    print_field("Mode", "RTE" if use_rte else "source")
+    print_field("Target", code(shorten_path(dst)))
+    print_field("Profile", code(shorten_path(src)))
+    print_field("Files", len(CONFIG_FILES))
     if backup:
-        print(f"target backup: {backup}")
+        print_field("Backup", code(shorten_path(backup)))
 
 
 def get_list() -> None:
@@ -246,11 +353,17 @@ def get_list() -> None:
             profiles.append((project, mode, saved_at, path))
 
     if not profiles:
-        print("no gui_lv profiles saved")
+        print_title("GUI_LV Profiles")
+        print_summary("Profiles", "0 saved", ok=False)
+        print("No profiles have been saved yet.")
+        print_hint(f"Run {code('save <project>')} to capture the current gui_lv configuration.")
         return
 
+    print_title("GUI_LV Profiles")
+    print_summary("Profiles", f"{len(profiles)} saved")
+    print_rule()
     for project, mode, saved_at, path in profiles:
-        print(f"{project}\t{mode}\t{saved_at}\t{path}")
+        print_profile_card(project, mode, saved_at, path)
 
 
 def get_status(use_rte: bool) -> None:
@@ -258,7 +371,11 @@ def get_status(use_rte: bool) -> None:
     ensure_dir(target, "target GUI_LV directory")
     status_path = target / STATUS_FILE
     if not status_path.is_file():
-        print(f"no current project status in {target}")
+        print_title("GUI_LV Status")
+        print_summary("Project", yellow(bold("not written by profile tool")), ok=False)
+        print_field("Mode", "RTE" if use_rte else "source")
+        print_field("Target", code(shorten_path(target)))
+        print_hint(f"Run {code('write <project>')} to write a profile and record status.")
         return
 
     try:
@@ -266,11 +383,15 @@ def get_status(use_rte: bool) -> None:
     except json.JSONDecodeError as exc:
         raise ProfileError(f"status file is not valid JSON: {status_path} ({exc})") from exc
 
-    print(f"project: {status.get('project', '-')}")
-    print(f"mode: {status.get('mode', '-')}")
-    print(f"written_at: {status.get('written_at', '-')}")
-    print(f"target: {status.get('target', target)}")
-    print(f"profile_path: {status.get('profile_path', '-')}")
+    project = status.get("project", "-")
+    mode = status.get("mode", "-")
+    print_title("GUI_LV Status")
+    print_summary("Active", green(bold(f"gui_lv_{project}")))
+    print_field("Project", green(project))
+    print_field("Mode", mode)
+    print_field("Written At", status.get("written_at", "-"))
+    print_field("Target", code(shorten_path(status.get("target", target))))
+    print_field("Profile", code(shorten_path(status.get("profile_path", "-"))))
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -311,10 +432,10 @@ def main(argv: list[str] | None = None) -> int:
         else:
             parser.error("unknown command")
     except ProfileError as exc:
-        print(f"error: {exc}", file=sys.stderr)
+        print_error(exc)
         return 1
     except OSError as exc:
-        print(f"error: {exc}", file=sys.stderr)
+        print_error(exc)
         return 1
 
     return 0

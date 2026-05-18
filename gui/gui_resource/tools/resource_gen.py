@@ -14,13 +14,28 @@ import shutil
 import subprocess
 import tempfile
 import os
+import sys
+import time
 from collections import OrderedDict
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Dict, Iterable, List, Sequence, Tuple
 
 
 class ResourceError(RuntimeError):
     """Raised when resource generation fails."""
+
+
+@dataclass
+class ResourceStats:
+    """Compact per-stage result for console reporting."""
+
+    total: int = 0
+    ok: int = 0
+    failed: int = 0
+    bytes: int = 0
+    seconds: float = 0.0
+    errors: List[str] = field(default_factory=list)
 
 
 # Maps config format strings -> (bpp, LV_IMG_CF_* macro, is_indexed, is_alpha)  [LVGL8]
@@ -59,6 +74,160 @@ IMG_FORMAT_MAP: Dict[str, Tuple[int, str, bool, bool]] = {
 
 FONT_FILE_PATTERN = re.compile(r"^(lv_font_[A-Za-z0-9_]+)\.c$")
 IMG_FILE_PATTERN = re.compile(r"^(lv_img_[A-Za-z0-9_]+)\.c$")
+
+LOG_STEP = ">>"
+LOG_OK = "OK"
+LOG_FAIL = "ERROR"
+LOG_WARN = "WARNING"
+LOG_SKIP = "SKIP"
+PROGRESS_WIDTH = 28
+SUMMARY_LABEL_WIDTH = 13
+SUMMARY_COUNT_WIDTH = 9
+SUMMARY_FAIL_WIDTH = 8
+SUMMARY_TIME_WIDTH = 7
+SUMMARY_SIZE_WIDTH = 8
+_gProgressLineWidth = 0
+
+
+def _use_color() -> bool:
+    return sys.stderr.isatty() and os.environ.get("NO_COLOR") is None
+
+
+def _color(chText: str, chCode: str) -> str:
+    if not _use_color():
+        return chText
+    return f"\033[{chCode}m{chText}\033[0m"
+
+
+def _fmt_duration(fSeconds: float) -> str:
+    return f"{fSeconds:.2f}s"
+
+
+def _fmt_size(u32Bytes: int) -> str:
+    if u32Bytes < 1024:
+        return f"{u32Bytes} B"
+
+    fSize: float = float(u32Bytes)
+    for chUnit in ["KB", "MB", "GB"]:
+        fSize /= 1024.0
+        if fSize < 1024.0:
+            return f"{fSize:.1f} {chUnit}"
+
+    return f"{fSize:.1f} TB"
+
+
+def _log_step(chText: str) -> None:
+    logging.info("%s %s", _color(LOG_STEP, "36"), chText)
+
+
+def _log_ok(chText: str) -> None:
+    logging.info("%s %s", _color(f"[{LOG_OK}]", "32"), chText)
+
+
+def _log_fail(chText: str) -> None:
+    logging.error("%s %s", _color(f"[{LOG_FAIL}]", "31;1"), chText)
+
+
+def _log_skip(chText: str) -> None:
+    logging.info("%s %s", _color(f"[{LOG_SKIP}]", "33"), chText)
+
+
+def _log_stage_result(chName: str, tStats: ResourceStats) -> None:
+    chLabel = "Font" if chName == "font" else "Image"
+    if tStats.total == 0:
+        _log_summary_row(
+            LOG_SKIP,
+            chLabel,
+            "0/0",
+            "0 failed",
+            _fmt_duration(tStats.seconds),
+            "",
+        )
+        return
+
+    _log_summary_row(
+        LOG_OK,
+        chLabel,
+        f"{tStats.ok}/{tStats.total}",
+        f"{tStats.failed} failed",
+        _fmt_duration(tStats.seconds),
+        _fmt_size(tStats.bytes),
+    )
+
+
+def _log_summary_row(chStatus: str,
+                     chLabel: str,
+                     chCount: str,
+                     chFailed: str,
+                     chTime: str,
+                     chSize: str) -> None:
+    chLine = (
+        f"{chLabel + ':':<{SUMMARY_LABEL_WIDTH}}"
+        f"{chCount:>{SUMMARY_COUNT_WIDTH}}  |  "
+        f"{chFailed:>{SUMMARY_FAIL_WIDTH}}  |  "
+        f"{chTime:>{SUMMARY_TIME_WIDTH}}  |  "
+        f"{chSize:>{SUMMARY_SIZE_WIDTH}}"
+    )
+
+    if chStatus == LOG_OK:
+        _log_ok(chLine)
+    elif chStatus == LOG_SKIP:
+        _log_skip(chLine)
+    else:
+        logging.info("[%s] %s", chStatus, chLine)
+
+
+def _progress_line(u32Done: int,
+                   u32Total: int,
+                   chStatus: str,
+                   bFinal: bool = False) -> str:
+    if u32Total <= 0:
+        u32Percent = 100
+    else:
+        u32Percent = min(100, int(u32Done * 100 / u32Total))
+
+    u32Filled = int(PROGRESS_WIDTH * u32Percent / 100)
+    chBar = "=" * u32Filled
+    if u32Percent < 100:
+        chBar += ">"
+        chBar = chBar[:PROGRESS_WIDTH]
+
+    chBar = chBar.ljust(PROGRESS_WIDTH)
+    if bFinal:
+        chStatus = f"Processed {u32Done}/{u32Total} files"
+
+    return f"[{chBar}] {u32Percent:3d}%  |  {chStatus}"
+
+
+def _render_progress(u32Done: int,
+                     u32Total: int,
+                     chStatus: str,
+                     bQuiet: bool,
+                     bFinal: bool = False) -> None:
+    global _gProgressLineWidth
+
+    if bQuiet:
+        return
+
+    chLine = _progress_line(u32Done, u32Total, chStatus, bFinal)
+    u32Pad = max(0, _gProgressLineWidth - len(chLine))
+    sys.stderr.write("\r" + chLine + (" " * u32Pad))
+    _gProgressLineWidth = len(chLine)
+    if bFinal:
+        sys.stderr.write("\n")
+        _gProgressLineWidth = 0
+    sys.stderr.flush()
+
+
+def _clear_progress(bQuiet: bool) -> None:
+    global _gProgressLineWidth
+
+    if bQuiet:
+        return
+
+    sys.stderr.write("\r" + (" " * _gProgressLineWidth) + "\r")
+    _gProgressLineWidth = 0
+    sys.stderr.flush()
 
 
 def _strip_json_comments(chRawJson: str) -> str:
@@ -200,7 +369,6 @@ def _cleanup_generated_files(ptOutputDir: Path,
     ptOutputDir.mkdir(parents=True, exist_ok=True)
     for ptFile in sorted(ptOutputDir.glob(f"{chPrefix}*.c")):
         ptFile.unlink()
-        logging.info("[clean] remove %s", ptFile.name)
 
 
 def _strip_absolute_paths_in_file(ptFilePath: Path,
@@ -298,17 +466,26 @@ def _validate_fields(tItem: dict,
             )
 
 
-def _generate_fonts(ptFontConfigPath: Path,
-                    ptFontOutputDir: Path) -> None:
-    _ensure_tool("lv_font_conv")
+def _count_font_outputs(ptFontConfigPath: Path) -> int:
+    return len(_build_font_group_map(ptFontConfigPath))
 
+
+def _count_image_outputs(ptImgConfigPath: Path) -> int:
+    tImgConfig: dict = _load_json_with_comments(ptImgConfigPath)
+    ltImgItems = tImgConfig.get("img", [])
+
+    if not isinstance(ltImgItems, list):
+        raise ResourceError("img config field 'img' must be a list")
+
+    return len(ltImgItems)
+
+
+def _build_font_group_map(ptFontConfigPath: Path) -> "OrderedDict[Tuple[str, str, str, str], dict]":
     tFontConfig: dict = _load_json_with_comments(ptFontConfigPath)
     ltFontItems = tFontConfig.get("font", [])
 
     if not isinstance(ltFontItems, list):
         raise ResourceError("font config field 'font' must be a list")
-
-    _cleanup_generated_files(ptFontOutputDir, "lv_font_")
 
     ptConfigDir: Path = ptFontConfigPath.parent
     dtGroupMap: "OrderedDict[Tuple[str, str, str, str], dict]" = OrderedDict()
@@ -349,6 +526,21 @@ def _generate_fonts(ptFontConfigPath: Path,
 
         dtGroupMap[tGroupKey]["texts"].append(ptTextPath)
 
+    return dtGroupMap
+
+def _generate_fonts(ptFontConfigPath: Path,
+                    ptFontOutputDir: Path,
+                    u32ProgressDone: int,
+                    u32ProgressTotal: int,
+                    bQuiet: bool) -> ResourceStats:
+    fStart: float = time.perf_counter()
+    tStats = ResourceStats()
+    _ensure_tool("lv_font_conv")
+
+    _cleanup_generated_files(ptFontOutputDir, "lv_font_")
+    dtGroupMap = _build_font_group_map(ptFontConfigPath)
+    tStats.total = len(dtGroupMap)
+
     with tempfile.TemporaryDirectory(prefix="lv_font_merge_") as chTempDir:
         ptTempDir = Path(chTempDir)
 
@@ -365,50 +557,54 @@ def _generate_fonts(ptFontConfigPath: Path,
             chOutputBase: str = f"lv_font_{chName}_{chSize}"
             ptTempTextPath: Path = ptTempDir / f"{chOutputBase}.txt"
             ptOutputPath: Path = ptFontOutputDir / f"{chOutputBase}.c"
-
-            ptTempTextPath.write_text(chMergedCharset, encoding="utf-8")
-
-            logging.info(
-                "[font] 合并%d个字体配置，去重后字符数：%d -> %s",
-                len(lptTextFiles),
-                u32UniqueCharCount,
-                ptOutputPath.name,
+            _render_progress(
+                u32ProgressDone + tStats.ok + tStats.failed + 1,
+                u32ProgressTotal,
+                f"Processing: {ptOutputPath.name}",
+                bQuiet,
             )
 
-            lchCommand: List[str] = [
-                "lv_font_conv",
-                "--bpp",
-                chBpp,
-                "--size",
-                chSize,
-                "--no-compress",
-                "--no-prefilter",
-                "--font",
-                str(ptSourcePath),
-                "--symbols",
-                chMergedCharset,
-                "--format",
-                "lvgl",
-                "-o",
-                str(ptOutputPath),
-                "--force-fast-kern-format",
-            ]
+            try:
+                ptTempTextPath.write_text(chMergedCharset, encoding="utf-8")
 
-            _run_command(lchCommand, chOutputBase)
+                lchCommand: List[str] = [
+                    "lv_font_conv",
+                    "--bpp",
+                    chBpp,
+                    "--size",
+                    chSize,
+                    "--no-compress",
+                    "--no-prefilter",
+                    "--font",
+                    str(ptSourcePath),
+                    "--symbols",
+                    chMergedCharset,
+                    "--format",
+                    "lvgl",
+                    "-o",
+                    str(ptOutputPath),
+                    "--force-fast-kern-format",
+                ]
 
-            _strip_absolute_paths_in_file(
-                ptOutputPath,
-                [ptSourcePath, ptOutputPath],
-            )
-            _fix_font_includes(ptOutputPath)
+                _run_command(lchCommand, chOutputBase)
 
-            u32FileSize: int = ptOutputPath.stat().st_size
-            logging.info(
-                "[font] generated %s (%d bytes)",
-                ptOutputPath.name,
-                u32FileSize,
-            )
+                _strip_absolute_paths_in_file(
+                    ptOutputPath,
+                    [ptSourcePath, ptOutputPath],
+                )
+                _fix_font_includes(ptOutputPath)
 
+                u32FileSize: int = ptOutputPath.stat().st_size
+                tStats.ok += 1
+                tStats.bytes += u32FileSize
+            except ResourceError as tError:
+                tStats.failed += 1
+                tStats.errors.append(
+                    f"Failed to process {ptOutputPath.name}: {tError}"
+                )
+
+    tStats.seconds = time.perf_counter() - fStart
+    return tStats
 
 def _pngquant_quantize(ptInputPath: Path, u32Colors: int) -> bytes:
     """Run pngquant on ptInputPath, return quantized PNG bytes (stdout)."""
@@ -580,7 +776,12 @@ def _write_lvgl8_c_file(ptOutputPath: Path,
 
 
 def _generate_images(ptImgConfigPath: Path,
-                     ptImgOutputDir: Path) -> None:
+                     ptImgOutputDir: Path,
+                     u32ProgressDone: int,
+                     u32ProgressTotal: int,
+                     bQuiet: bool) -> ResourceStats:
+    fStart: float = time.perf_counter()
+    tStats = ResourceStats()
     tImgConfig: dict = _load_json_with_comments(ptImgConfigPath)
     ltImgItems = tImgConfig.get("img", [])
 
@@ -589,47 +790,70 @@ def _generate_images(ptImgConfigPath: Path,
 
     _cleanup_generated_files(ptImgOutputDir, "lv_img_")
     ptConfigDir: Path = ptImgConfigPath.parent
+    tStats.total = len(ltImgItems)
 
     for u32Index, tImgItem in enumerate(ltImgItems):
+        chProgressName = f"img[{u32Index}]"
         if not isinstance(tImgItem, dict):
-            raise ResourceError(f"img[{u32Index}] must be an object")
+            _render_progress(
+                u32ProgressDone + tStats.ok + tStats.failed + 1,
+                u32ProgressTotal,
+                f"Processing: {chProgressName}",
+                bQuiet,
+            )
+            tStats.failed += 1
+            tStats.errors.append(f"Failed to process {chProgressName}: item must be an object")
+            continue
 
-        _validate_fields(tImgItem, ["name", "file", "format"], "img", u32Index)
+        try:
+            _validate_fields(tImgItem, ["name", "file", "format"], "img", u32Index)
 
-        chName: str = str(tImgItem["name"]).strip()
-        chFile: str = str(tImgItem["file"]).strip()
-        chFormat: str = str(tImgItem["format"]).strip().upper()
-        chOutputName: str = f"lv_img_{chName}"
+            chName: str = str(tImgItem["name"]).strip()
+            chFile: str = str(tImgItem["file"]).strip()
+            chFormat: str = str(tImgItem["format"]).strip().upper()
+            chOutputName: str = f"lv_img_{chName}"
+            chProgressName = Path(chFile).name
 
-        if chFormat not in IMG_FORMAT_MAP:
-            raise ResourceError(
-                f"Unsupported image format '{chFormat}' in img[{u32Index}]"
+            _render_progress(
+                u32ProgressDone + tStats.ok + tStats.failed + 1,
+                u32ProgressTotal,
+                f"Processing: {chProgressName}",
+                bQuiet,
             )
 
-        u32Bpp, chCfMacro, bIndexed, bAlpha = IMG_FORMAT_MAP[chFormat]
-        ptInputPath: Path = _resolve_input_path(ptConfigDir, "img_scr", chFile)
-        ptOutputPath: Path = ptImgOutputDir / f"{chOutputName}.c"
+            if chFormat not in IMG_FORMAT_MAP:
+                raise ResourceError(
+                    f"Unsupported image format '{chFormat}' in img[{u32Index}]"
+                )
 
-        logging.info("[img] generate %s from %s (%s)",
-                     ptOutputPath.name, ptInputPath.name, chFormat)
+            u32Bpp, chCfMacro, bIndexed, bAlpha = IMG_FORMAT_MAP[chFormat]
+            ptInputPath: Path = _resolve_input_path(ptConfigDir, "img_scr", chFile)
+            ptOutputPath: Path = ptImgOutputDir / f"{chOutputName}.c"
 
-        if bIndexed:
-            # quantize with pngquant (same as LVGL8 online converter)
-            lu8PngBytes = _pngquant_quantize(ptInputPath, 1 << u32Bpp)
-            u32W, u32H, lu8Data = _png_bytes_to_indexed(lu8PngBytes, u32Bpp)
-        elif bAlpha:
-            u32W, u32H, lu8Data = _png_to_alpha_data(ptInputPath, u32Bpp)
-        else:
-            raise ResourceError(
-                f"Format '{chFormat}' (true-color) is not yet supported"
+            if bIndexed:
+                # quantize with pngquant (same as LVGL8 online converter)
+                lu8PngBytes = _pngquant_quantize(ptInputPath, 1 << u32Bpp)
+                u32W, u32H, lu8Data = _png_bytes_to_indexed(lu8PngBytes, u32Bpp)
+            elif bAlpha:
+                u32W, u32H, lu8Data = _png_to_alpha_data(ptInputPath, u32Bpp)
+            else:
+                raise ResourceError(
+                    f"Format '{chFormat}' (true-color) is not yet supported"
+                )
+
+            _write_lvgl8_c_file(ptOutputPath, chOutputName, chCfMacro,
+                                u32W, u32H, lu8Data)
+
+            tStats.ok += 1
+            tStats.bytes += ptOutputPath.stat().st_size
+        except ResourceError as tError:
+            tStats.failed += 1
+            tStats.errors.append(
+                f"Failed to process {ptInputPath.name}: {tError}"
             )
 
-        _write_lvgl8_c_file(ptOutputPath, chOutputName, chCfMacro,
-                            u32W, u32H, lu8Data)
-
-        logging.info("[img] generated %s (%d bytes)",
-                     ptOutputPath.name, ptOutputPath.stat().st_size)
-
+    tStats.seconds = time.perf_counter() - fStart
+    return tStats
 
 def _collect_declarations(ptDir: Path,
                           tPattern: re.Pattern[str]) -> List[str]:
@@ -644,6 +868,16 @@ def _collect_declarations(ptDir: Path,
             lchNames.append(tMatch.group(1))
 
     return lchNames
+
+
+def _collect_size(ptDir: Path, chPrefix: str) -> int:
+    if not ptDir.exists():
+        return 0
+
+    return sum(
+        ptFile.stat().st_size
+        for ptFile in sorted(ptDir.glob(f"{chPrefix}*.c"))
+    )
 
 
 def _write_ui_resource_header(ptHeaderPath: Path,
@@ -739,6 +973,12 @@ def _build_parser(ptDefaultResourceDir: Path) -> argparse.ArgumentParser:
     tParser.add_argument("--font", action="store_true", help="Generate fonts")
     tParser.add_argument("--img", action="store_true", help="Generate images")
     tParser.add_argument(
+        "-q",
+        "--quiet",
+        action="store_true",
+        help="Only print errors",
+    )
+    tParser.add_argument(
         "--font-config",
         default=str(ptDefaultAssetsDir / "font_config.json"),
         help="font config json path",
@@ -767,13 +1007,17 @@ def _build_parser(ptDefaultResourceDir: Path) -> argparse.ArgumentParser:
 
 
 def main() -> int:
-    logging.basicConfig(level=logging.INFO, format="%(message)s")
-
     ptScriptPath: Path = Path(__file__).resolve()
     ptResourceDir: Path = ptScriptPath.parent.parent
 
     tParser = _build_parser(ptResourceDir)
     tArgs = tParser.parse_args()
+    bQuiet: bool = bool(tArgs.quiet) or os.environ.get("RESOURCE_QUIET") == "1"
+
+    logging.basicConfig(
+        level=logging.ERROR if bQuiet else logging.INFO,
+        format="%(message)s",
+    )
 
     bDoFont: bool = bool(tArgs.font)
     bDoImg: bool = bool(tArgs.img)
@@ -787,31 +1031,87 @@ def main() -> int:
     ptFontOutDir = Path(tArgs.font_out).resolve()
     ptImgOutDir = Path(tArgs.img_out).resolve()
     ptHeaderPath = Path(tArgs.header).resolve()
+    fStart: float = time.perf_counter()
+    tFontStats = ResourceStats()
+    tImgStats = ResourceStats()
     try:
+        chMode = "all" if bDoFont and bDoImg else ("font" if bDoFont else "image")
+        _log_step(f"[LVGL Resource Generator] Start ({chMode})")
+
+        u32TotalFiles = 0
         if bDoFont:
-            logging.info("[font] start")
-            _generate_fonts(ptFontConfigPath, ptFontOutDir)
+            u32TotalFiles += _count_font_outputs(ptFontConfigPath)
+        if bDoImg:
+            u32TotalFiles += _count_image_outputs(ptImgConfigPath)
+
+        if bDoFont:
+            tFontStats = _generate_fonts(
+                ptFontConfigPath,
+                ptFontOutDir,
+                0,
+                u32TotalFiles,
+                bQuiet,
+            )
 
         if bDoImg:
-            logging.info("[img] start")
-            _generate_images(ptImgConfigPath, ptImgOutDir)
+            tImgStats = _generate_images(
+                ptImgConfigPath,
+                ptImgOutDir,
+                tFontStats.ok + tFontStats.failed,
+                u32TotalFiles,
+                bQuiet,
+            )
+
+        u32Processed = tFontStats.ok + tFontStats.failed + tImgStats.ok + tImgStats.failed
+        _render_progress(
+            u32Processed,
+            u32TotalFiles,
+            "",
+            bQuiet,
+            bFinal=True,
+        )
 
         lchFontNames = _collect_declarations(ptFontOutDir, FONT_FILE_PATTERN)
         lchImgNames = _collect_declarations(ptImgOutDir, IMG_FILE_PATTERN)
 
         _write_ui_resource_header(ptHeaderPath, lchFontNames, lchImgNames)
-        logging.info(
-            "[header] synced %s (font=%d, img=%d)",
-            ptHeaderPath.name,
-            len(lchFontNames),
-            len(lchImgNames),
-        )
 
     except ResourceError as tError:
-        logging.error("[error] %s", tError)
+        _clear_progress(bQuiet)
+        _log_fail("resource generation failed")
+        logging.error("%s", tError)
         return 1
 
-    logging.info("[done] resource generation completed")
+    fElapsed = time.perf_counter() - fStart
+    for chError in [*tFontStats.errors, *tImgStats.errors]:
+        _log_fail(chError)
+
+    u32TotalBytes = (
+        _collect_size(ptFontOutDir, "lv_font_")
+        + _collect_size(ptImgOutDir, "lv_img_")
+    )
+
+    _log_stage_result("font", tFontStats)
+    _log_stage_result("image", tImgStats)
+
+    u32Failed = tFontStats.failed + tImgStats.failed
+    if u32Failed > 0:
+        logging.warning(
+            "%s %d file(s) failed, total time: %s",
+            _color(f"[{LOG_WARN}]", "33"),
+            u32Failed,
+            _fmt_duration(fElapsed),
+        )
+        return 1
+
+    _log_summary_row(
+        LOG_OK,
+        "[DONE] Total",
+        f"{len(lchFontNames) + len(lchImgNames)} files",
+        "0 failed",
+        _fmt_duration(fElapsed),
+        _fmt_size(u32TotalBytes),
+    )
     return 0
 
 
