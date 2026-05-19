@@ -77,14 +77,15 @@ IMG_FILE_PATTERN = re.compile(r"^(lv_img_[A-Za-z0-9_]+)\.c$")
 
 LOG_STEP = ">>"
 LOG_OK = "OK"
+LOG_DONE = "DONE"
 LOG_FAIL = "ERROR"
 LOG_WARN = "WARNING"
 LOG_SKIP = "SKIP"
 PROGRESS_WIDTH = 28
-SUMMARY_LABEL_WIDTH = 13
-SUMMARY_COUNT_WIDTH = 9
+SUMMARY_LABEL_WIDTH = 5
+SUMMARY_COUNT_WIDTH = 6
 SUMMARY_FAIL_WIDTH = 8
-SUMMARY_TIME_WIDTH = 7
+SUMMARY_TIME_WIDTH = 6
 SUMMARY_SIZE_WIDTH = 8
 _gProgressLineWidth = 0
 
@@ -97,6 +98,12 @@ def _color(chText: str, chCode: str) -> str:
     if not _use_color():
         return chText
     return f"\033[{chCode}m{chText}\033[0m"
+
+
+def _style_inline(chText: str, chBaseCode: str) -> str:
+    if (not _use_color()) or (chBaseCode == ""):
+        return chText
+    return _color(chText, chBaseCode)
 
 
 def _fmt_duration(fSeconds: float) -> str:
@@ -117,19 +124,75 @@ def _fmt_size(u32Bytes: int) -> str:
 
 
 def _log_step(chText: str) -> None:
-    logging.info("%s %s", _color(LOG_STEP, "36"), chText)
+    logging.info("%s", _color(chText, "36"))
 
 
 def _log_ok(chText: str) -> None:
-    logging.info("%s %s", _color(f"[{LOG_OK}]", "32"), chText)
+    logging.info("%s", _style_inline(chText, "32"))
+
+
+def _log_done(chText: str) -> None:
+    logging.info("%s", _style_inline(chText, "32"))
+
+
+def _log_plain(chText: str) -> None:
+    logging.info("%s", chText)
+
+
+def _log_warn(chText: str) -> None:
+    logging.warning("[%s] %s", LOG_WARN, chText)
 
 
 def _log_fail(chText: str) -> None:
-    logging.error("%s %s", _color(f"[{LOG_FAIL}]", "31;1"), chText)
+    lchLines: List[str] = chText.splitlines()
+    if len(lchLines) == 0:
+        lchLines = [""]
+
+    logging.error("[%s] %s", LOG_FAIL, lchLines[0])
+
+    for chLine in lchLines[1:]:
+        logging.error("        %s", chLine)
 
 
 def _log_skip(chText: str) -> None:
-    logging.info("%s %s", _color(f"[{LOG_SKIP}]", "33"), chText)
+    _log_plain(chText)
+
+
+def _style_table_frame(chText: str) -> str:
+    if not _use_color():
+        return chText
+
+    lchParts: List[str] = []
+    for chChar in chText:
+        if chChar in ["+", "-", "|"]:
+            lchParts.append(_color(chChar, "94"))
+        else:
+            lchParts.append(chChar)
+
+    return "".join(lchParts)
+
+
+def _summary_border_line() -> str:
+    return (
+        f"+{'-' * (SUMMARY_LABEL_WIDTH + 2)}"
+        f"+{'-' * (SUMMARY_COUNT_WIDTH + 2)}"
+        f"+{'-' * (SUMMARY_FAIL_WIDTH + 2)}"
+        f"+{'-' * (SUMMARY_TIME_WIDTH + 2)}"
+        f"+{'-' * (SUMMARY_SIZE_WIDTH + 2)}+"
+    )
+
+
+def _log_summary_header() -> None:
+    chRule = _summary_border_line()
+    chHeader = (
+        f"| {'Type':<{SUMMARY_LABEL_WIDTH}} "
+        f"| {'Files':>{SUMMARY_COUNT_WIDTH}} "
+        f"| {'Failed':>{SUMMARY_FAIL_WIDTH}} "
+        f"| {'Time':>{SUMMARY_TIME_WIDTH}} "
+        f"| {'Size':>{SUMMARY_SIZE_WIDTH}} |"
+    )
+    _log_plain(_style_table_frame(chHeader))
+    _log_plain(_style_table_frame(chRule))
 
 
 def _log_stage_result(chName: str, tStats: ResourceStats) -> None:
@@ -162,19 +225,21 @@ def _log_summary_row(chStatus: str,
                      chTime: str,
                      chSize: str) -> None:
     chLine = (
-        f"{chLabel + ':':<{SUMMARY_LABEL_WIDTH}}"
-        f"{chCount:>{SUMMARY_COUNT_WIDTH}}  |  "
-        f"{chFailed:>{SUMMARY_FAIL_WIDTH}}  |  "
-        f"{chTime:>{SUMMARY_TIME_WIDTH}}  |  "
-        f"{chSize:>{SUMMARY_SIZE_WIDTH}}"
-    )
+        f"| {chLabel:<{SUMMARY_LABEL_WIDTH}} "
+        f"| {chCount:>{SUMMARY_COUNT_WIDTH}} "
+        f"| {chFailed:>{SUMMARY_FAIL_WIDTH}} "
+        f"| {chTime:>{SUMMARY_TIME_WIDTH}} "
+        f"| {chSize:>{SUMMARY_SIZE_WIDTH}} |"
+    ).rstrip()
 
     if chStatus == LOG_OK:
-        _log_ok(chLine)
+        _log_plain(_style_table_frame(chLine))
+    elif chStatus == LOG_DONE:
+        _log_done(chLine)
     elif chStatus == LOG_SKIP:
-        _log_skip(chLine)
+        _log_skip(_style_table_frame(chLine))
     else:
-        logging.info("[%s] %s", chStatus, chLine)
+        _log_plain(_style_table_frame(chLine))
 
 
 def _progress_line(u32Done: int,
@@ -193,8 +258,12 @@ def _progress_line(u32Done: int,
         chBar = chBar[:PROGRESS_WIDTH]
 
     chBar = chBar.ljust(PROGRESS_WIDTH)
+
     if bFinal:
         chStatus = f"Processed {u32Done}/{u32Total} files"
+
+    if chStatus == "":
+        return f"[{chBar}] {u32Percent:3d}%"
 
     return f"[{chBar}] {u32Percent:3d}%  |  {chStatus}"
 
@@ -1036,7 +1105,7 @@ def main() -> int:
     tImgStats = ResourceStats()
     try:
         chMode = "all" if bDoFont and bDoImg else ("font" if bDoFont else "image")
-        _log_step(f"[LVGL Resource Generator] Start ({chMode})")
+        _log_step(f"LVGL Resource Generator ({chMode})")
 
         u32TotalFiles = 0
         if bDoFont:
@@ -1062,7 +1131,10 @@ def main() -> int:
                 bQuiet,
             )
 
-        u32Processed = tFontStats.ok + tFontStats.failed + tImgStats.ok + tImgStats.failed
+        u32Processed = (
+            tFontStats.ok + tFontStats.failed
+            + tImgStats.ok + tImgStats.failed
+        )
         _render_progress(
             u32Processed,
             u32TotalFiles,
@@ -1078,8 +1150,7 @@ def main() -> int:
 
     except ResourceError as tError:
         _clear_progress(bQuiet)
-        _log_fail("resource generation failed")
-        logging.error("%s", tError)
+        _log_fail(f"resource generation failed\n{tError}")
         return 1
 
     fElapsed = time.perf_counter() - fStart
@@ -1091,27 +1162,20 @@ def main() -> int:
         + _collect_size(ptImgOutDir, "lv_img_")
     )
 
-    _log_stage_result("font", tFontStats)
-    _log_stage_result("image", tImgStats)
+    _log_plain(_style_table_frame(_summary_border_line()))
+    _log_summary_header()
+    if bDoFont:
+        _log_stage_result("font", tFontStats)
+    if bDoImg:
+        _log_stage_result("image", tImgStats)
+    _log_plain(_style_table_frame(_summary_border_line()))
 
     u32Failed = tFontStats.failed + tImgStats.failed
     if u32Failed > 0:
-        logging.warning(
-            "%s %d file(s) failed, total time: %s",
-            _color(f"[{LOG_WARN}]", "33"),
-            u32Failed,
-            _fmt_duration(fElapsed),
-        )
+        _log_warn(f"{u32Failed} file(s) failed, total time: {_fmt_duration(fElapsed)}")
         return 1
 
-    _log_summary_row(
-        LOG_OK,
-        "[DONE] Total",
-        f"{len(lchFontNames) + len(lchImgNames)} files",
-        "0 failed",
-        _fmt_duration(fElapsed),
-        _fmt_size(u32TotalBytes),
-    )
+    _log_done(f"Successfully generated {chMode} resources.")
     return 0
 
 
