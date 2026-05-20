@@ -98,29 +98,6 @@ GUI_LV_PRIVATE(
 
 } gui_lv_scene_cfg_t;
 
-
-/*!
- * \brief Page configuration structure
- */
-typedef struct {
-    
-    gui_lv_page_id_t  ePageId ;             //!< Page identifier            
-    gui_lv_extend_t  *ptExtend;             //!< Extended scene data 
-
-    void (*pfnDraw  )(lv_obj_t *ptRoot);    //!< Page init callback         
-    void (*pfnLoad  )(lv_obj_t *ptRoot);    //!< Page load callback         
-    void (*pfnBind  )(void);                //!< Page bind callback         
-    void (*pfnDepose)(void);                //!< Page destroy callback    
-
-GUI_LV_PRIVATE(
-    emb_list_t  tPageNode;                  //!< Page list node  
-    uint8_t    *pchFocusIndex;              //!< Focus index array pointer
-    bool        bIsRestoreFocus;            //!< Focus restore enabled flag
-    bool        bIsInitExtend;              //!< Extended data initialized flag
-)
-
-} gui_lv_page_cfg_t;
-
 /*============================= GLOBAL VARIABLES =============================*/
 
 extern 
@@ -237,57 +214,6 @@ extern
 void gui_lv_scene_back_with_anim(gui_lv_switch_anim_mode_t eAnimMode);
 
 
-
-/*----------------------------------------------------------------------------*
- * Page Management                                                            *
- *----------------------------------------------------------------------------*/
-/*!
- * \brief Append a set of pages to a scene player
- *
- * \param[in] ptThis the target scene player
- * \param[in] eSceneId the scene id to which the page belongs
- */
-extern
-GUI_LV_NONNULL(1)
-void gui_lv_page_append_to_scene(gui_lv_page_cfg_t *ptThis, 
-                                 gui_lv_scene_id_t eSceneId);
-
-
-/*!
- * \brief Switch to a different page
- * \param[in] eId the target page id
- */
-extern
-void gui_lv_page_switch(gui_lv_page_id_t eId);
-
-
-/*!
- * \brief Switch to a different page with animation
- *
- * \param[in] eId the target page id
- * \param[in] eAnimMode the animation mode
- */
-extern
-void gui_lv_page_switch_with_anim(gui_lv_page_id_t eId, 
-                                  gui_lv_switch_anim_mode_t eAnimMode);
-
-
-/*!
- * \brief Go back to the previous page
- */
-extern
-void gui_lv_page_back(void);
-
-
-/*!
- * \brief Go back to the previous page with animation
- * \param[in] eAnimMode the animation mode
- */
-extern
-void gui_lv_page_back_with_anim(gui_lv_switch_anim_mode_t eAnimMode);
-
-
-
 /*----------------------------------------------------------------------------*
  * Utility Functions                                                          *
  *----------------------------------------------------------------------------*/
@@ -299,17 +225,10 @@ extern
 gui_lv_scene_id_t gui_lv_get_scene_id(void);
 
 /*!
- * \brief Get the current page ID
- * \return The current page ID
- */
-extern
-gui_lv_page_id_t gui_lv_get_page_id(void);
-
-/*!
  * \brief Enable focus restore when switching scenes
  * \param[in] eId the scene id of the target scene
  */
-void gui_lv_scene_focus_restore_enabled(gui_lv_scene_id_t eId);
+void gui_lv_scene_focus_restore_enable(gui_lv_scene_id_t eId);
 
 /*!
  * \brief Disable focus restore when switching scenes

@@ -65,17 +65,10 @@
     EMB_LIST_ENTRY(s_tSceneHead.prev, gui_lv_scene_cfg_t, tSceneNode)
 
 /*================================== TYPES ===================================*/
-
 typedef struct {
     lv_obj_t           *ptRoot;
     gui_lv_scene_cfg_t *ptCFG;
 } gui_lv_scene_t;
-
-typedef struct {
-    lv_obj_t           *ptRoot;
-    gui_lv_page_cfg_t  *ptCFG;
-} gui_lv_page_t;
-
 
 /*============================= GLOBAL VARIABLES =============================*/
 gui_lv_switch_anim_mode_t GUI_LV_SWITCH_MODE_NONE        = {
@@ -155,22 +148,11 @@ gui_lv_switch_anim_mode_t GUI_LV_SWITCH_MODE_OUT_BOTTOM  = {
 };
 
 /*============================== LOCAL VARIABLES =============================*/
-/*!
- * \brief Scene list head
- */
-static emb_list_t s_tSceneHead;
-static emb_list_t s_tPageHead ;
-
-/*!
- * \brief Scene pools
- */
+static emb_list_t     s_tSceneHead;
 static gui_lv_scene_t s_tScenePools[GUI_LV_SCENE_MAX];
-static gui_lv_page_t  s_tPagePools[GUI_LV_PAGE_MAX];
-
 
 /*================================ PROTOTYPES ================================*/
 static inline lv_obj_t *__gui_lv_create_container_root(void);
-static void __gui_lv_page_list_pop_stack(void);
 
 static void __gui_lv_scene_list_pop_stack (gui_lv_switch_anim_mode_t eAnimMode);
 static void __gui_lv_scene_list_push_stack(gui_lv_scene_id_t         eTargetId, 
@@ -185,12 +167,11 @@ static void __gui_lv_focus_restore(gui_lv_scene_id_t eId, gui_lv_extend_t *ptExt
 
 /*============================== IMPLEMENTATION ==============================*/
 /*!
- * \brief Initialize the scene and page lists
+ * \brief Initialize the scene list
  */
 void gui_lv_scene_manage_init(void)
 {
     emb_list_init(&s_tSceneHead);
-    emb_list_init(&s_tPageHead );
 }
 
 /*!
@@ -228,14 +209,6 @@ void gui_lv_scene_set_home(gui_lv_scene_id_t eId)
 void gui_lv_scene_switch_to_home(void)
 {
     if(emb_list_is_empty(&s_tSceneHead)) return;
-
-    /**************************
-     *     Clear the page     *
-     **************************/
-    while(!emb_list_is_empty(&s_tPageHead))
-    {
-        __gui_lv_page_list_pop_stack();
-    }
 
     /**************************
      * Pop scenes until home *
@@ -307,16 +280,7 @@ void gui_lv_scene_switch(gui_lv_scene_id_t eId)
     GUI_LV_ASSERT(s_tScenePools[eId].ptCFG->pfnBind   != NULL);
     GUI_LV_ASSERT(s_tScenePools[eId].ptCFG->pfnDepose != NULL);
 
-    /**************************
-     *     Clear the page     *
-     **************************/
-    do {
-        if(emb_list_is_empty(&s_tPageHead)) break;
-
-        __gui_lv_page_list_pop_stack();
-    } while(true);
-
-     /****************************************
+    /****************************************
      * 1. Clear the prev scene              *
      * 2. Load the new scene with animation *
      ****************************************/
@@ -339,15 +303,6 @@ void gui_lv_scene_switch_with_anim(gui_lv_scene_id_t eId,
     GUI_LV_ASSERT(s_tScenePools[eId].ptCFG->pfnBind   != NULL);
     GUI_LV_ASSERT(s_tScenePools[eId].ptCFG->pfnDepose != NULL);
 
-    /**************************
-     *     Clear the page     *
-     **************************/
-    do {
-        if(emb_list_is_empty(&s_tPageHead)) break;
-
-        __gui_lv_page_list_pop_stack();
-    } while(true);
-
     /****************************************
      * 1. Clear the prev scene              *
      * 2. Load the new scene with animation *
@@ -361,15 +316,6 @@ void gui_lv_scene_switch_with_anim(gui_lv_scene_id_t eId,
 void gui_lv_scene_back(void)
 {
     if(s_tSceneHead.next->next == &s_tSceneHead) return;
-
-    /**************************
-     *     Clear the page     *
-     **************************/
-    do {
-        if(emb_list_is_empty(&s_tPageHead)) break;
-
-        __gui_lv_page_list_pop_stack();
-    } while(true);
 
     /************************************************
      * 1. Clear the current scene                   *
@@ -386,60 +332,12 @@ void gui_lv_scene_back_with_anim(gui_lv_switch_anim_mode_t eAnimMode)
 {
     if(s_tSceneHead.next->next == &s_tSceneHead) return;
 
-    /**************************
-     *     Clear the page     *
-     **************************/
-    do {
-        if(emb_list_is_empty(&s_tPageHead)) break;
-
-        __gui_lv_page_list_pop_stack();
-
-    } while(true);
-
     /************************************************
      * 1. Clear the current scene                   *
      * 2. Load the previous scene with animation   *
      ************************************************/
     __gui_lv_scene_list_pop_stack(eAnimMode);
 }
-
-
-/*----------------------------------------------------------------------------*
- * Page Management                                                            *
- *----------------------------------------------------------------------------*/
-GUI_LV_NONNULL(1)
-void gui_lv_page_append_to_scene(gui_lv_page_cfg_t *ptThis, 
-                                 gui_lv_scene_id_t eSceneId)
-{
-    GUI_LV_ASSERT(ptThis != NULL);
-
-}
-
-void gui_lv_page_switch(gui_lv_page_id_t eId)
-{
-
-}
-
-
-void gui_lv_page_switch_with_anim(gui_lv_page_id_t eId, 
-                                  gui_lv_switch_anim_mode_t eAnimMode)
-{
-
-}
-
-
-void gui_lv_page_back(void)
-{
-
-}
-
-
-void gui_lv_page_back_with_anim(gui_lv_switch_anim_mode_t eAnimMode)
-{
-    
-
-}
-
 
 /*----------------------------------------------------------------------------*
  * Utility Functions                                                          *
@@ -457,24 +355,10 @@ gui_lv_scene_id_t gui_lv_get_scene_id(void)
 }
 
 /*!
- * \brief Get the current active page id
- * \return the current active page id
- */
-gui_lv_page_id_t gui_lv_get_page_id(void)
-{
-    GUI_LV_ASSERT(!emb_list_is_empty(&s_tPageHead));
-    
-    gui_lv_page_cfg_t *ptThis = EMB_LIST_ENTRY( s_tPageHead.prev, 
-                                                gui_lv_page_cfg_t, 
-                                                tPageNode);
-    return ptThis->ePageId;
-}
-
-/*!
  * \brief Enable focus restore when switching scenes
  * \param[in] eId the scene id of the target scene
  */
-void gui_lv_scene_focus_restore_enabled(gui_lv_scene_id_t eId)
+void gui_lv_scene_focus_restore_enable(gui_lv_scene_id_t eId)
 {
     gui_lv_scene_cfg_t *ptThis = s_tScenePools[eId].ptCFG;
 
@@ -531,23 +415,6 @@ static inline lv_obj_t *__gui_lv_create_container_root(void)
     lv_obj_set_style_bg_opa(ptRoot, LV_OPA_COVER, 0);
     lv_obj_set_style_border_width(ptRoot, 0, 0);
     return ptRoot;
-}
-
-/*!
- * \brief Pop the top page from the page stack and destroy it
- *
- * \note  This function assumes that the page stack is not empty 
- *        and does not perform any checks.
- */
-static void __gui_lv_page_list_pop_stack(void)
-{
-    gui_lv_page_cfg_t *ptThis  = EMB_LIST_ENTRY( s_tPageHead.prev, 
-                                                 gui_lv_page_cfg_t, 
-                                                 tPageNode);
-    emb_list_del          (&(ptThis->tPageNode));
-    __gui_lv_extend_depose(  ptThis->ptExtend  );
-    GUI_LV_INVOKE_RT_VOID (  ptThis->pfnDepose );
-    ptThis->bIsInitExtend = false;
 }
 
 /*!

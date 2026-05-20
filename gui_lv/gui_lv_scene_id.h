@@ -40,18 +40,6 @@ typedef enum {
     GUI_LV_SCENE_MAX
 } gui_lv_scene_id_t;
 
-
-typedef enum {
-    /* 占位枚举（请勿使用） */
-    PLACEHOLDER1,
-    
-    /* ---------- Page ID Begin ----------- */
-    
-    /* ---------- Page ID End ------------- */
-
-    GUI_LV_PAGE_MAX
-} gui_lv_page_id_t;
-
 /*=================================== END ====================================*/
 #ifdef   __cplusplus
 }
