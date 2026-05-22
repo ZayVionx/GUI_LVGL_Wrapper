@@ -241,11 +241,12 @@ void gui_lv_scene_register(gui_lv_scene_cfg_t *ptThis)
 {
     GUI_LV_ASSERT(ptThis != NULL);
 
-    gui_lv_scene_id_t  eId    = ptThis->eSceneId;
-    s_tScenePools[eId].ptCFG  = ptThis;
-    s_tScenePools[eId].ptRoot = NULL;
+    gui_lv_scene_id_t  eId                    = ptThis->eSceneId;
+    s_tScenePools[eId].ptCFG                  = ptThis;
+    s_tScenePools[eId].ptRoot                 = NULL;
     s_tScenePools[eId].ptCFG->bIsRestoreFocus = false;
     s_tScenePools[eId].ptCFG->bIsInitExtend   = false;
+    s_tScenePools[eId].ptCFG->eMode           = GUI_LV_MODE_NAVIGATE;
     emb_list_init(&ptThis->tSceneNode);
 
     /* Initialize focus indices */
@@ -394,6 +395,35 @@ bool gui_lv_scene_is_focus_restore(gui_lv_scene_id_t eId)
     gui_lv_scene_cfg_t *ptThis = s_tScenePools[eId].ptCFG;
 
     return ptThis->bIsRestoreFocus;
+}
+
+/*!
+ * \brief Set the mode of a scene
+ * \param[in] eId the scene id of the target scene
+ * \param[in] eMode navigate/edit
+ */
+void gui_lv_scene_set_mode(gui_lv_scene_id_t eId, gui_lv_mode_e eMode)
+{
+    gui_lv_scene_cfg_t *ptThis = s_tScenePools[eId].ptCFG;
+
+    if(emb_list_is_empty(&s_tSceneHead))    return;
+
+    ptThis->eMode = eMode;
+}
+
+/*!
+ * \brief Get the mode of a scene
+ * \param[in] eId the scene id of the target scene
+ * 
+ * \return the mode of the scene
+ */
+gui_lv_mode_e gui_lv_scene_get_mode(gui_lv_scene_id_t eId)
+{
+    gui_lv_scene_cfg_t *ptThis = s_tScenePools[eId].ptCFG;
+
+    if(emb_list_is_empty(&s_tSceneHead))    return GUI_LV_MODE_NAVIGATE;
+
+    return ptThis->eMode;
 }
 
 /*=========================== LOCAL IMPLEMENTATION ===========================*/

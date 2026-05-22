@@ -54,6 +54,10 @@ extern "C" {
 
 /*============================ MACROFIED FUNCTIONS ===========================*/
 /*================================== TYPES ===================================*/
+typedef enum {
+    GUI_LV_MODE_NAVIGATE,
+    GUI_LV_MODE_EDIT,
+} gui_lv_mode_e;
 
 /*!
  * \brief Switch screen with animation
@@ -90,10 +94,11 @@ typedef struct {
     void (*pfnDepose)(void);                //!< Scene destroy callback   
     
 GUI_LV_PRIVATE(
-    emb_list_t  tSceneNode;                 //!< Scene list node    
-    uint8_t    *pchFocusIndex;              //!< Focus index array pointer
-    bool        bIsRestoreFocus;            //!< Focus restore enabled flag
-    bool        bIsInitExtend;              //!< Extended data initialized flag
+    emb_list_t    tSceneNode;               //!< Scene list node    
+    uint8_t      *pchFocusIndex;            //!< Focus index array pointer
+    bool          bIsRestoreFocus;          //!< Focus restore enabled flag
+    bool          bIsInitExtend;            //!< Extended data initialized flag
+    gui_lv_mode_e eMode;                    //!< Scene mode
 )
 
 } gui_lv_scene_cfg_t;
@@ -244,6 +249,21 @@ void gui_lv_scene_focus_restore_disable(gui_lv_scene_id_t eId);
  *         false: focus restore is disabled
  */
 bool gui_lv_scene_is_focus_restore(gui_lv_scene_id_t eId);
+
+/*!
+ * \brief Set the mode of a scene
+ * \param[in] eId the scene id of the target scene
+ * \param[in] eMode navigate/edit
+ */
+void gui_lv_scene_set_mode(gui_lv_scene_id_t eId, gui_lv_mode_e eMode);
+
+/*!
+ * \brief Get the mode of a scene
+ * \param[in] eId the scene id of the target scene
+ * 
+ * \return the mode of the scene
+ */
+gui_lv_mode_e gui_lv_scene_get_mode(gui_lv_scene_id_t eId);
 
 /*============================== IMPLEMENTATION ==============================*/
 /*=================================== END ====================================*/
