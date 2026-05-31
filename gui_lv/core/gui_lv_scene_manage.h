@@ -94,11 +94,11 @@ typedef struct {
     void (*pfnDepose)(void);                //!< Scene destroy callback   
     
 GUI_LV_PRIVATE(
-    emb_list_t    tSceneNode;               //!< Scene list node    
-    uint8_t      *pchFocusIndex;            //!< Focus index array pointer
-    bool          bIsRestoreFocus;          //!< Focus restore enabled flag
-    bool          bIsInitExtend;            //!< Extended data initialized flag
-    gui_lv_mode_e eMode;                    //!< Scene mode
+    emb_list_t         tSceneNode;          //!< Scene list node    
+    uint8_t           *pchFocusIndex;       //!< Focus index array pointer
+    bool               bIsRestoreFocus;     //!< Focus restore enabled flag
+    bool               bIsInitExtend;       //!< Extended data initialized flag
+    gui_lv_mode_e      eMode;               //!< Scene mode
 )
 
 } gui_lv_scene_cfg_t;
