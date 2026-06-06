@@ -58,13 +58,18 @@
         </condition>
 
         <condition id="GUI_Scene">
-            <description>Requires GUI_LVGL_Wrapper User component</description>
+            <description>Requires GUI_LVGL_Wrapper Core component</description>
             <require Cclass="GUI_LVGL_Wrapper" Cgroup="Core"/>
         </condition>
 
         <condition id="GUI_Template">
             <description>Requires GUI_LVGL_Wrapper User component</description>
             <require Cclass="GUI_LVGL_Wrapper" Cgroup="User"/>
+        </condition>
+
+        <condition id="GUI_Libraries">
+            <description>Requires GUI_LVGL_Wrapper Core component</description>
+            <require Cclass="GUI_LVGL_Wrapper" Cgroup="Core"/>
         </condition>
 
     </conditions>
@@ -217,6 +222,30 @@
                 
             </files>
             
+        </component>
+
+
+        <component Cclass="GUI_LVGL_Wrapper"  Cgroup="Libraries"
+                   Cversion="1.0.0"           condition="GUI_Libraries">
+            <description>
+                GUI libraries and components.
+
+                This group is for user-defined libraries and components that are not part of the core framework.
+            </description>
+
+            <files>
+                <!-- ======== Framework headers (read-only) ================ -->
+                <file category="header"  version="1.0.0" name="Libraries/include/__gui_lv_lib.h"/>
+                <file category="header"  version="1.0.0" name="Libraries/include/gui_lv_page_cursor.h"/>
+
+                <!-- ======== Framework sources (read-only) ================ -->
+                <file category="sourceC" version="1.0.0" name="Libraries/source/gui_lv_page_cursor.c"/>
+
+            </files>
+            
+            <RTE_Components_h>
+#define __GUI_LVGL_USE_PAGE_CURSOR__    1
+            </RTE_Components_h>
         </component>
 
         

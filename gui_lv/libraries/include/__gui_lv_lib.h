@@ -16,26 +16,14 @@
 *                                                                           *
 ****************************************************************************/
 
-#ifndef __GUI_LVGL_H__
-#define __GUI_LVGL_H__
+#ifndef __GUI_LV_LIB_H__
+#define __GUI_LV_LIB_H__
 
 /*================================= INCLUDES =================================*/
-#include "core/gui_lv_scene_manage.h"
-#include "helper/include/gui_lv_helper.h"
-#include "libraries/include/__gui_lv_lib.h"
+#include "RTE_Components.h"
 
-#ifdef __GUI_LVGL_WRAPPER_CONF__
-#   include <gui_lv_font.h>
-#   include <gui_lv_sys_data.h>
-#   include <gui_lv_custom_components.h>   
-#else
-#   include "gui_lv_font.h"
-#   include "gui_lv_sys_data.h"
-#   include "gui_lv_custom_components.h"
-#endif
-
-#if 0
-#include "../gui/gui_resource/generated/gui_lv_resource.h"
+#ifdef __GUI_LVGL_USE_PAGE_CURSOR__
+#   include "gui_lv_page_cursor.h"
 #endif
 
 #ifdef   __cplusplus
@@ -45,24 +33,11 @@ extern "C" {
 /*============================ MACROFIED FUNCTIONS ===========================*/
 /*================================== TYPES ===================================*/
 /*============================= GLOBAL VARIABLES =============================*/
-extern gui_lv_style_t g_tContDefStyle;
-
 /*============================== LOCAL VARIABLES =============================*/
 /*================================ PROTOTYPES ================================*/
-/*!
- * \brief Initialise the GUI module.
- *
- * \note This API defines a single, stable entry point for GUI bring-up.
- *
- * \note Application-specific configuration should be done in gui_lvgl.c within
- *       the marked "user code begin/end" regions.
- */
-extern
-void gui_lv_init(void);
-
 /*============================== IMPLEMENTATION ==============================*/
 /*=================================== END ====================================*/
 #ifdef   __cplusplus
 }
 #endif
-#endif /* __GUI_LVGL_H__ */
+#endif /* __GUI_LV_LIB_H__ */
