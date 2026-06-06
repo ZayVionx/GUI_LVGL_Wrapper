@@ -38,14 +38,14 @@ static void __page_cursor_clear      (gui_lv_page_cursor_t *ptThis);
 static void __page_cursor_refresh    (gui_lv_page_cursor_t *ptThis);
 
 /*============================== IMPLEMENTATION ==============================*/
-/**
+/*******************************************************************************
  * @brief Initialize the page cursor
  *
  * @param[in] ptThis Pointer to the page cursor structure
  * @param[in] chPageSize Maximum item count per page
  * @param[in] eIndexBase Item index base, 0-based or 1-based
  * @return true on success, false on failure
- */
+ ******************************************************************************/
 bool gui_lv_page_cursor_init(gui_lv_page_cursor_t       *ptThis,
                              uint8_t                    chPageSize,
                              gui_lv_page_cursor_index_e eIndexBase)
@@ -62,12 +62,12 @@ bool gui_lv_page_cursor_init(gui_lv_page_cursor_t       *ptThis,
     return true;
 }
 
-/**
+/*******************************************************************************
  * @brief Reset the page cursor to its initial state
  * @param[in] ptThis Pointer to the page cursor structure
- * @note This function can be used to clear the page cursor information 
+ * @note This function can be used to clear the page cursor information
  *       and reset it to the initial state.
- */
+ ******************************************************************************/
 void gui_lv_page_cursor_reset(gui_lv_page_cursor_t *ptThis)
 {
     if(ptThis == NULL)  return;
@@ -76,11 +76,11 @@ void gui_lv_page_cursor_reset(gui_lv_page_cursor_t *ptThis)
     __page_cursor_refresh(ptThis);
 }
 
-/**
+/*******************************************************************************
  * @brief Update the page cursor based on the total item count and current page number
  * @param[in] ptThis Pointer to the page cursor structure
  * @param[in] u16ItemNum Total item count
- */
+ ******************************************************************************/
 void gui_lv_page_cursor_update(gui_lv_page_cursor_t *ptThis, uint16_t u16ItemNum)
 {
     if(ptThis == NULL) return;
@@ -89,14 +89,14 @@ void gui_lv_page_cursor_update(gui_lv_page_cursor_t *ptThis, uint16_t u16ItemNum
     __page_cursor_refresh(ptThis);
 }
 
-/**
+/*******************************************************************************
  * @brief Move the page cursor to the previous item
  * @param[in] ptThis Pointer to the page cursor structure
- * @param[in] bIsLoop When the first item has been reached, 
+ * @param[in] bIsLoop When the first item has been reached,
  *                    will it loop back to the last item of the previous page?
- * @return true if the page cursor successfully moved to the previous item, 
+ * @return true if the page cursor successfully moved to the previous item,
  *         false if already at the first item
- */
+ ******************************************************************************/
 extern
 bool gui_lv_page_cursor_prev_item(gui_lv_page_cursor_t *ptThis, bool bIsLoop)
 {
@@ -125,14 +125,14 @@ bool gui_lv_page_cursor_prev_item(gui_lv_page_cursor_t *ptThis, bool bIsLoop)
     return true;
 }
 
-/**
+/*******************************************************************************
  * @brief Move the page cursor to the next item
  * @param[in] ptThis Pointer to the page cursor structure
- * @param[in] bIsLoop When the last item has been reached, 
+ * @param[in] bIsLoop When the last item has been reached,
  *                    will it loop back to the first item of the next page?
- * @return true if the page cursor successfully moved to the next item, 
+ * @return true if the page cursor successfully moved to the next item,
  *         false if already at the last item
- */
+ ******************************************************************************/
 extern
 bool gui_lv_page_cursor_next_item(gui_lv_page_cursor_t *ptThis, bool bIsLoop)
 {
@@ -161,12 +161,12 @@ bool gui_lv_page_cursor_next_item(gui_lv_page_cursor_t *ptThis, bool bIsLoop)
     return true;
 }
 
-/**
+/*******************************************************************************
  * @brief Move the page cursor to the previous page
  * @param[in] ptThis Pointer to the page cursor structure
- * @return true if the page cursor successfully moved to the previous page, 
+ * @return true if the page cursor successfully moved to the previous page,
  *         false if already at the first page
- */
+ ******************************************************************************/
 bool gui_lv_page_cursor_prev_page(gui_lv_page_cursor_t *ptThis)
 {
     if(ptThis == NULL || this.u16CurPage <= 1) 
@@ -178,12 +178,12 @@ bool gui_lv_page_cursor_prev_page(gui_lv_page_cursor_t *ptThis)
     return true;
 }
 
-/**
+/*******************************************************************************
  * @brief Move the page cursor to the next page
  * @param[in] ptThis Pointer to the page cursor structure
- * @return true if the page cursor successfully moved to the next page, 
+ * @return true if the page cursor successfully moved to the next page,
  *         false if already at the last page
- */
+ ******************************************************************************/
 bool gui_lv_page_cursor_next_page(gui_lv_page_cursor_t *ptThis)
 {
     if(    (ptThis == NULL) 
@@ -195,13 +195,13 @@ bool gui_lv_page_cursor_next_page(gui_lv_page_cursor_t *ptThis)
     return true;
 }
 
-/**
+/*******************************************************************************
  * @brief Move the page cursor to a specific page number
  * @param[in] ptThis Pointer to the page cursor structure
  * @param[in] u16PageNum Target page number (1-based)
- * @return true if the page cursor successfully moved to the target page, 
+ * @return true if the page cursor successfully moved to the target page,
  *         false if the target page number is out of range
- */
+ ******************************************************************************/
 bool gui_lv_page_cursor_goto(gui_lv_page_cursor_t *ptThis, uint16_t u16PageNum)
 {
     if(ptThis == NULL || u16PageNum < 1 || u16PageNum > this.u16PageNum)
@@ -216,33 +216,33 @@ bool gui_lv_page_cursor_goto(gui_lv_page_cursor_t *ptThis, uint16_t u16PageNum)
     return true;    
 }
 
-/**
+/*******************************************************************************
  * @brief Check if the page cursor is empty (no items)
  * @param[in] ptThis Pointer to the page cursor structure
  * @return true if the page cursor is empty, false otherwise
- */
+ ******************************************************************************/
 bool gui_lv_page_cursor_is_empty(const gui_lv_page_cursor_t *ptThis)
 {
     return (ptThis == NULL) ? true 
                             : (this.u16ItemNum == 0);
 }
 
-/**
+/*******************************************************************************
  * @brief Check if the page cursor is at the first page
  * @param[in] ptThis Pointer to the page cursor structure
  * @return true if the page cursor is at the first page, false otherwise
- */
+ ******************************************************************************/
 bool gui_lv_page_cursor_is_first(const gui_lv_page_cursor_t *ptThis)
 {
     return (ptThis == NULL) ? false 
                             : (this.u16CurPage <= 1);
 }
 
-/**
+/*******************************************************************************
  * @brief Check if the page cursor is at the last page
  * @param[in] ptThis Pointer to the page cursor structure
  * @return true if the page cursor is at the last page, false otherwise
- */
+ ******************************************************************************/
 bool gui_lv_page_cursor_is_last(const gui_lv_page_cursor_t *ptThis)
 {
     return (ptThis == NULL) ? false 
@@ -272,8 +272,10 @@ static void __page_cursor_clear(gui_lv_page_cursor_t *ptThis)
     this.u16ItemNum    = 0;
     this.u16PageNum    = 1;
     this.u16CurPage    = 1;
-    this.chStartIndex  = 0;
     this.chVaildNum    = 0;
+    this.chStartIndex  = 0;
+    this.chEndIndex    = 0;
+    this.chFocusIndex  = 0;
 }
 
 static void __page_cursor_refresh(gui_lv_page_cursor_t *ptThis)
