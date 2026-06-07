@@ -61,11 +61,11 @@ typedef struct {
 /*================================ PROTOTYPES ================================*/
 /**
  * @brief Initialize the page cursor
- *
  * @param[in] ptThis Pointer to the page cursor structure
  * @param[in] chPageSize Maximum item count per page
  * @param[in] eIndexBase Item index base, 0-based or 1-based
- * @return 0 on success, -1 on failure
+ * 
+ * @return true on success, false on failure
  */
 extern
 bool gui_lv_page_cursor_init(gui_lv_page_cursor_t       *ptThis,

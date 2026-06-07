@@ -40,10 +40,10 @@ static void __page_cursor_refresh    (gui_lv_page_cursor_t *ptThis);
 /*============================== IMPLEMENTATION ==============================*/
 /*******************************************************************************
  * @brief Initialize the page cursor
- *
  * @param[in] ptThis Pointer to the page cursor structure
  * @param[in] chPageSize Maximum item count per page
  * @param[in] eIndexBase Item index base, 0-based or 1-based
+ * 
  * @return true on success, false on failure
  ******************************************************************************/
 bool gui_lv_page_cursor_init(gui_lv_page_cursor_t       *ptThis,
@@ -72,7 +72,8 @@ void gui_lv_page_cursor_reset(gui_lv_page_cursor_t *ptThis)
 {
     if(ptThis == NULL)  return;
 
-    this.u16CurPage = 1;
+    this.u16CurPage   = 1;
+    this.chFocusIndex = 0;
     __page_cursor_refresh(ptThis);
 }
 
@@ -328,6 +329,20 @@ static void __page_cursor_refresh(gui_lv_page_cursor_t *ptThis)
     else if(this.chFocusIndex >= this.chVaildNum)
     {
         this.chFocusIndex = this.chVaildNum - 1;
+    }
+
+    if(this.chVaildNum == 0)
+    {
+        this.chEndIndex = 0;
+    }
+    else
+    {
+        uint32_t u32EndOffset = u32StartOffset + this.chVaildNum - 1 + u32IndexBase;
+
+        if(u32EndOffset > UINT8_MAX)
+            this.chEndIndex = UINT8_MAX;
+        else
+            this.chEndIndex = (uint8_t)u32EndOffset;
     }
 }
 /*==================================== END ===================================*/

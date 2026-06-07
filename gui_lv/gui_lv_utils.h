@@ -152,6 +152,42 @@ extern "C" {
 #endif
 
 /*----------------------------------------------------------------------------*
+ * Pointer / Array NULL Utilities                                             *
+ *----------------------------------------------------------------------------*/
+/*!
+ * @brief 直接将单个指针置为 NULL
+ * @param _ptr 要清空的指针变量
+ */
+#define GUI_LV_PTR_SET_NULL(_ptr)                                              \
+    do {                                                                       \
+        (_ptr) = NULL;                                                         \
+    } while (0)
+
+/*!
+ * @brief 将指针数组的所有元素批量置为 NULL
+ * @param _array 指针数组名
+ * @param _num   数组元素个数
+ */
+#define GUI_LV_ARRAY_SET_NULL(_array, _num)                                    \
+    do {                                                                       \
+        for (uint8_t i = 0; i < (_num); i++) {                                 \
+            (_array)[i] = NULL;                                                \
+        }                                                                      \
+    } while (0)
+
+/*!
+ * @brief 自动计算数组长度，批量置 NULL（最推荐）
+ * @param _array 静态数组（必须是数组，不能是纯指针）
+ */
+#define GUI_LV_ARRAY_AUTO_SET_NULL(_array)                                     \
+    do {                                                                       \
+        uint8_t i;                                                             \
+        for (i = 0; i < GUI_LV_ARRAY_SIZE(_array); i++) {                      \
+            (_array)[i] = NULL;                                                \
+        }                                                                      \
+    } while (0)
+
+/*----------------------------------------------------------------------------*
  * Font                                                                       *
  *----------------------------------------------------------------------------*/
 #define FONT(_font, _size)          GUI_LV_CONNECT4(&lv_font_, _font, _, _size)
