@@ -26,14 +26,17 @@
 #   include "gui_lvgl.h"
 #endif
 
+
 /*--------------------------*
  * Don't Fix Include Order! *
  *--------------------------*/
 #define __GUI_LV_IMPL__
-#include "gui_lv_utils.h"
+#   include "gui_lv_utils.h"
 
+/*---------------------------*
+ * APP layer header includes *
+ *---------------------------*/
 #if !defined(_WIN64)
-/* Application layer header includes */
 
 #endif
 
@@ -80,10 +83,10 @@ static void __on_scene_<name>_timer0_cb(lv_timer_t *ptTimer);
 static gui_lv_fsm_rt_t __scene_sync_app_data(void);
 
 /*============================ SCENE REGISTRATION ============================*/
-/** 
+/******************************************************************************
  * @note The scene ID should be defined in your enum as GUI_LV_SCENE_<NAME>.
  *       Header include is in gui_lv_scene_id.h
- */
+ ******************************************************************************/
 void gui_lv_scene_<name>_init(void)
 {
     static gui_lv_extend_t s_tGUIEX; 
@@ -110,6 +113,14 @@ void gui_lv_scene_<name>_init(void)
 
 
 /*============================= SCENE CALLBACKS ==============================*/
+/******************************************************************************
+ * @brief Scene callback responsibilities.                                    *
+ *                                                                            *
+ * @note  draw   - Create widgets under `ptRoot`.                             *
+ * @note  load   - Use app-layer parameters once to fill runtime-only values. *
+ * @note  bind   - Register events and input handlers.                        *
+ * @note  depose - Clear scene-local state before exit.                       *
+ ******************************************************************************/
 GUI_LV_NONNULL(1)
 static void __on_scene_<name>_draw(lv_obj_t *ptRoot)
 {
