@@ -27,14 +27,17 @@
 #   include "gui_lvgl.h"
 #endif
 
+
 /*--------------------------*
  * Don't Fix Include Order! *
  *--------------------------*/
 #define __GUI_LV_IMPL__
 #   include "gui_lv_utils.h"
 
+/*---------------------------*
+ * APP layer header includes *
+ *---------------------------*/
 #if !defined(_WIN64)
-/* Application layer header includes */
 
 #endif
 
@@ -82,10 +85,10 @@ static gui_lv_fsm_rt_t __scene_sync_app_data(void);
 
 /*============================ IMPLEMENTATION ================================*/
 /*============================ SCENE REGISTRATION ============================*/
-/** 
+/****************************************************************************** 
  * @note The scene ID should be defined in your enum as GUI_LV_SCENE_<NAME>.
  *       Header include is in gui_lv_scene_id.h
- */
+ ******************************************************************************/
 void gui_lv_scene_%Instance%_init(void)
 {
     static gui_lv_extend_t s_tGUIEX; 
@@ -112,6 +115,14 @@ void gui_lv_scene_%Instance%_init(void)
 
 
 /*============================= SCENE CALLBACKS ==============================*/
+/******************************************************************************
+ * @brief Scene callback responsibilities.                                    *
+ *                                                                            *
+ * @note  draw   - Create widgets under `ptRoot`.                             *
+ * @note  load   - Use app-layer parameters once to fill runtime-only values. *
+ * @note  bind   - Register events and input handlers.                        *
+ * @note  depose - Clear scene-local state before exit.                       *
+ ******************************************************************************/
 GUI_LV_NONNULL(1)
 static void __on_scene%Instance%_draw(lv_obj_t *ptRoot)
 {
@@ -163,10 +174,6 @@ static void __on_scene%Instance%_depose(void)
 
 /*============================ TIMER TASKS ===================================*/
 #if GUI_LV_SCENE_TIMER_NUM
-/**
- * @note  Multiple scene timers may follow this callback pattern.
- * @note  Create and start each timer in the scene draw callback.
- */
 GUI_LV_NONNULL(1)
 static void __on_scene%Instance%_timer0_cb(lv_timer_t *ptTimer)
 {
@@ -175,6 +182,7 @@ static void __on_scene%Instance%_timer0_cb(lv_timer_t *ptTimer)
     (void)__scene_sync_app_data();
 
     /* USER: periodic visual refresh -----------------------------------------*/
+    
 }
 #endif
 
