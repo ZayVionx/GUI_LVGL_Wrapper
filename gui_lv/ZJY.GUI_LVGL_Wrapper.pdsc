@@ -207,18 +207,17 @@
                    Cversion="1.2.0"           condition="GUI_Template">
             <description>
                 GUI scene wrapper instance template.
-
-                Each component instance generates one wrapper source/header pair.
-                The RTE generator replaces %Instance% with 0,1,2,...
-
+                
                 Wrapper entry:
                 - gui_lv_scene_"name"_init()
             </description>
 
             <files>
                 <!-- the template for scenes -->
-                <file category="sourceC" attr="template" version="1.2.0" name="template/gui_scene_template.c"/>
-                <file category="header"  attr="template" version="1.2.0" name="template/gui_scene_template.h"/>
+                <file category="sourceC" attr="template" version="1.2.0" name="template/gui_lv_scene_template.c"/>
+                <file category="header"  attr="template" version="1.2.0" name="template/gui_lv_scene_template.h"/>
+                <file category="sourceC" attr="template" version="1.2.0" name="template/gui_lv_scene_task_template.c"/>
+                <file category="header"  attr="template" version="1.2.0" name="template/gui_lv_scene_task_template.h"/>
                 
             </files>
             
