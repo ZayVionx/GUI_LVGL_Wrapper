@@ -54,6 +54,26 @@
 
 #endif
 
+static const gui_lv_scene_init_fn_t s_gui_lv_scene_init_start
+GUI_LV_SCENE_INIT_USED
+GUI_LV_SCENE_INIT_SECTION(GUI_LV_SCENE_INIT_SEC_START) = 0;
+
+static const gui_lv_scene_init_fn_t s_gui_lv_scene_init_end
+GUI_LV_SCENE_INIT_USED
+GUI_LV_SCENE_INIT_SECTION(GUI_LV_SCENE_INIT_SEC_END) = 0;
+
+void __gui_lv_scene_auto_init_exported(void)
+{
+    gui_lv_scene_init_fn_t const *ppfnInit;
+
+    for (ppfnInit = &s_gui_lv_scene_init_start + 1;
+         ppfnInit < &s_gui_lv_scene_init_end;
+         ppfnInit++) {
+        if (*ppfnInit != NULL) {
+            (*ppfnInit)();
+        }
+    }
+}
 /*================================== MACROS ==================================*/
 #undef  this
 #define this        (*ptThis)

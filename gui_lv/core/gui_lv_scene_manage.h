@@ -50,7 +50,45 @@ extern "C" {
 #include "core/gui_lv_common.h"
 
 /*================================== MACROS ==================================*/
+/*----------------------------------------------------------------------------*
+ * Scene Auto Init Export                                                     *
+ *                                                                            *
+ * Use gui_lv_scene_set_init(fn) at file scope to export a scene init function *
+ * into the auto-init table. The exported functions are called internally by   *
+ * gui_lv_scene_auto_init().                                                   *
+ *                                                                            *
+ * Rules:                                                                     *
+ *   - fn must be declared as: void fn(void)                                   *
+ *   - gui_lv_scene_set_init(fn) must be placed outside any function body      *
+ *   - Do not call gui_lv_scene_auto_init() from scene files                   *
+ *   - Do not depend on the registration order unless the linker map is fixed  *
+ *----------------------------------------------------------------------------*/
+typedef void (*gui_lv_scene_init_fn_t)(void);
 
+#if defined(__CC_ARM) || defined(__ARMCC_VERSION)
+#   define GUI_LV_SCENE_INIT_USED        __attribute__((used))
+#   define GUI_LV_SCENE_INIT_SECTION(x)  __attribute__((section(x)))
+#else
+#   error "Unsupported compiler"
+#endif
+
+#define GUI_LV_SCENE_INIT_SEC_START      ".gui_lv_scene_init.0"
+#define GUI_LV_SCENE_INIT_SEC_ITEM       ".gui_lv_scene_init.1"
+#define GUI_LV_SCENE_INIT_SEC_END        ".gui_lv_scene_init.2"
+
+/*----------------------------------------------------------------------------*
+ * Scene Init Auto-Registration                                               *
+ *                                                                            *
+ * Internal use only. Dont't Used this API                                    *
+ *----------------------------------------------------------------------------*/
+// #define gui_lv_scene_set_init(fn)                                              
+#define __GUI_LV_SCENE_INIT_APPEND_RO(fn)                                      \
+    static const gui_lv_scene_init_fn_t gui_lv_scene_init_export_##fn          \
+    GUI_LV_SCENE_INIT_USED                                                     \
+    GUI_LV_SCENE_INIT_SECTION(GUI_LV_SCENE_INIT_SEC_ITEM) = fn
+
+extern void __gui_lv_scene_auto_init_exported(void);
+#define __GUI_LV_SCENE_AUTO_INIT_EXPORTED()  __gui_lv_scene_auto_init_exported()
 
 /*============================ MACROFIED FUNCTIONS ===========================*/
 /*================================== TYPES ===================================*/
