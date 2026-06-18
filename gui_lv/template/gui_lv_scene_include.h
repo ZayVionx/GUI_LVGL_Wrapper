@@ -169,7 +169,7 @@ extern "C" {
 #endif
 
 /*============================ MACROFIED FUNCTIONS ===========================*/
-#define __GUI_LV_ALL_SCENE_INIT()                                              \
+#define __RTE_Acceleration_GUI_LV_ALL_SCENE_INIT()                             \
     do {                                                                       \
         __GUI_LV_SCENE_0_INIT();                                               \
         __GUI_LV_SCENE_1_INIT();                                               \

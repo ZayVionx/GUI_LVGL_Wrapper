@@ -34,6 +34,15 @@
 /*============================ MACROFIED FUNCTIONS ===========================*/
 /*================================== TYPES ===================================*/
 /*============================== LOCAL VARIABLES =============================*/
+#if !defined(_WIN64)
+static gui_lv_data_cfg_t tUiDataCfg = {
+    .pfnDataLoad  = (bool (*)(void))NULL,           /* Load params from Flash */
+    .pfnDataSave  = (bool (*)(void))NULL,           /* Write params to Flash */
+    .pfnDataReset = (bool (*)(void))NULL,           /* Restore factory data  */
+    .pfnPowerOff  = (void (*)(void))NULL,           /* System power off      */
+};
+#endif
+
 /*============================== GLOBAL VARIABLES ============================*/
 gui_lv_style_t g_tContDefStyle = {
     .config = {
@@ -47,22 +56,47 @@ gui_lv_style_t g_tContDefStyle = {
 
 /*================================ PROTOTYPES ================================*/
 /*============================== IMPLEMENTATION ==============================*/
-/*!
- * \note Called by gui_lv_init() after the LVGL core/port initialisation stage.
+/*******************************************************************************
+ * @note Called by gui_lv_init() after the LVGL core/port initialisation stage.
  *       Modify only the "user code" block below.
- */
+ ******************************************************************************/
 static void gui_sys_data_init(void)
 {
     /*---------------------- user code begin: sys data ----------------------*/
-    gui_lv_set_lang(GUI_LV_LANGUAGE_TC);
-    gui_lv_set_startup_scene_id( (gui_lv_scene_id_t)0);
+#if !defined(_WIN64)
+    /* Set language */
+	gui_lv_language_t   language = GUI_LV_LANGUAGE_CN;      //!< Need to replace with actual data and remove this comment
+
+    /* Set boot scene ID */
+	gui_lv_scene_id_t    startup = 0;                       //!< Need to replace with actual data and remove this comment
+
+    /* Set the buzzer level */
+	gui_lv_beep_level_t   volume = GUI_LV_BEEP_LEVEL_1;     //!< Need to replace with actual data and remove this comment
+
+    /* Set device information */
+    uint8_t  u8HW_Ver  = 10;                                //!< Need to replace with actual data and remove this comment
+    uint8_t  u8SW_Ver  = 10;                                //!< Need to replace with actual data and remove this comment
+    uint32_t u32SN_Ver = 1234567890;                        //!< Need to replace with actual data and remove this comment
+    
+    gui_lv_set_lang            ((gui_lv_language_t)   language);
+    gui_lv_set_startup_scene_id((gui_lv_scene_id_t)   startup );
+    gui_lv_set_beep_level      ((gui_lv_beep_level_t) volume  );
+    gui_lv_set_device_info     ("NAME", u32SN_Ver, u8SW_Ver, u8HW_Ver);
+
+    gui_lv_data_init(&tUiDataCfg);
+#else
+    gui_lv_set_lang            (GUI_LV_LANGUAGE_CN        );
+    gui_lv_set_startup_scene_id((gui_lv_scene_id_t)0      );
+    gui_lv_set_beep_level      (GUI_LV_BEEP_LEVEL_1       );
+    gui_lv_set_device_info     ("NAME", 1234567890, 11, 12);
+#endif
     /*---------------------- user code end  : sys data ----------------------*/
 }
 
-/*!
- * \note Called by gui_lv_init() after gui_sys_data_init().
+/*******************************************************************************
+ * @note Called by gui_lv_init() after gui_sys_data_init().
  *       Modify only the "user code" block below.
- */
+ ******************************************************************************/
 static void gui_common_style_init(void)
 {
     /*------------------- user code begin: common style -------------------*/
@@ -70,29 +104,26 @@ static void gui_common_style_init(void)
     /*------------------- user code end  : common style -------------------*/
 }
 
-/*!
- * \note Called by gui_lv_init() after data/style initialisation.
+/*******************************************************************************
+ * @note Called by gui_lv_init() after data/style initialisation.
  *       - RTE build: keep the default __GUI_LV_ALL_SCENE_INIT().
  *       - Non-RTE  : register scenes manually in the "user code" block.
- */
+ ******************************************************************************/
 static void gui_all_scene_init(void)
 {
     gui_lv_scene_manage_init();
 
 #if defined(__RTE_Acceleration_GUI_LVGL_SCENE__)
-    __GUI_LV_ALL_SCENE_INIT();
+    __RTE_Acceleration_GUI_LV_ALL_SCENE_INIT();
 #else
-    /*-------------------- user code begin: scene register --------------------*/
-    /* Example:
-     *   gui_lv_scene_0_init();
-     */
+    /* If this auto initialization function is disabled,
+     * manually append all scene initialization logic below */
+    __GUI_LV_SCENE_AUTO_INIT_EXPORTED();
     
+    /*-------------------- user code begin: scene register --------------------*/
+
     /*-------------------- user code end  : scene register --------------------*/
 #endif
-
-    /************************************
-     *    Set the default home scene    *
-     ************************************/
     gui_lv_scene_set_home((gui_lv_scene_id_t)0);
 }
 
@@ -100,10 +131,10 @@ static void gui_all_scene_init(void)
 /*----------------------------------------------------------------------------*
  * Public API                                                                 *
  *----------------------------------------------------------------------------*/
-/*!
- * \brief  GUI system total initialization entry
- * \note   LVGL init + display/indev port + helper + user config + scene load
- */
+/*******************************************************************************
+ * @brief  GUI system total initialization entry
+ * @note   LVGL init + display/indev port + helper + user config + scene load
+ ******************************************************************************/
 void gui_lv_init(void)
 {
 #if !defined(_WIN64)
