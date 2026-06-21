@@ -97,8 +97,8 @@ typedef enum {
     GUI_LV_MODE_EDIT,
 } gui_lv_mode_e;
 
-/*!
- * \brief Switch screen with animation
+/**
+ * @brief Switch screen with animation
  */
 typedef const struct {
     uint32_t           u32AnimTime;         //!< time of the animation   
@@ -107,8 +107,8 @@ typedef const struct {
 } gui_lv_switch_anim_mode_t;
 
 
-/*!
- * \brief Extended scene data structure
+/**
+ * @brief Extended scene data structure
  */
 typedef struct {
     uint8_t      chGroupNum;                //!< Number of groups in the scene  
@@ -118,8 +118,8 @@ typedef struct {
 } gui_lv_extend_t;
 
 
-/*!
- * \brief Scene configuration structure (internal use)
+/**
+ * @brief Scene configuration structure (internal use)
  */
 typedef struct {
 
@@ -187,71 +187,77 @@ gui_lv_switch_anim_mode_t GUI_LV_SWITCH_MODE_OUT_BOTTOM;
 
 /*============================== LOCAL VARIABLES =============================*/
 /*================================ PROTOTYPES ================================*/
-/*!
- * \brief Set the home scene
- * \param[in] eId the scene id to set as home
+/**
+ * @brief Set the home scene
  * 
- * \note Do not call this function.
+ * @param[in] eId the scene id to set as home
+ * @note Do not call this function.
  *       Call it only before initializing the scene management system.
  */
 extern
 void gui_lv_scene_set_home(gui_lv_scene_id_t eId);
 
-/*!
- * \brief Switch to a different scene
- * \param[in] eId the target scene id
+
+/**
+ * @brief Switch to a different scene
+ *
+ * @param[in] eId the target scene id
  */
 extern
 void gui_lv_scene_switch_to_home(void);
 
+
 /*----------------------------------------------------------------------------*
  * Scene Management                                                           *
  *----------------------------------------------------------------------------*/
-/*!
- * \brief Initialize the scene management system
+/**
+ * @brief Initialize the scene management system
  */
 extern
 void gui_lv_scene_manage_init(void);
 
 
-/*!
- * \brief Register a set of scenes to a scene player
- * \param[in] ptThis the target scene player
+/**
+ * @brief Register a set of scenes to a scene player
+ * 
+ * @param[in] ptThis the target scene player
  */
 extern
 GUI_LV_NONNULL(1)
 void gui_lv_scene_register(gui_lv_scene_cfg_t *ptThis);
 
 
-/*!
- * \brief Switch to a different scene
- * \param[in] eId the target scene id
+/**
+ * @brief Switch to a different scene
+ * 
+ * @param[in] eId the target scene id
  */
 extern
 void gui_lv_scene_switch(gui_lv_scene_id_t eId);
 
 
-/*!
- * \brief Switch to a different scene with animation
+/**
+ * @brief Switch to a different scene with animation
  *
- * \param[in] eId the target scene id
- * \param[in] eAnimMode the animation mode
+ * @param[in] eId the target scene id
+ * @param[in] eAnimMode the animation mode
  */
 extern
 void gui_lv_scene_switch_with_anim(gui_lv_scene_id_t eId, 
                                    gui_lv_switch_anim_mode_t eAnimMode);
 
 
-/*!
- * \brief Go back to the previous scene with animation
+/**
+ * @brief Go back to the previous scene
  */
 extern
 void gui_lv_scene_back(void);
 
 
-/*!
- * \brief Go back to the previous scene with animation
- * \param[in] eAnimMode the animation mode
+/**
+ * @brief Go back to the previous scene with animation
+ * 
+ * @param[in] eAnimMode the animation mode
  */
 extern
 void gui_lv_scene_back_with_anim(gui_lv_switch_anim_mode_t eAnimMode);
@@ -260,46 +266,50 @@ void gui_lv_scene_back_with_anim(gui_lv_switch_anim_mode_t eAnimMode);
 /*----------------------------------------------------------------------------*
  * Utility Functions                                                          *
  *----------------------------------------------------------------------------*/
-/*!
- * \brief Get the current scene ID
- * \return The current scene ID
+/**
+ * @brief Get the current scene ID
+ * 
+ * @return The current scene ID
  */
 extern
 gui_lv_scene_id_t gui_lv_get_scene_id(void);
 
-/*!
- * \brief Enable focus restore when switching scenes
- * \param[in] eId the scene id of the target scene
+/**
+ * @brief Enable focus restore when switching scenes
+ * 
+ * @param[in] eId the scene id of the target scene
  */
 void gui_lv_scene_focus_restore_enable(gui_lv_scene_id_t eId);
 
-/*!
- * \brief Disable focus restore when switching scenes
- * \param[in] eId the scene id of the target scene
+/**
+ * @brief Disable focus restore when switching scenes
+ * 
+ * @param[in] eId the scene id of the target scene
  */
 void gui_lv_scene_focus_restore_disable(gui_lv_scene_id_t eId);                                      
 
-/*!
- * \brief Check if focus restore is enabled for a scene
- * \param[in] eId the scene id of the target scene
+/**
+ * @brief Check if focus restore is enabled for a scene
  * 
- * \return true : focus restore is enabled
+ * @param[in] eId the scene id of the target scene
+ * @return true : focus restore is enabled
  *         false: focus restore is disabled
  */
 bool gui_lv_scene_is_focus_restore(gui_lv_scene_id_t eId);
 
-/*!
- * \brief Set the mode of a scene
- * \param[in] eId the scene id of the target scene
- * \param[in] eMode navigate/edit
+/**
+ * @brief Set the mode of a scene
+ * 
+ * @param[in] eId the scene id of the target scene
+ * @param[in] eMode navigate/edit
  */
 void gui_lv_scene_set_mode(gui_lv_scene_id_t eId, gui_lv_mode_e eMode);
 
-/*!
- * \brief Get the mode of a scene
- * \param[in] eId the scene id of the target scene
+/**
+ * @brief Get the mode of a scene
  * 
- * \return the mode of the scene
+ * @param[in] eId the scene id of the target scene
+ * @return the mode of the scene
  */
 gui_lv_mode_e gui_lv_scene_get_mode(gui_lv_scene_id_t eId);
 

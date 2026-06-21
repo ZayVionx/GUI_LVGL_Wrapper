@@ -186,21 +186,22 @@ static void __gui_lv_focus_save   (gui_lv_scene_id_t eId, gui_lv_extend_t *ptExt
 static void __gui_lv_focus_restore(gui_lv_scene_id_t eId, gui_lv_extend_t *ptExtend);
 
 /*============================== IMPLEMENTATION ==============================*/
-/*!
- * \brief Initialize the scene list
- */
+
+/*******************************************************************************
+ * @brief Initialize the scene list
+ ******************************************************************************/
 void gui_lv_scene_manage_init(void)
 {
     emb_list_init(&s_tSceneHead);
 }
 
-/*!
- * \brief Set the home scene
- * \param[in] eId the scene id to set as home
+/*******************************************************************************
+ * @brief Set the home scene
  * 
- * \note Do not call this function.
+ * @param[in] eId the scene id to set as home
+ * @note Do not call this function.
  *       Call it only before initializing the scene management system.
- */
+ ******************************************************************************/
 void gui_lv_scene_set_home(gui_lv_scene_id_t eId)
 {
     if(eId >= GUI_LV_SCENE_MAX)     return;
@@ -223,9 +224,9 @@ void gui_lv_scene_set_home(gui_lv_scene_id_t eId)
     }
 }
 
-/*!
- * \brief Switch to the home scene
- */
+/*******************************************************************************
+ * @brief Switch to the home scene
+ ******************************************************************************/
 void gui_lv_scene_switch_to_home(void)
 {
     if(emb_list_is_empty(&s_tSceneHead)) return;
@@ -252,10 +253,12 @@ void gui_lv_scene_switch_to_home(void)
 /*----------------------------------------------------------------------------*
  * Scene Management                                                           *
  *----------------------------------------------------------------------------*/
-/*!
- * \brief Register a scene configuration
- * \param[in] ptThis the scene configuration to register
- */
+
+/*******************************************************************************
+ * @brief Register a scene configuration
+ * 
+ * @param[in] ptThis the scene configuration to register
+ ******************************************************************************/
 GUI_LV_NONNULL(1)
 void gui_lv_scene_register(gui_lv_scene_cfg_t *ptThis)
 {
@@ -288,10 +291,11 @@ void gui_lv_scene_register(gui_lv_scene_cfg_t *ptThis)
 }
 
 
-/*!
- * \brief Switch to a different scene
- * \param[in] eId the target scene id
- */
+/*******************************************************************************
+ * @brief Switch to a different scene
+ * 
+ * @param[in] eId the target scene id
+ ******************************************************************************/
 void gui_lv_scene_switch(gui_lv_scene_id_t eId)
 {
     if(eId >= GUI_LV_SCENE_MAX)    return;
@@ -308,12 +312,12 @@ void gui_lv_scene_switch(gui_lv_scene_id_t eId)
     __gui_lv_scene_list_push_stack(eId, GUI_LV_SWITCH_MODE_NONE);    
 }
 
-/*!
- * \brief Switch to a different scene with animation
+/*******************************************************************************
+ * @brief Switch to a different scene with animation
  *
- * \param[in] eId the target scene id
- * \param[in] eAnimMode the animation mode
- */
+ * @param[in] eId the target scene id
+ * @param[in] eAnimMode the animation mode
+ ******************************************************************************/
 void gui_lv_scene_switch_with_anim(gui_lv_scene_id_t eId, 
                                    gui_lv_switch_anim_mode_t eAnimMode)
 {
@@ -331,9 +335,9 @@ void gui_lv_scene_switch_with_anim(gui_lv_scene_id_t eId,
     __gui_lv_scene_list_push_stack(eId, eAnimMode);
 }
 
-/*!
- * \brief Go back to the previous scene 
- */
+/*******************************************************************************
+ * @brief Go back to the previous scene 
+ ******************************************************************************/
 void gui_lv_scene_back(void)
 {
     if(s_tSceneHead.next->next == &s_tSceneHead) return;
@@ -345,10 +349,11 @@ void gui_lv_scene_back(void)
     __gui_lv_scene_list_pop_stack(GUI_LV_SWITCH_MODE_NONE);
 }
 
-/*!
- * \brief Go back to the previous scene with animation
- * \param[in] eAnimMode the animation mode
- */
+/*******************************************************************************
+ * @brief Go back to the previous scene with animation
+ * 
+ * @param[in] eAnimMode the animation mode
+ ******************************************************************************/
 void gui_lv_scene_back_with_anim(gui_lv_switch_anim_mode_t eAnimMode)
 {
     if(s_tSceneHead.next->next == &s_tSceneHead) return;
@@ -363,10 +368,11 @@ void gui_lv_scene_back_with_anim(gui_lv_switch_anim_mode_t eAnimMode)
 /*----------------------------------------------------------------------------*
  * Utility Functions                                                          *
  *----------------------------------------------------------------------------*/
-/*!
- * \brief Get the current active scene id
- * \return the current active scene id
- */
+/*******************************************************************************
+ * @brief Get the current active scene id
+ * 
+ * @return the current active scene id
+ ******************************************************************************/
 gui_lv_scene_id_t gui_lv_get_scene_id(void)
 {
     GUI_LV_ASSERT(!emb_list_is_empty(&s_tSceneHead));
@@ -375,10 +381,11 @@ gui_lv_scene_id_t gui_lv_get_scene_id(void)
     return ptThis->eSceneId;
 }
 
-/*!
- * \brief Enable focus restore when switching scenes
- * \param[in] eId the scene id of the target scene
- */
+/*******************************************************************************
+ * @brief Enable focus restore when switching scenes
+ * 
+ * @param[in] eId the scene id of the target scene
+ ******************************************************************************/
 void gui_lv_scene_focus_restore_enable(gui_lv_scene_id_t eId)
 {
     gui_lv_scene_cfg_t *ptThis = s_tScenePools[eId].ptCFG;
@@ -389,10 +396,11 @@ void gui_lv_scene_focus_restore_enable(gui_lv_scene_id_t eId)
     ptThis->bIsRestoreFocus = true;
 }
 
-/*!
- * \brief Disable focus restore when switching scenes
- * \param[in] eId the scene id of the target scene
- */
+/*******************************************************************************
+ * @brief Disable focus restore when switching scenes
+ * 
+ * @param[in] eId the scene id of the target scene
+ ******************************************************************************/
 void gui_lv_scene_focus_restore_disable(gui_lv_scene_id_t eId)
 {
     gui_lv_scene_cfg_t *ptThis = s_tScenePools[eId].ptCFG;
@@ -403,13 +411,13 @@ void gui_lv_scene_focus_restore_disable(gui_lv_scene_id_t eId)
     ptThis->bIsRestoreFocus = false;
 }
 
-/*!
- * \brief Check if focus restore is enabled for a scene
- * \param[in] eId the scene id of the target scene
+/*******************************************************************************
+ * @brief Check if focus restore is enabled for a scene
  * 
- * \return true : focus restore is enabled
+ * @param[in] eId the scene id of the target scene
+ * @return true : focus restore is enabled
  *         false: focus restore is disabled
- */
+ *******************************************************************************/
 bool gui_lv_scene_is_focus_restore(gui_lv_scene_id_t eId)
 {
     gui_lv_scene_cfg_t *ptThis = s_tScenePools[eId].ptCFG;
@@ -417,11 +425,12 @@ bool gui_lv_scene_is_focus_restore(gui_lv_scene_id_t eId)
     return ptThis->bIsRestoreFocus;
 }
 
-/*!
- * \brief Set the mode of a scene
- * \param[in] eId the scene id of the target scene
- * \param[in] eMode navigate/edit
- */
+/*******************************************************************************
+ * @brief Set the mode of a scene
+ * 
+ * @param[in] eId the scene id of the target scene
+ * @param[in] eMode navigate/edit
+ ******************************************************************************/
 void gui_lv_scene_set_mode(gui_lv_scene_id_t eId, gui_lv_mode_e eMode)
 {
     gui_lv_scene_cfg_t *ptThis = s_tScenePools[eId].ptCFG;
@@ -431,12 +440,12 @@ void gui_lv_scene_set_mode(gui_lv_scene_id_t eId, gui_lv_mode_e eMode)
     ptThis->eMode = eMode;
 }
 
-/*!
- * \brief Get the mode of a scene
- * \param[in] eId the scene id of the target scene
+/*******************************************************************************
+ * @brief Get the mode of a scene
  * 
- * \return the mode of the scene
- */
+ * @param[in] eId the scene id of the target scene
+ * @return the mode of the scene
+ ******************************************************************************/
 gui_lv_mode_e gui_lv_scene_get_mode(gui_lv_scene_id_t eId)
 {
     gui_lv_scene_cfg_t *ptThis = s_tScenePools[eId].ptCFG;
@@ -449,6 +458,7 @@ gui_lv_mode_e gui_lv_scene_get_mode(gui_lv_scene_id_t eId)
 /*=========================== LOCAL IMPLEMENTATION ===========================*/
 /*!
  * \brief Create a root container for a scene
+ *
  * \return pointer to the root container object
  */
 static inline lv_obj_t *__gui_lv_create_container_root(void)
@@ -469,8 +479,8 @@ static inline lv_obj_t *__gui_lv_create_container_root(void)
 
 /*!
  * \brief Pop the top scene from the scene stack, destroy it, and load the new top scene
- * \param[in] eAnimMode the animation mode to loading the new scene
  *
+ * \param[in] eAnimMode the animation mode to loading the new scene
  * \note  This function assumes that the scene stack is not empty 
  *        and does not perform any checks.
  */
@@ -534,6 +544,7 @@ static void __gui_lv_scene_list_pop_stack(gui_lv_switch_anim_mode_t eAnimMode)
 
 /*!
  * \brief Push a new scene onto the scene stack and load it
+ *
  * \param[in] eTargetId the target scene id to load
  * \param[in] eAnimMode the animation mode to loading the new scene
  *
@@ -620,6 +631,7 @@ static void __gui_lv_scene_list_push_stack(gui_lv_scene_id_t         eTargetId,
 
 /*!
  * \brief Create groups and timers for a scene based on its extended data
+ *
  * \param[in] ptExtend the extended data of the scene
  */
 GUI_LV_NONNULL(1)
@@ -652,6 +664,7 @@ static void __gui_lv_extend_create(gui_lv_extend_t *ptExtend)
 
 /*!
  * \brief Destroy groups and timers of a scene based on its extended data
+ *
  * \param[in] ptExtend the extended data of the scene
  */
 GUI_LV_NONNULL(1)
@@ -683,6 +696,7 @@ static void __gui_lv_extend_depose(gui_lv_extend_t *ptExtend)
 
 /*!
  * \brief Bind the first group in the scene's extended data to the input device
+ *
  * \param[in] ptExtend the extended data of the scene
  */
 GUI_LV_NONNULL(1)

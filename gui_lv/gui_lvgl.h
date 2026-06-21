@@ -49,12 +49,12 @@ extern gui_lv_style_t g_tContDefStyle;
 
 /*============================== LOCAL VARIABLES =============================*/
 /*================================ PROTOTYPES ================================*/
-/*!
- * \brief Initialise the GUI module.
+/**
+ * @brief Initialise the GUI module.
  *
- * \note This API defines a single, stable entry point for GUI bring-up.
+ * @note This API defines a single, stable entry point for GUI bring-up.
  *
- * \note Application-specific configuration should be done in gui_lvgl.c within
+ * @note Application-specific configuration should be done in gui_lvgl.c within
  *       the marked "user code begin/end" regions.
  */
 extern

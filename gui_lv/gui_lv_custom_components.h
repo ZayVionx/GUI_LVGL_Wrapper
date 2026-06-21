@@ -41,13 +41,13 @@ extern "C" {
  * Battery Component                                                          *
  *----------------------------------------------------------------------------*/
 typedef struct {
-    lv_obj_t      *ptParent;               //!< 父容器对象
-    lv_obj_t      *ptFrameImg;             //!< 电池外框图对象 
-    lv_img_dsc_t  *pImgScr;                //!< 电池外框图 
-    lv_img_dsc_t  *pLowImgScr;             //!< 低电量图（空闲且电量为0时显示，可为空）
-    lv_align_t     chAlign;                //!< 电池对齐方式   
-    lv_coord_t     i16X;                   //!< 电池组件X坐标
-    lv_coord_t     i16Y;                   //!< 电池组件Y坐标
+    lv_obj_t      *ptParent;            //!< 父容器对象
+    lv_obj_t      *ptFrameImg;          //!< 电池外框图对象 
+    lv_img_dsc_t  *pImgScr;             //!< 电池外框图 
+    lv_img_dsc_t  *pLowImgScr;          //!< 低电量图（空闲且电量为0时显示，可为空）
+    lv_align_t     chAlign;             //!< 电池对齐方式   
+    lv_coord_t     i16X;                //!< 电池组件X坐标
+    lv_coord_t     i16Y;                //!< 电池组件Y坐标
 
     /* 电量格属性 */
     struct {
@@ -82,45 +82,53 @@ GUI_LV_PRIVATE(
 /*----------------------------------------------------------------------------*
  * Battery Component                                                          *
  *----------------------------------------------------------------------------*/
-/*!
- * \brief Create a custom battery component.
- * \param[in] ptBattery: Pointer to battery component structure
+/**
+ * @brief Create a custom battery component.
+ * 
+ * @param[in] ptBattery: Pointer to battery component structure
  */
 extern
 GUI_LV_NONNULL(1)
 void gui_lv_custom_battery_create(gui_lv_custom_battery_t *ptBattery);
 
-/*!
- * \brief Destroy a custom battery component: release timer and all UI objects.
- * \param[in] ptBattery: Pointer to battery component structure
+
+/**
+ * @brief Destroy a custom battery component: release timer and all UI objects.
+ * 
+ * @param[in] ptBattery: Pointer to battery component structure
  */
 extern
 GUI_LV_NONNULL(1)
 void gui_lv_custom_battery_destroy(gui_lv_custom_battery_t *ptBattery);
 
-/*!
- * \brief Enter idle mode: stop blinking, show current level in gray.
- * \param[in] ptBattery: Pointer to battery component structure
+
+/**
+ * @brief Enter idle mode: stop blinking, show current level in gray.
+ * 
+ * @param[in] ptBattery: Pointer to battery component structure
  */
 extern
 GUI_LV_NONNULL(1)
 void gui_lv_custom_battery_enter_idle_mode(gui_lv_custom_battery_t *ptBattery);
 
-/*!
- * \brief Enter charging mode: start blinking animation.
- * \param[in] ptBattery: Pointer to battery component structure
+
+/**
+ * @brief Enter charging mode: start blinking animation.
+ * 
+ * @param[in] ptBattery: Pointer to battery component structure
  */
 extern
 GUI_LV_NONNULL(1)
 void gui_lv_custom_battery_enter_charging_mode(gui_lv_custom_battery_t *ptBattery);
 
-/*!
- * \brief Set battery level.
+
+/**
+ * @brief Set battery level.
  
- * \param[in] ptBattery: Pointer to battery component structure
- * \param[in] chBattLevel: Battery level to set (0 to chBattMax)
+ * @param[in] ptBattery: Pointer to battery component structure
+ * @param[in] chBattLevel: Battery level to set (0 to chBattMax)
  * 
- * \note  - In charging mode: mark pending update, will sync after current blink cycle
+ * @note  - In charging mode: mark pending update, will sync after current blink cycle
  *        - In idle mode: immediately refresh display
  */
 extern

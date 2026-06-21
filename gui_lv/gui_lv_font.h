@@ -14,8 +14,8 @@ extern "C" {
 
 /*============================== LOCAL VARIABLES =============================*/
 /**
- * \brief Font test strings for different languages.
- * \note  These are placeholders; replace with actual test strings as needed.
+ * @brief Font test strings for different languages.
+ * @note  These are placeholders; replace with actual test strings as needed.
  */
 // static const char *const FONT_<TEST>_TEXT[GUI_LV_LANGUAGE_MAX]   = {};
 // static const char *const FONT_<TEST>_TEXT[][GUI_LV_LANGUAGE_MAX] = {};

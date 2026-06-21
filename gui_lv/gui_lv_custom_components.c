@@ -41,10 +41,11 @@ static void __gui_lv_battery_timer_cb(lv_timer_t *ptTimer);
 /*----------------------------------------------------------------------------*
  * Battery Component                                                          *
  *----------------------------------------------------------------------------*/
-/*!
- * \brief Create a custom battery component.
- * \param[in] ptBattery: Pointer to battery component structure
- */
+/*******************************************************************************
+ * @brief Create a custom battery component.
+ * 
+ * @param[in] ptBattery: Pointer to battery component structure
+ ******************************************************************************/
 GUI_LV_NONNULL(1)
 void gui_lv_custom_battery_create(gui_lv_custom_battery_t *ptBattery)
 {
@@ -94,10 +95,11 @@ void gui_lv_custom_battery_create(gui_lv_custom_battery_t *ptBattery)
     __gui_lv_battery_refresh_display(ptThis);
 }
 
-/*!
- * \brief Destroy a custom battery component: release timer and all UI objects.
- * \param[in] ptBattery: Pointer to battery component structure
- */
+/*******************************************************************************
+ * @brief Destroy a custom battery component: release timer and all UI objects.
+ * 
+ * @param[in] ptBattery: Pointer to battery component structure
+ ******************************************************************************/
 GUI_LV_NONNULL(1)
 void gui_lv_custom_battery_destroy(gui_lv_custom_battery_t *ptBattery)
 {
@@ -110,10 +112,11 @@ void gui_lv_custom_battery_destroy(gui_lv_custom_battery_t *ptBattery)
     }
 }
 
-/*!
- * \brief Enter idle mode: stop blinking and display current battery level in gray.
- * \param[in] ptBattery: Pointer to battery component structure
- */
+/*******************************************************************************
+ * @brief Enter idle mode: stop blinking and display current battery level in gray.
+ * 
+ * @param[in] ptBattery: Pointer to battery component structure
+ ******************************************************************************/
 GUI_LV_NONNULL(1)
 void gui_lv_custom_battery_enter_idle_mode(gui_lv_custom_battery_t *ptBattery)
 {
@@ -125,10 +128,11 @@ void gui_lv_custom_battery_enter_idle_mode(gui_lv_custom_battery_t *ptBattery)
     __gui_lv_battery_refresh_display(ptBattery);
 }
 
-/*!
- * \brief Enter charging mode: start blinking animation.
- * \param[in] ptBattery: Pointer to battery component structure
- */
+/*******************************************************************************
+ * @brief Enter charging mode: start blinking animation.
+ * 
+ * @param[in] ptBattery: Pointer to battery component structure
+ ******************************************************************************/
 GUI_LV_NONNULL(1)
 void gui_lv_custom_battery_enter_charging_mode(gui_lv_custom_battery_t *ptBattery)
 {
@@ -141,11 +145,12 @@ void gui_lv_custom_battery_enter_charging_mode(gui_lv_custom_battery_t *ptBatter
     __gui_lv_battery_refresh_display(ptBattery);
 }
 
-/*!
- * \brief Set the battery level.
- * \param[in] ptBattery: Pointer to battery component structure
- * \param[in] chBattLevel: Battery level to set
- */
+/*******************************************************************************
+ * @brief Set the battery level.
+ * 
+ * @param[in] ptBattery: Pointer to battery component structure
+ * @param[in] chBattLevel: Battery level to set
+ ******************************************************************************/
 GUI_LV_NONNULL(1)
 void gui_lv_custom_battery_set_level(gui_lv_custom_battery_t *ptBattery, 
                                      uint8_t chBattLevel)
@@ -169,12 +174,12 @@ void gui_lv_custom_battery_set_level(gui_lv_custom_battery_t *ptBattery,
     }
 }
 
-/*!
- * \brief an internal helper function to set the battery frame image
+/*******************************************************************************
+ * @brief an internal helper function to set the battery frame image
  * 
- * \param[in] ptThis the target battery component
- * \param[in] pImgScr the pointer of the image source
- */
+ * @param[in] ptThis the target battery component
+ * @param[in] pImgScr the pointer of the image source
+ ******************************************************************************/
 static 
 GUI_LV_NONNULL(1)
 void __gui_lv_battery_set_frame_img(gui_lv_custom_battery_t *ptBattery,

@@ -147,7 +147,7 @@ lv_timer_t *gui_lv_timer_init(lv_timer_cb_t timer_cb, uint32_t period, void *use
 
 /*================================== UTILS ===================================*/
 
-/**
+/*******************************************************************************
  * @brief  Grid navigation on LVGL group — one call handles everything.
  *
  *   Direction keys:  calculate target index → focus it → return new index.
@@ -163,7 +163,7 @@ lv_timer_t *gui_lv_timer_init(lv_timer_cb_t timer_cb, uint32_t period, void *use
  *   Direction:  gui_lv_group_focus_nav(group, 2, GUI_LV_NAV_UP,      true);
  *   Confirm:    int32_t idx = gui_lv_group_focus_nav(group, 2, GUI_LV_NAV_MAX, false);
  *   1D list:    gui_lv_group_focus_nav(group, 1, GUI_LV_NAV_DOWN,    true);
- */
+ ******************************************************************************/
 int32_t gui_lv_group_focus_nav(uint8_t cols, gui_lv_navigation_t eNav, bool wrap)
 {
     lv_group_t *group = LV_INDEV_KEYPAD->group;
@@ -213,12 +213,12 @@ int32_t gui_lv_group_focus_nav(uint8_t cols, gui_lv_navigation_t eNav, bool wrap
 }
 
 
-/**
+/*******************************************************************************
  * @brief Get current focus index of a group.   
  * @param ptGroup: LVGL group to query.
  * 
  * @return 0-based focus index, or -1 if no focus / NULL group.
- */
+ ******************************************************************************/
 int16_t gui_lv_group_get_focus_index(lv_group_t *ptGroup)
 {
     if(ptGroup == NULL) return -1;
@@ -239,14 +239,14 @@ int16_t gui_lv_group_get_focus_index(lv_group_t *ptGroup)
     return -1;
 }
 
-/*!
- * \brief Get the object at a specific index in a group.
+/*******************************************************************************
+ * @brief Get the object at a specific index in a group.
  *
- * \param ptGroup LVGL group to query.
- * \param chIdx 0-based index of the object.
+ * @param ptGroup LVGL group to query.
+ * @param chIdx 0-based index of the object.
  * 
- * \return Pointer to the object, or NULL if not found.
- */
+ * @return Pointer to the object, or NULL if not found.
+ ******************************************************************************/
 lv_obj_t *gui_lv_group_get_index_obj(lv_group_t *ptGroup, uint8_t chIdx)
 {
     if(ptGroup == NULL) return NULL;

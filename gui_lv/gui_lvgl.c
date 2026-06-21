@@ -36,10 +36,10 @@
 /*============================== LOCAL VARIABLES =============================*/
 #if !defined(_WIN64)
 static gui_lv_data_cfg_t tUiDataCfg = {
-    .pfnDataLoad  = (bool (*)(void))NULL,           /* Load params from Flash */
-    .pfnDataSave  = (bool (*)(void))NULL,           /* Write params to Flash */
-    .pfnDataReset = (bool (*)(void))NULL,           /* Restore factory data  */
-    .pfnPowerOff  = (void (*)(void))NULL,           /* System power off      */
+    .pfnDataLoad  = (bool (*)(void))NULL,           //!< Load params from Flash
+    .pfnDataSave  = (bool (*)(void))NULL,           //!< Write params to Flash
+    .pfnDataReset = (bool (*)(void))NULL,           //!< Restore factory data
+    .pfnPowerOff  = (void (*)(void))NULL,           //!< System power off 
 };
 #endif
 
@@ -57,12 +57,14 @@ gui_lv_style_t g_tContDefStyle = {
 /*================================ PROTOTYPES ================================*/
 /*============================== IMPLEMENTATION ==============================*/
 /*******************************************************************************
- * @note Called by gui_lv_init() after the LVGL core/port initialisation stage.
- *       Modify only the "user code" block below.
+ * @brief Initialise product-specific GUI system data.
+ * @note  Configure language, startup scene, beep level, device info, and optional
+ *        persistent-data callbacks before styles and scenes are initialised.
+ *        Replace the placeholder values in the user block during product porting.
  ******************************************************************************/
 static void gui_sys_data_init(void)
 {
-    /*---------------------- user code begin: sys data ----------------------*/
+    /*------------------- user code begin: sys data -------------------*/
 #if !defined(_WIN64)
     /* Set language */
 	gui_lv_language_t   language = GUI_LV_LANGUAGE_CN;      //!< Need to replace with actual data and remove this comment
@@ -90,12 +92,14 @@ static void gui_sys_data_init(void)
     gui_lv_set_beep_level      (GUI_LV_BEEP_LEVEL_1       );
     gui_lv_set_device_info     ("NAME", 1234567890, 11, 12);
 #endif
-    /*---------------------- user code end  : sys data ----------------------*/
+    /*------------------- user code end  : sys data -------------------*/
 }
 
 /*******************************************************************************
- * @note Called by gui_lv_init() after gui_sys_data_init().
- *       Modify only the "user code" block below.
+ * @brief Initialise GUI-wide reusable styles.
+ * @note  Put shared styles used by multiple widgets or scenes in the user block.
+ *        This runs before scene registration/loading, so scene code can assume
+ *        common styles such as g_tContDefStyle are ready.
  ******************************************************************************/
 static void gui_common_style_init(void)
 {
@@ -105,9 +109,10 @@ static void gui_common_style_init(void)
 }
 
 /*******************************************************************************
- * @note Called by gui_lv_init() after data/style initialisation.
- *       - RTE build: keep the default __GUI_LV_ALL_SCENE_INIT().
- *       - Non-RTE  : register scenes manually in the "user code" block.
+ * @brief Initialise the scene manager and register all available scenes.
+ * @note  RTE builds use generated scene registration. Non-RTE builds should add
+ *        manual scene registration in the user block if auto-export is disabled
+ *        or incomplete. The home scene is selected after registration.
  ******************************************************************************/
 static void gui_all_scene_init(void)
 {
@@ -116,13 +121,13 @@ static void gui_all_scene_init(void)
 #if defined(__RTE_Acceleration_GUI_LVGL_SCENE__)
     __RTE_Acceleration_GUI_LV_ALL_SCENE_INIT();
 #else
-    /* If this auto initialization function is disabled,
+    /* !!! If this auto initialization function is disabled,
      * manually append all scene initialization logic below */
     __GUI_LV_SCENE_AUTO_INIT_EXPORTED();
     
-    /*-------------------- user code begin: scene register --------------------*/
+    /*------------------ user code begin: scene register ------------------*/
 
-    /*-------------------- user code end  : scene register --------------------*/
+    /*------------------ user code end  : scene register ------------------*/
 #endif
     gui_lv_scene_set_home((gui_lv_scene_id_t)0);
 }
@@ -132,8 +137,12 @@ static void gui_all_scene_init(void)
  * Public API                                                                 *
  *----------------------------------------------------------------------------*/
 /*******************************************************************************
- * @brief  GUI system total initialization entry
- * @note   LVGL init + display/indev port + helper + user config + scene load
+ * @brief Initialise the GUI module.
+ *
+ * @note This API defines a single, stable entry point for GUI bring-up.
+ *
+ * @note Application-specific configuration should be done in gui_lvgl.c within
+ *       the marked "user code begin/end" regions.
  ******************************************************************************/
 void gui_lv_init(void)
 {
@@ -150,7 +159,9 @@ void gui_lv_init(void)
     gui_all_scene_init();
     
     /* Load startup scene */
-    gui_lv_scene_switch(gui_lv_get_startup_scene_id());
+    gui_lv_scene_switch(
+        gui_lv_get_startup_scene_id()
+    );
     lv_timer_handler();
 }
 

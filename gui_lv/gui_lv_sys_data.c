@@ -30,12 +30,14 @@
 /*============================ MACROFIED FUNCTIONS ===========================*/
 /*================================== TYPES ===================================*/
 
-/*! \brief System-level UI persistent data. */
+/**
+ * @brief System-level UI persistent data. 
+ */
 typedef struct {
-    gui_lv_language_t    eLanguage;     //!< Current display language.
-    gui_lv_scene_id_t    eStartSceneId; //!< Scene shown at startup.
-    gui_lv_beep_level_t  eBeepLevel;    //!< Buzzer volume level.
-    gui_lv_device_info_t tDeviceInfo;   //!< Device information.
+    gui_lv_language_t    eLanguage;         //!< Current display language.
+    gui_lv_scene_id_t    eStartSceneId;     //!< Scene shown at startup.
+    gui_lv_beep_level_t  eBeepLevel;        //!< Buzzer volume level.
+    gui_lv_device_info_t tDeviceInfo;       //!< Device information.
 } gui_lv_sys_data_t;
 
 
@@ -120,6 +122,7 @@ bool gui_lv_set_device_info( const char *pchName,
 /*============================= GETTER FUNCTIONS =============================*/
 /*******************************************************************************
  * @brief   Get current UI language.
+ * 
  * @return  Current UI language.
  ******************************************************************************/
 gui_lv_language_t gui_lv_get_current_lang(void)
@@ -129,6 +132,7 @@ gui_lv_language_t gui_lv_get_current_lang(void)
 
 /*******************************************************************************
  * @brief   Get current startup scene ID.
+ * 
  * @return  Current startup scene ID.
  ******************************************************************************/
 gui_lv_scene_id_t gui_lv_get_startup_scene_id(void)
@@ -138,6 +142,7 @@ gui_lv_scene_id_t gui_lv_get_startup_scene_id(void)
 
 /*******************************************************************************
  * @brief   Get the level of the buzzer.
+ * 
  * @return  Current beep level (0-3).
  ******************************************************************************/
 gui_lv_beep_level_t gui_lv_get_beep_level(void)
@@ -147,6 +152,7 @@ gui_lv_beep_level_t gui_lv_get_beep_level(void)
 
 /*******************************************************************************
  * @brief   Get device information.
+ * 
  * @return  Current device information.
  ******************************************************************************/
 gui_lv_device_info_t gui_lv_get_device_info(void)

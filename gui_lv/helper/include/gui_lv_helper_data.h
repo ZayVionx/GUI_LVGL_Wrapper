@@ -76,12 +76,12 @@ typedef struct {
     gui_lv_data_type_t   eType;        /* Data type */
 } gui_lv_data_entry_t;
 
- typedef struct {
+typedef struct {
     bool (*pfnDataLoad )(void);
     bool (*pfnDataSave )(void);
     bool (*pfnDataReset)(void);
     void (*pfnPowerOff )(void);
- } gui_lv_data_cfg_t;
+} gui_lv_data_cfg_t;
 
 typedef struct {
     gui_lv_data_cfg_t *ptCfg;

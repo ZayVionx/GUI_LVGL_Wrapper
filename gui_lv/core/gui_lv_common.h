@@ -79,11 +79,11 @@ lv_obj_t *gui_lv_group_get_index_obj(lv_group_t *ptGroup, uint8_t chIdx);
 
 
 /*=============================== STATIC INLINE ==============================*/
-/*!
- * \brief   Handle vertical key navigation for group focus.
- * \details Maps UP/DOWN and LONG_UP/LONG_DOWN keys to previous/next group focus.
+/**
+ * @brief   Handle vertical key navigation for group focus.
+ * @details Maps UP/DOWN and LONG_UP/LONG_DOWN keys to previous/next group focus.
  *          Intended for vertically arranged focusable widgets.
- * \param   e LVGL event object.
+ * @param   e LVGL event object.
  */
 static inline void gui_lv_group_focus_vertical_event_cb(lv_event_t *e)
 {
@@ -101,11 +101,11 @@ static inline void gui_lv_group_focus_vertical_event_cb(lv_event_t *e)
     }
 }
 
-/*!
- * \brief   Handle horizontal key navigation for group focus.
- * \details Maps LEFT/RIGHT and LONG_LEFT/LONG_RIGHT keys to previous/next group focus.
+/**
+ * @brief   Handle horizontal key navigation for group focus.
+ * @details Maps LEFT/RIGHT and LONG_LEFT/LONG_RIGHT keys to previous/next group focus.
  *          Intended for horizontally arranged focusable widgets.
- * \param   e LVGL event object.
+ * @param   e LVGL event object.
  */
 static inline void gui_lv_group_focus_horizontal_event_cb(lv_event_t *e)
 {
