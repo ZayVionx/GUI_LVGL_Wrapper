@@ -117,7 +117,7 @@ bool gui_lv_page_cursor_prev_item(gui_lv_page_cursor_t *ptThis, bool bIsLoop)
         return true;
     }
 
-    if(!bIsLoop || this.u16PageNum <= 1) return false;
+    if(!bIsLoop) return false;
 
     this.u16CurPage = this.u16PageNum;
     __page_cursor_refresh(ptThis);
@@ -153,7 +153,7 @@ bool gui_lv_page_cursor_next_item(gui_lv_page_cursor_t *ptThis, bool bIsLoop)
         return true;
     }
 
-    if(!bIsLoop || this.u16PageNum <= 1) return false;
+    if(!bIsLoop) return false;
 
     this.u16CurPage = 1;
     __page_cursor_refresh(ptThis);
