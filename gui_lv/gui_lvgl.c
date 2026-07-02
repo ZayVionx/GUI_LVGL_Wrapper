@@ -124,11 +124,8 @@ static void gui_all_scene_init(void)
     /* !!! If this auto initialization function is disabled,
      * manually append all scene initialization logic below */
     __GUI_LV_SCENE_AUTO_INIT_EXPORTED();
-    
-    /*------------------ user code begin: scene register ------------------*/
-
-    /*------------------ user code end  : scene register ------------------*/
 #endif
+
     gui_lv_scene_set_home((gui_lv_scene_id_t)0);
 }
 
