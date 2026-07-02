@@ -47,7 +47,7 @@
 #define GUI_LV_SCENE_USED_DATA      0
 
 /*============================ TYPES =========================================*/
-typedef struct {
+static struct {
     lv_obj_t   *ptRoot;
 
     /* User-defined scene members begin --------------------------------------*/
@@ -58,18 +58,17 @@ typedef struct {
     lv_group_t *ptGroup[GUI_LV_SCENE_GROUP_NUM];
     lv_timer_t *ptTimer[GUI_LV_SCENE_TIMER_NUM];
 
-#if GUI_LV_SCENE_USED_DATA
-    GUI_LV_PRIVATE(
-        struct {    
-            /* USER: cached app data mirrored for GUI refresh ----------------*/
 
-        } Data;
-    )
-#endif
-} gui_scene%Instance%_t;
+GUI_LV_PRIVATE(
+    struct {    
+        /* USER: cached app data mirrored for GUI refresh ----------------*/
+
+    } Data;
+)
+
+} s_tGUI;
 
 /*============================ LOCAL VARIABLES ===============================*/
-static gui_scene%Instance%_t s_tGUI;
 
 /*============================ PROTOTYPES ====================================*/
 static void __on_scene%Instance%_draw  (lv_obj_t *ptRoot);
@@ -112,7 +111,7 @@ void gui_lv_scene_%Instance%_init(void)
 
     gui_lv_scene_register(&s_tCFG);
 }
-
+__GUI_LV_SCENE_INIT_APPEND_RO(gui_lv_scene_%Instance%_init);
 
 /*============================= SCENE CALLBACKS ==============================*/
 /******************************************************************************

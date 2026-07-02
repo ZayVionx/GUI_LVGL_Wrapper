@@ -26,7 +26,7 @@ extern "C" {
 #endif
 
 #ifdef __GUI_LVGL_WRAPPER_CONF__
-// #   include <gui_lv_conf.h>
+#   include <gui_lv_conf.h>
 #else
 #   include "gui_lv_conf.h"
 #endif
@@ -34,24 +34,22 @@ extern "C" {
 /*********************
  *      DEFINES
  *********************/
-// 自定义键值
-#define LV_KEY_NONE      	  0 	/* None Operation 	*/
-#define LV_KEY_OK        	131		/* OK		        */
-#define LV_KEY_LONG_OK   	132		/* Long Press OK	*/
-#define LV_KEY_LONG_HOME 	133		/* Long Press HOME	*/
-#define LV_KEY_LONG_UP   	134		/* Long Press UP	*/
-#define LV_KEY_LONG_DOWN 	135		/* Long Press DOWN  */
-#define LV_KEY_LONG_LEFT 	136		/* Long Press LEFT  */
-#define LV_KEY_LONG_RIGHT	137		/* Long Press RIGHT */
+/* 按键数量 */
+#define KEY_NUM               2
+
+/* 自定义键值 */
+#define LV_KEY_NONE           0 	/* None Operation 	*/
+#define LV_KEY_OK           131		/* OK		        */
+#define LV_KEY_LONG_OK      132		/* Long Press OK	*/
+#define LV_KEY_LONG_HOME    133		/* Long Press HOME	*/
+#define LV_KEY_LONG_UP      134		/* Long Press UP	*/
+#define LV_KEY_LONG_DOWN    135		/* Long Press DOWN  */
+#define LV_KEY_LONG_LEFT    136		/* Long Press LEFT  */
+#define LV_KEY_LONG_RIGH    137		/* Long Press RIGHT */
 	
 /**********************
  *      TYPEDEFS
  **********************/
-typedef enum {
-    KEY_MODE_NAV,      /*!< Navigation mode */
-    KEY_MODE_EDIT,     /*!< Edit mode       */
-    KEY_MODE_MAX       
-} key_mode_e;
 
 /**********************
  *  GLOBAL VARIABLES
@@ -76,9 +74,6 @@ typedef enum {
  * GLOBAL PROTOTYPES
  **********************/
 void lv_port_indev_init(void);
-
-void gui_lv_set_key_mode(key_mode_e mode);
-key_mode_e gui_lv_get_key_mode(void);
 
 /**********************
  *      MACROS

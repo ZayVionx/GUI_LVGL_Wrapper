@@ -310,27 +310,27 @@ static void mouse_get_xy(lv_coord_t * x, lv_coord_t * y)
 /*------------------
  * Keypad
  * -----------------*/
-static key_mode_e g_key_mode = KEY_MODE_NAV;
-static const lv_key_t g_key_mode_map[KEY_MODE_MAX][KEY_NUM][2] = {
+static gui_lv_mode_e eKeyMode;
+static const lv_key_t sKeyModeMap[GUI_LV_MODE_MAX][KEY_NUM][2] = {
     /* ========== Navigation mode ===== */
     {   
-        {LV_KEY_UP,     LV_KEY_LONG_UP},       
-        {LV_KEY_DOWN,   LV_KEY_LONG_DOWN}, 
-        {LV_KEY_LEFT,   LV_KEY_LONG_LEFT},  
-        {LV_KEY_RIGHT,   LV_KEY_LONG_RIGHT},   
-        {LV_KEY_OK,     LV_KEY_LONG_OK},   
-        {LV_KEY_ESC,    LV_KEY_NONE},     
-        {LV_KEY_HOME,   LV_KEY_LONG_HOME}   
+        {LV_KEY_UP,     LV_KEY_LONG_UP   },       
+        {LV_KEY_DOWN,   LV_KEY_LONG_DOWN }, 
+        {LV_KEY_LEFT,   LV_KEY_LONG_LEFT },  
+        {LV_KEY_RIGHT,  LV_KEY_LONG_RIGHT},   
+        {LV_KEY_OK,     LV_KEY_LONG_OK   },   
+        {LV_KEY_ESC,    LV_KEY_NONE      },     
+        {LV_KEY_HOME,   LV_KEY_LONG_HOME }   
     },
     /* =========== Edit mode =========== */
     {
-        {LV_KEY_UP,     LV_KEY_LONG_UP},    
-        {LV_KEY_DOWN,   LV_KEY_LONG_DOWN},  
-        {LV_KEY_LEFT,   LV_KEY_LONG_LEFT},  
+        {LV_KEY_UP,     LV_KEY_LONG_UP   },    
+        {LV_KEY_DOWN,   LV_KEY_LONG_DOWN },  
+        {LV_KEY_LEFT,   LV_KEY_LONG_LEFT },  
         {LV_KEY_RIGHT,  LV_KEY_LONG_RIGHT}, 
-        {LV_KEY_OK,     LV_KEY_LONG_OK},    
-        {LV_KEY_ESC,    LV_KEY_NONE},      
-        {LV_KEY_HOME,   LV_KEY_LONG_HOME}   
+        {LV_KEY_OK,     LV_KEY_LONG_OK   },    
+        {LV_KEY_ESC,    LV_KEY_NONE      },      
+        {LV_KEY_HOME,   LV_KEY_LONG_HOME }   
     }
 };
 
@@ -340,7 +340,7 @@ static void keypad_init(void)
     /*Your code comes here*/
 }
 
-GUI_LV_WEAK uint8_t key_get_value(void)
+GUI_LV_WEAK uint8_t keypad_get_value(void)
 {
     GUI_LV_UNUSED(0);
     /*Your code comes here*/
@@ -351,40 +351,25 @@ GUI_LV_WEAK uint8_t key_get_value(void)
 static void keypad_read(lv_indev_drv_t * indev_drv, lv_indev_data_t * data)
 {    
     /**
-     * @note u8KeyId:    Stored in the low  four bits of u8KeyInfo 
-     * @note u8KeyState: Stored in the high four bits of u8KeyInfo
+     * @note chKeyId:    Stored in the low  four bits of chKeyInfo 
+     * @note chKeyState: Stored in the high four bits of chKeyInfo
      *                0: short press
      *                1: long press
      */
-    uint8_t u8KeyInfo  = key_get_value();
-    uint8_t u8KeyId    = u8KeyInfo & 0x0F;
-    uint8_t u8KeyState = (u8KeyInfo >> 4) & 0x0F;
+    uint8_t chKeyInfo  = keypad_get_value();
+    uint8_t chKeyId    = chKeyInfo & 0x0F;
+    uint8_t chKeyState = (chKeyInfo >> 4) & 0x0F;
     
     data->state = LV_INDEV_STATE_REL;
     data->key   = 0; 
 
-	if(u8KeyId < KEY_NUM)
+	if(chKeyId < KEY_NUM)
     {
-        data->key   = g_key_mode_map[g_key_mode][u8KeyId][u8KeyState];
+        data->key   = sKeyModeMap[eKeyMode][chKeyId][chKeyState];
         data->state = LV_INDEV_STATE_PR;
     }
 }
 
-/* Set the keyboard operation mode */
-void gui_lv_set_key_mode(key_mode_e mode) 
-{
-    if(mode < KEY_MODE_MAX) {
-        g_key_mode = mode;
-    } else {
-        g_key_mode = KEY_MODE_NAV;
-    }
-}
-
-/* Get the keyboard operation mode */
-key_mode_e gui_lv_get_key_mode(void)
-{
-    return g_key_mode;
-}	
 
 #if __LV_USE_ENCODER_INDEV__
 /*------------------

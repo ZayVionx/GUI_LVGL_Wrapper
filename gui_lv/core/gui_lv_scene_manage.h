@@ -94,7 +94,9 @@ extern void __gui_lv_scene_auto_init_exported(void);
 /*================================== TYPES ===================================*/
 typedef enum {
     GUI_LV_MODE_NAVIGATE,
-    GUI_LV_MODE_EDIT,
+    GUI_LV_MODE_EDIT    ,
+    
+    GUI_LV_MODE_MAX
 } gui_lv_mode_e;
 
 /**
