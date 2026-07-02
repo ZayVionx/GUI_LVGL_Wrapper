@@ -17,8 +17,8 @@
 ****************************************************************************/
 
 /*============================ INCLUDES ======================================*/
-#include <gui_lv_scene_<name>.h>
-#include <gui_lv_scene_task_<name>.h>
+#include "gui_lv_scene_<name>.h"
+#include "gui_lv_scene_task_<name>.h"
 
 #ifdef __GUI_LVGL_WRAPPER_CONF__
 #   include <gui_lvgl.h>
