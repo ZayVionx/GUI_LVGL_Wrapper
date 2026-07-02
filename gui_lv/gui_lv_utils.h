@@ -81,31 +81,31 @@ extern "C" {
 #define rgb(_r, _g, _b)             lv_color_make(_r, _g, _b)
 
 #if LV_COLOR_DEPTH == 1
-	#define RGB(r, g, b) \
+	#define RGB(r, g, b)                                            \
 		{.full = ((uint8_t)(((uint16_t)(r) + (uint16_t)(g) + (uint16_t)(b)) / 3 > 128 ? 1 : 0))}
 #elif LV_COLOR_DEPTH == 8
-	#define RGB(r, g, b) \
-		{.full = ((uint8_t)(((uint8_t)((r) >> 5) << 5) | \
-				   ((uint8_t)((g) >> 5) << 2) | \
+	#define RGB(r, g, b)                                            \
+		{.full = ((uint8_t)(((uint8_t)((r) >> 5) << 5) |            \
+				   ((uint8_t)((g) >> 5) << 2) |                     \
 				   ((uint8_t)((b) >> 6))))}
 #elif LV_COLOR_DEPTH == 16
 	#if LV_COLOR_16_SWAP == 0
-		#define RGB(r, g, b) \
-			.full = ((uint16_t)(((uint16_t)((r) >> 3) << 11) | \
-						((uint16_t)((g) >> 2) << 5) | \
+		#define RGB(r, g, b)                                        \
+			.full = ((uint16_t)(((uint16_t)((r) >> 3) << 11) |      \
+						((uint16_t)((g) >> 2) << 5) |               \
 						((uint16_t)((b) >> 3))))
 	#else
-		#define RGB(r, g, b) \
-			.full = ((uint16_t)(((uint16_t)((g) >> 5) << 13) | \
-						((uint16_t)((r) >> 3) << 8) | \
-						((uint16_t)((b) >> 3) << 3) | \
+		#define RGB(r, g, b)                                        \
+			.full = ((uint16_t)(((uint16_t)((g) >> 5) << 13) |      \
+						((uint16_t)((r) >> 3) << 8) |               \
+						((uint16_t)((b) >> 3) << 3) |               \
 						((uint16_t)((g) >> 2) & 0x07)))
 	#endif
 #elif LV_COLOR_DEPTH == 32
-	#define RGB(r, g, b) \
-		.full = ((uint32_t)((uint32_t)(b) | \
-					((uint32_t)(g) << 8) | \
-					((uint32_t)(r) << 16) | \
+	#define RGB(r, g, b)                                            \
+		.full = ((uint32_t)((uint32_t)(b) |                         \
+					((uint32_t)(g) << 8)  |                         \
+					((uint32_t)(r) << 16) |                         \
 					(0xFFUL << 24)))
 #else
 	#error "Unsupported LV_COLOR_DEPTH"

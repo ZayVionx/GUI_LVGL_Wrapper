@@ -27,7 +27,6 @@
 #   include "gui_lvgl.h"
 #endif
 
-
 /*--------------------------*
  * Don't Fix Include Order! *
  *--------------------------*/
@@ -80,6 +79,7 @@ static void __on_scene%Instance%_depose(void);
 static void __on_scene%Instance%_timer0_cb(lv_timer_t *ptTimer);
 #endif
 
+static void __scene_get_app_data_single(void);
 static gui_lv_fsm_rt_t __scene_sync_app_data(void);
 
 /*============================ IMPLEMENTATION ================================*/
@@ -143,6 +143,7 @@ GUI_LV_NONNULL(1)
 static void __on_scene%Instance%_load(lv_obj_t *ptRoot)
 {
     GUI_LV_UNUSED(ptRoot);
+    __scene_get_app_data_single();
 
     /* User load code begin --------------------------------------------------*/
 
@@ -177,7 +178,6 @@ GUI_LV_NONNULL(1)
 static void __on_scene%Instance%_timer0_cb(lv_timer_t *ptTimer)
 {
     GUI_LV_UNUSED(ptTimer);
-
     (void)__scene_sync_app_data();
 
     /* USER: periodic visual refresh -----------------------------------------*/
@@ -187,6 +187,12 @@ static void __on_scene%Instance%_timer0_cb(lv_timer_t *ptTimer)
 
 
 /*============================ DATA SYNC =====================================*/
+static void __scene_get_app_data_single(void)
+{
+    GUI_LV_UNUSED(0);
+
+}
+
 #if GUI_LV_SCENE_USED_DATA
 
 #   if (GUI_LV_SCENE_TIMER_NUM == 0)

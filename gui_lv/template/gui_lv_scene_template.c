@@ -26,7 +26,6 @@
 #   include "gui_lvgl.h"
 #endif
 
-
 /*--------------------------*
  * Don't Fix Include Order! *
  *--------------------------*/
@@ -77,6 +76,7 @@ static void __on_scene_<name>_depose(void);
 static void __on_scene_<name>_timer0_cb(lv_timer_t *ptTimer);
 #endif
 
+static void __scene_get_app_data_single(void);
 static gui_lv_fsm_rt_t __scene_sync_app_data(void);
 
 /*============================ SCENE REGISTRATION ============================*/
@@ -183,6 +183,12 @@ static void __on_scene_<name>_timer0_cb(lv_timer_t *ptTimer)
 #endif
 
 /*============================ DATA SYNC =====================================*/
+static void __scene_get_app_data_single(void)
+{
+    GUI_LV_UNUSED(0);
+
+}
+
 #if GUI_LV_SCENE_USED_DATA
 
 #   if (GUI_LV_SCENE_TIMER_NUM == 0)

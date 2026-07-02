@@ -34,10 +34,10 @@ extern "C" {
 /*********************
  *      DEFINES
  *********************/
-/* 按键数量 */
+/* Number of Key */
 #define KEY_NUM               2
 
-/* 自定义键值 */
+/* Custom key-value pairs */
 #define LV_KEY_NONE           0 	/* None Operation 	*/
 #define LV_KEY_OK           131		/* OK		        */
 #define LV_KEY_LONG_OK      132		/* Long Press OK	*/
