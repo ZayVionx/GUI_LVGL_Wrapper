@@ -85,6 +85,9 @@
 
             <files>
                 <!-- ======== Framework headers (read-only) ================ -->
+                <file category="header"  name="gui_lv_utils.h"/>
+
+                <!-- ======== Framework headers (read-only) ================ -->
                 <file category="header"  name="core/gui_lv_common.h"/>
                 <file category="header"  name="core/gui_lv_scene_manage.h"/>
                 <file category="header"  name="core/_internal/emb_list.h"/>
@@ -93,6 +96,11 @@
                 <file category="sourceC" name="core/gui_lv_common.c"/>
                 <file category="sourceC" name="core/gui_lv_scene_manage.c"/>
 
+                <!-- the template for scenes -->
+                <file category="sourceC" attr="template" version="1.2.0" select="User Scene Template"      name="template/gui_lv_scene_template.c"/>
+                <file category="header"  attr="template" version="1.2.0" select="User Scene Template"      name="template/gui_lv_scene_template.h"/>
+                <file category="sourceC" attr="template" version="1.2.0" select="User Scene Task Template" name="template/gui_lv_scene_task_template.c"/>
+                <file category="header"  attr="template" version="1.2.0" select="User Scene Task Template" name="template/gui_lv_scene_task_template.h"/>
             </files>
             <Pre_Include_Global_h>
 #define __GUI_LVGL_WRAPPER__        1
@@ -142,9 +150,6 @@
             </description>
 
             <files>
-                <!-- ======== Framework headers (read-only) ================ -->
-                <file category="header"  name="gui_lv_utils.h"/>
-
                 <!-- ================== Framework headers ================== -->
                 <file category="header"  attr="config"  version="1.1.0" name="gui_lvgl.h"/>
                 <file category="header"  attr="config"  version="1.1.0" name="gui_lv_conf.h"/>
@@ -190,7 +195,6 @@
                 <file category="header"  attr="config" version="1.2.0" name="template/gui_lv_scene.h"/>
                 <file category="sourceC" attr="config" version="1.2.0" name="template/gui_lv_scene_task.c"/>
                 <file category="header"  attr="config" version="1.2.0" name="template/gui_lv_scene_task.h"/>
-
             </files>
 
             <RTE_Components_h>
@@ -203,25 +207,23 @@
             </Pre_Include_Global_h>
         </component>
 
-        <component Cclass="GUI_LVGL_Wrapper"  Cgroup="Template"
-                   Cversion="1.2.0"           condition="GUI_Template">
-            <description>
+        <!-- <component Cclass="GUI_LVGL_Wrapper"  Cgroup="Template"
+                   Cversion="1.2.0"           condition="GUI_Template"> -->
+            <!-- <description>
                 GUI scene wrapper instance template.
                 
                 Wrapper entry:
                 - gui_lv_scene_"name"_init()
-            </description>
+            </description> -->
 
-            <files>
+            <!-- <files> -->
                 <!-- the template for scenes -->
-                <file category="sourceC" attr="template" version="1.2.0" name="template/gui_lv_scene_template.c"/>
-                <file category="header"  attr="template" version="1.2.0" name="template/gui_lv_scene_template.h"/>
-                <file category="sourceC" attr="template" version="1.2.0" name="template/gui_lv_scene_task_template.c"/>
-                <file category="header"  attr="template" version="1.2.0" name="template/gui_lv_scene_task_template.h"/>
-                
-            </files>
-            
-        </component>
+                <!-- <file category="sourceC" attr="template" version="1.2.0" select="User Scene Template"      name="template/gui_lv_scene_template.c"/>
+                <file category="header"  attr="template" version="1.2.0" select="User Scene Template"      name="template/gui_lv_scene_template.h"/>
+                <file category="sourceC" attr="template" version="1.2.0" select="User Scene Task Template" name="template/gui_lv_scene_task_template.c"/>
+                <file category="header"  attr="template" version="1.2.0" select="User Scene Task Template" name="template/gui_lv_scene_task_template.h"/> -->
+            <!-- </files> -->
+        <!-- </component> -->
 
 
         <component Cclass="GUI_LVGL_Wrapper"  Cgroup="Libraries"
