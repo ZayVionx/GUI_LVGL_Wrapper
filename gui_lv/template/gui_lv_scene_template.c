@@ -139,6 +139,7 @@ GUI_LV_NONNULL(1)
 static void __on_scene_<name>_load(lv_obj_t *ptRoot)
 {
     GUI_LV_UNUSED(ptRoot);
+    __scene_get_app_data_single();
 
     /* User load code begin --------------------------------------------------*/
 
