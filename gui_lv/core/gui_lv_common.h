@@ -19,8 +19,7 @@
 #ifndef __GUI_LV_COMMON_H__
 #define __GUI_LV_COMMON_H__
 
-/*=============================== UI LIB MACROS ==============================*/
-/*================================= INCLUDES =================================*/
+/*============================ INCLUDES ======================================*/
 #include "gui_lv_utils.h"
 #include "helper/include/gui_lv_helper_input.h"
 
@@ -66,8 +65,8 @@ void gui_lv_spinbox_param_init(lv_obj_t *spinbox, int32_t count, int32_t point, 
 extern
 lv_timer_t *gui_lv_timer_init(lv_timer_cb_t timer_cb, uint32_t period, void *user_data,
                                                                     bool BIs_On);
-
-/*================================== UTILS ===================================*/
+                                                                    
+/*============================ UTILS =========================================*/
 extern
 int32_t gui_lv_group_focus_nav(uint8_t cols, gui_lv_navigation_t eNav, bool wrap);
 
@@ -78,7 +77,7 @@ extern
 lv_obj_t *gui_lv_group_get_index_obj(lv_group_t *ptGroup, uint8_t chIdx);
 
 
-/*=============================== STATIC INLINE ==============================*/
+/*============================ STATIC INLINE =================================*/
 #if __LV_USE_KEYPAD_INDEV__
 
 /**

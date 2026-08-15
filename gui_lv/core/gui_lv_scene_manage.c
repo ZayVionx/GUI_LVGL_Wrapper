@@ -16,7 +16,7 @@
 *                                                                           *
 ****************************************************************************/
 
-/*================================= INCLUDES =================================*/
+/*============================ INCLUDES ======================================*/
 #define __GUI_LV_SCENE_IMPLEMENT__
 #include <stdlib.h>
 #include <stddef.h>
@@ -74,7 +74,7 @@ void __gui_lv_scene_auto_init_exported(void)
         }
     }
 }
-/*================================== MACROS ==================================*/
+/*============================ MACROS ========================================*/
 #undef  this
 #define this        (*ptThis)
 
@@ -84,13 +84,13 @@ void __gui_lv_scene_auto_init_exported(void)
 #define __GUI_LV_SCENE_GET_CURRENT_CFG()                                    \
     EMB_LIST_ENTRY(s_tSceneHead.prev, gui_lv_scene_cfg_t, tSceneNode)
 
-/*================================== TYPES ===================================*/
+/*============================ TYPES =========================================*/
 typedef struct {
     lv_obj_t           *ptRoot;
     gui_lv_scene_cfg_t *ptCFG;
 } gui_lv_scene_t;
 
-/*============================= GLOBAL VARIABLES =============================*/
+/*============================ GLOBAL VARIABLES ==============================*/
 gui_lv_switch_anim_mode_t GUI_LV_SWITCH_MODE_NONE        = {
     .u32AnimTime  = 0,
     .u32AnimDelay = 0,
@@ -167,11 +167,11 @@ gui_lv_switch_anim_mode_t GUI_LV_SWITCH_MODE_OUT_BOTTOM  = {
     .eLoadAnim    = LV_SCR_LOAD_ANIM_OUT_BOTTOM,
 };
 
-/*============================== LOCAL VARIABLES =============================*/
+/*============================ LOCAL VARIABLES ===============================*/
 static emb_list_t     s_tSceneHead;
 static gui_lv_scene_t s_tScenePools[GUI_LV_SCENE_MAX];
 
-/*================================ PROTOTYPES ================================*/
+/*============================ PROTOTYPES ====================================*/
 static inline lv_obj_t *__gui_lv_create_container_root(void);
 
 static void __gui_lv_scene_list_pop_stack (gui_lv_switch_anim_mode_t eAnimMode);
@@ -185,7 +185,7 @@ static void __gui_lv_indev_bind_group(gui_lv_extend_t *ptExtend);
 static void __gui_lv_focus_save   (gui_lv_scene_id_t eId, gui_lv_extend_t *ptExtend);
 static void __gui_lv_focus_restore(gui_lv_scene_id_t eId, gui_lv_extend_t *ptExtend);
 
-/*============================== IMPLEMENTATION ==============================*/
+/*============================ IMPLEMENTATION ================================*/
 
 /*******************************************************************************
  * @brief Initialize the scene list
@@ -455,7 +455,7 @@ gui_lv_mode_e gui_lv_scene_get_mode(gui_lv_scene_id_t eId)
     return ptThis->eMode;
 }
 
-/*=========================== LOCAL IMPLEMENTATION ===========================*/
+/*============================ LOCAL IMPLEMENTATION ==========================*/
 /*!
  * \brief Create a root container for a scene
  *
@@ -767,4 +767,4 @@ static void __gui_lv_focus_restore(gui_lv_scene_id_t eId,
     }
 }
 
-/*=================================== END ====================================*/
+/*============================ END ===========================================*/

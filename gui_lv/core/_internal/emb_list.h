@@ -19,13 +19,13 @@
 #ifndef __EMB_LIST_H__
 #define __EMB_LIST_H__
 
-/*================================= INCLUDES =================================*/
+/*============================ INCLUDES ======================================*/
 #include "gui_lv_utils.h"
 
 #ifdef   __cplusplus
 extern "C" {
 #endif
-/*================================== MACROS ==================================*/
+/*============================ MACROS ========================================*/
 #ifndef NULL
 #   define NULL       ((void *)0)
 #endif
@@ -50,7 +50,7 @@ typedef unsigned long emb_size_t;
         GUI_LV_ASSERT((node)->next != NULL);                                   \
     } while (0)
 
-/*============================ TYPEOF SUPPORT ===============================*/
+/*============================ TYPEOF SUPPORT ================================*/
 #if defined(__cplusplus)
 #define EMB_TYPEOF(expr) decltype(expr)
 #elif defined(__GNUC__) || defined(__clang__)
@@ -335,7 +335,7 @@ void emb_list_replace(emb_list_t *old_list, emb_list_t *new_list)
          (pos) = (n), (n) = emb_list_next_entry(n, member))
 
 
-/*=================================== END ====================================*/
+/*============================ END ===========================================*/
 #ifdef   __cplusplus
 }
 #endif

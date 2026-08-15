@@ -22,22 +22,22 @@
 *                                                                           *
 ****************************************************************************/
 
-/*================================= INCLUDES =================================*/
+/*============================ INCLUDES ======================================*/
 #include "gui_lv_page_cursor.h"
 
-/*================================== MACROS ==================================*/
+/*============================ MACROS ========================================*/
 #undef  this
 #define this    (*ptThis)
 /*============================ MACROFIED FUNCTIONS ===========================*/
-/*================================== TYPES ===================================*/
-/*============================= GLOBAL VARIABLES =============================*/
-/*============================== LOCAL VARIABLES =============================*/
-/*================================ PROTOTYPES ================================*/
+/*============================ TYPES =========================================*/
+/*============================ GLOBAL VARIABLES ==============================*/
+/*============================ LOCAL VARIABLES ===============================*/
+/*============================ PROTOTYPES ====================================*/
 static bool __page_cursor_check_index(gui_lv_page_cursor_index_e eIndexBase);
 static void __page_cursor_clear      (gui_lv_page_cursor_t *ptThis);
 static void __page_cursor_refresh    (gui_lv_page_cursor_t *ptThis);
 
-/*============================== IMPLEMENTATION ==============================*/
+/*============================ IMPLEMENTATION ================================*/
 /*******************************************************************************
  * @brief Initialize the page cursor
  * @param[in] ptThis Pointer to the page cursor structure
@@ -251,8 +251,7 @@ bool gui_lv_page_cursor_is_last(const gui_lv_page_cursor_t *ptThis)
 }
 
 
-
-/*======================= LOCAL FUNCTION IMPLEMENTATION ======================*/
+/*============================ LOCAL FUNCTION IMPLEMENTATION =================*/
 static bool __page_cursor_check_index(gui_lv_page_cursor_index_e eIndexBase)
 {
     switch(eIndexBase)
@@ -345,4 +344,4 @@ static void __page_cursor_refresh(gui_lv_page_cursor_t *ptThis)
             this.chEndIndex = (uint8_t)u32EndOffset;
     }
 }
-/*==================================== END ===================================*/
+/*============================ END ===========================================*/

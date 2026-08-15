@@ -19,7 +19,7 @@
 #ifndef __GUI_LV_SCENE_MANAGE_H__
 #define __GUI_LV_SCENE_MANAGE_H__
 
-/*================================= INCLUDES =================================*/
+/*============================ INCLUDES ======================================*/
 #include <stdint.h>
 #include <stdbool.h>
 
@@ -49,7 +49,7 @@ extern "C" {
 #endif
 #include "core/gui_lv_common.h"
 
-/*================================== MACROS ==================================*/
+/*============================ MACROS ========================================*/
 /*----------------------------------------------------------------------------*
  * Scene Auto Init Export                                                     *
  *                                                                            *
@@ -91,7 +91,7 @@ extern void __gui_lv_scene_auto_init_exported(void);
 #define __GUI_LV_SCENE_AUTO_INIT_EXPORTED()  __gui_lv_scene_auto_init_exported()
 
 /*============================ MACROFIED FUNCTIONS ===========================*/
-/*================================== TYPES ===================================*/
+/*============================ TYPES =========================================*/
 typedef enum {
     GUI_LV_MODE_NAVIGATE,
     GUI_LV_MODE_EDIT    ,
@@ -143,7 +143,7 @@ GUI_LV_PRIVATE(
 
 } gui_lv_scene_cfg_t;
 
-/*============================= GLOBAL VARIABLES =============================*/
+/*============================ GLOBAL VARIABLES ==============================*/
 
 extern 
 gui_lv_switch_anim_mode_t GUI_LV_SWITCH_MODE_OVER_LEFT;
@@ -187,8 +187,8 @@ gui_lv_switch_anim_mode_t GUI_LV_SWITCH_MODE_OUT_TOP;
 extern
 gui_lv_switch_anim_mode_t GUI_LV_SWITCH_MODE_OUT_BOTTOM;
 
-/*============================== LOCAL VARIABLES =============================*/
-/*================================ PROTOTYPES ================================*/
+/*============================ LOCAL VARIABLES ===============================*/
+/*============================ PROTOTYPES ====================================*/
 /**
  * @brief Set the home scene
  * 
@@ -315,8 +315,8 @@ void gui_lv_scene_set_mode(gui_lv_scene_id_t eId, gui_lv_mode_e eMode);
  */
 gui_lv_mode_e gui_lv_scene_get_mode(gui_lv_scene_id_t eId);
 
-/*============================== IMPLEMENTATION ==============================*/
-/*=================================== END ====================================*/
+/*============================ IMPLEMENTATION ================================*/
+/*============================ END ===========================================*/
 #ifdef   __cplusplus
 }
 #endif

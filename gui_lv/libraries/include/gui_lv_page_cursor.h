@@ -25,20 +25,20 @@
 #ifndef __GUI_LV_PAGE_CURSOR_H__
 #define __GUI_LV_PAGE_CURSOR_H__
 
-/*================================= INCLUDES =================================*/
+/*============================ INCLUDES ======================================*/
 #include <stdint.h>
 #include <stdbool.h>
 
 #ifdef   __cplusplus
 extern "C" {
 #endif
-/*================================== MACROS ==================================*/
+/*============================ MACROS ========================================*/
 #ifndef NULL
 #   define NULL     ((void *)0)
 #endif
 
 /*============================ MACROFIED FUNCTIONS ===========================*/
-/*================================== TYPES ===================================*/
+/*============================ TYPES =========================================*/
 typedef enum {
     GUI_LV_PAGE_CURSOR_INDEX_0 = 0,
     GUI_LV_PAGE_CURSOR_INDEX_1 = 1,
@@ -56,9 +56,9 @@ typedef struct {
     gui_lv_page_cursor_index_e eIndexBase  ;    //!< Item index base, 0-based or 1-based
 } gui_lv_page_cursor_t;
 
-/*============================= GLOBAL VARIABLES =============================*/
-/*============================== LOCAL VARIABLES =============================*/
-/*================================ PROTOTYPES ================================*/
+/*============================ GLOBAL VARIABLES ==============================*/
+/*============================ LOCAL VARIABLES ===============================*/
+/*============================ PROTOTYPES ====================================*/
 /**
  * @brief Initialize the page cursor
  * @param[in] ptThis Pointer to the page cursor structure
@@ -162,8 +162,9 @@ bool gui_lv_page_cursor_is_first(const gui_lv_page_cursor_t *ptThis);
  */
 extern
 bool gui_lv_page_cursor_is_last(const gui_lv_page_cursor_t *ptThis);
-/*============================== IMPLEMENTATION ==============================*/
-/*=================================== END ====================================*/
+
+/*============================ IMPLEMENTATION ================================*/
+/*============================ END ===========================================*/
 #ifdef   __cplusplus
 }
 #endif

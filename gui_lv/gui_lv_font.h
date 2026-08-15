@@ -1,7 +1,7 @@
 #ifndef __UI_FONT_H__
 #define __UI_FONT_H__
 
-/*================================= INCLUDES =================================*/
+/*============================ INCLUDES ======================================*/
 #ifdef __GUI_LVGL_WRAPPER_CONF__
 #   include <gui_lv_sys_data.h>
 #else
@@ -12,7 +12,7 @@
 extern "C" {
 #endif
 
-/*============================== LOCAL VARIABLES =============================*/
+/*============================ LOCAL VARIABLES ===============================*/
 /**
  * @brief Font test strings for different languages.
  * @note  These are placeholders; replace with actual test strings as needed.
@@ -20,7 +20,8 @@ extern "C" {
 // static const char *const FONT_<TEST>_TEXT[GUI_LV_LANGUAGE_MAX]   = {};
 // static const char *const FONT_<TEST>_TEXT[][GUI_LV_LANGUAGE_MAX] = {};
 
-/*=================================== END ====================================*/
+
+/*============================ END ===========================================*/
 #ifdef   __cplusplus
 }
 #endif
