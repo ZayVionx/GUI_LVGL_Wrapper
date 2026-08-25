@@ -17,7 +17,8 @@
 ****************************************************************************/
 
 /*================================= INCLUDES =================================*/
-#ifdef __RTE_Acceleration_GUI_LVGL_Scene%Instance%__
+#if (   (__RTE_Acceleration_GUI_LVGL_Scene%Instance%__)     \
+    &&  (__LV_USE_KEYPAD_INDEV__ || __LV_USE_ENCODER_INDEV__))
 #   include <gui_lv_scene_task_%Instance%.h>
 #   include <gui_lv_scene_%Instance%.h>
 
@@ -36,7 +37,7 @@
 void gui_lv_scene_task_%Instance%(lv_event_t *e)
 {
     if(lv_event_get_code(e) != LV_EVENT_KEY)    return;
-    uint32_t u32Key = lv_indev_get_key(LV_INDEV_KEYPAD);
+    uint32_t u32Key = lv_indev_get_key(LV_SCENE_GROUP_INDEV);
 
     switch(u32Key)
     {

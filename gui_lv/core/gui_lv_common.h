@@ -79,6 +79,8 @@ lv_obj_t *gui_lv_group_get_index_obj(lv_group_t *ptGroup, uint8_t chIdx);
 
 
 /*=============================== STATIC INLINE ==============================*/
+#if __LV_USE_KEYPAD_INDEV__
+
 /**
  * @brief   Handle vertical key navigation for group focus.
  * @details Maps UP/DOWN and LONG_UP/LONG_DOWN keys to previous/next group focus.
@@ -88,7 +90,7 @@ lv_obj_t *gui_lv_group_get_index_obj(lv_group_t *ptGroup, uint8_t chIdx);
 static inline void gui_lv_group_focus_vertical_event_cb(lv_event_t *e)
 {
     if(lv_event_get_code(e) != LV_EVENT_KEY)    return;
-    uint32_t u32Key = lv_indev_get_key(LV_INDEV_KEYPAD);
+    uint32_t u32Key = lv_indev_get_key(LV_SCENE_GROUP_INDEV);
 
     switch(u32Key) 
     {
@@ -110,7 +112,7 @@ static inline void gui_lv_group_focus_vertical_event_cb(lv_event_t *e)
 static inline void gui_lv_group_focus_horizontal_event_cb(lv_event_t *e)
 {
     if(lv_event_get_code(e) != LV_EVENT_KEY)    return;
-    uint32_t u32Key = lv_indev_get_key(LV_INDEV_KEYPAD);
+    uint32_t u32Key = lv_indev_get_key(LV_SCENE_GROUP_INDEV);
 
     switch(u32Key) 
     {
@@ -122,6 +124,8 @@ static inline void gui_lv_group_focus_horizontal_event_cb(lv_event_t *e)
 		default: break;
     }
 }
+
+#endif /* __LV_USE_KEYPAD_INDEV__ */
 
 /*============================ END ===========================================*/
 #ifdef   __cplusplus

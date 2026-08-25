@@ -16,7 +16,8 @@
 *                                                                           *
 ****************************************************************************/
 
-#ifdef __RTE_Acceleration_GUI_LVGL_Scene%Instance%__
+#if (   (__RTE_Acceleration_GUI_LVGL_Scene%Instance%__)     \
+    &&  (__LV_USE_KEYPAD_INDEV__ || __LV_USE_ENCODER_INDEV__))
 
 #ifndef __GUI_LV_SCENE_TASK_%Instance%_H__
 #define __GUI_LV_SCENE_TASK_%Instance%_H__

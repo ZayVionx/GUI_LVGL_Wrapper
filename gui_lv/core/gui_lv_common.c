@@ -166,8 +166,11 @@ lv_timer_t *gui_lv_timer_init(lv_timer_cb_t timer_cb, uint32_t period, void *use
  ******************************************************************************/
 int32_t gui_lv_group_focus_nav(uint8_t cols, gui_lv_navigation_t eNav, bool wrap)
 {
-    lv_group_t *group = LV_INDEV_KEYPAD->group;
-    if(group == NULL || group->obj_focus == NULL) return -1;
+    lv_indev_t *ptIndev = LV_SCENE_GROUP_INDEV;
+    if(ptIndev == NULL || ptIndev->group == NULL) return -1;
+
+    lv_group_t *group = ptIndev->group;
+    if(group->obj_focus == NULL) return -1;
 
     /* --- 1. find current index --- */
     int32_t cur = 0;

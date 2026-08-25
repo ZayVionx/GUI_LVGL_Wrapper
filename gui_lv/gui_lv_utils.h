@@ -72,6 +72,14 @@ extern "C" {
         extern lv_indev_t       *indev_encoder;
 #       define LV_INDEV_ENCODER  indev_encoder
 #   endif
+
+    #if __LV_USE_KEYPAD_INDEV__
+    #   define LV_SCENE_GROUP_INDEV LV_INDEV_KEYPAD
+    #elif __LV_USE_ENCODER_INDEV__
+    #   define LV_SCENE_GROUP_INDEV LV_INDEV_ENCODER
+    #else
+    #   define LV_SCENE_GROUP_INDEV NULL
+    #endif
 #endif
 
 /*----------------------------------------------------------------------------*
@@ -275,28 +283,34 @@ extern "C" {
  *----------------------------------------------------------------------------*/
 #define GUI_LV_GROUP_FOCUS_NEXT(void)                                          \
 	do {                                                                       \
-		lv_group_t *group = LV_INDEV_KEYPAD->group;                            \
-		lv_group_focus_next(group);                                            \
+        lv_indev_t *ptIndev = LV_SCENE_GROUP_INDEV;                            \
+        if(ptIndev != NULL && ptIndev->group != NULL) {                        \
+		    lv_group_focus_next(ptIndev->group);                               \
+        }                                                                      \
 	} while (0)
     
 #define GUI_LV_GROUP_FOCUS_PREV(void)                                          \
 	do {                                                                       \
-		lv_group_t *group = LV_INDEV_KEYPAD->group;                            \
-		lv_group_focus_prev(group);                                            \
+        lv_indev_t *ptIndev = LV_SCENE_GROUP_INDEV;                            \
+        if(ptIndev != NULL && ptIndev->group != NULL) {                        \
+		    lv_group_focus_prev(ptIndev->group);                               \
+        }                                                                      \
 	} while (0)
 
 #define GUI_LV_INDEV_BIND_GROUP(_group)                                        \
 	do {                                                                       \
-		if (LV_INDEV_KEYPAD != NULL) {                                         \
-			lv_indev_set_group(LV_INDEV_KEYPAD, (_group));                     \
+        lv_indev_t *ptIndev = LV_SCENE_GROUP_INDEV;                            \
+		if(ptIndev != NULL) {                                                  \
+			lv_indev_set_group(ptIndev, (_group));                             \
 		}                                                                      \
 	} while (0)
 
 #define GUI_LV_GROUP_GET_FOCUSED_OBJ()                                         \
 	({                                                                         \
 		lv_obj_t *_ptObj = NULL;                                               \
-		if (LV_INDEV_KEYPAD != NULL) {                                         \
-			_ptObj = lv_group_get_focused(LV_INDEV_KEYPAD->group);             \
+        lv_indev_t *ptIndev = LV_SCENE_GROUP_INDEV;                            \
+		if(ptIndev != NULL && ptIndev->group != NULL) {                        \
+			_ptObj = lv_group_get_focused(ptIndev->group);                     \
 		}                                                                      \
 		_ptObj;                                                                \
 	})

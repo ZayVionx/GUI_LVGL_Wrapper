@@ -34,7 +34,7 @@
 void gui_lv_scene_task_<name>(lv_event_t *e)
 {
     if(lv_event_get_code(e) != LV_EVENT_KEY)    return;
-    uint32_t u32Key = lv_indev_get_key(LV_INDEV_KEYPAD);
+    uint32_t u32Key = lv_indev_get_key(LV_SCENE_GROUP_INDEV);
 
     switch(u32Key)
     {

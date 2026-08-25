@@ -19,12 +19,15 @@
 /*============================ INCLUDES ======================================*/
 #ifdef __RTE_Acceleration_GUI_LVGL_Scene%Instance%__
 #   include <gui_lv_scene_%Instance%.h>
-#   include <gui_lv_scene_task_%Instance%.h>
 
 #ifdef __GUI_LVGL_WRAPPER_CONF__
 #   include <gui_lvgl.h>
 #else
 #   include "gui_lvgl.h"
+#endif
+
+#if (__LV_USE_KEYPAD_INDEV__ || __LV_USE_ENCODER_INDEV__)
+#   include <gui_lv_scene_task_%Instance%.h>
 #endif
 
 /*--------------------------*
@@ -41,7 +44,7 @@
 #endif
 
 /*============================ MACROS ========================================*/
-#define GUI_LV_SCENE_GROUP_NUM      1
+#define GUI_LV_SCENE_GROUP_NUM      0
 #define GUI_LV_SCENE_TIMER_NUM      0
 #define GUI_LV_SCENE_USED_DATA      0
 

@@ -369,7 +369,7 @@ static void keypad_read(lv_indev_drv_t * indev_drv, lv_indev_data_t * data)
         data->state = LV_INDEV_STATE_PR;
     }
 }
-
+#endif
 
 #if __LV_USE_ENCODER_INDEV__
 /*------------------
@@ -463,6 +463,4 @@ static bool button_is_pressed(uint8_t id)
 
 /*This dummy typedef exists purely to silence -Wpedantic.*/
 typedef int keep_pedantic_happy;
-#endif
-
 #endif
