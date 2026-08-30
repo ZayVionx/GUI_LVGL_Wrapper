@@ -59,6 +59,8 @@ extern "C" {
     extern lv_indev_t           *kb_indev;
     extern lv_indev_t           *enc_indev;
     extern lv_indev_t           *mouse_indev;
+
+    #   define LV_SCENE_GROUP_INDEV LV_INDEV_KEYPAD
 #else
 #   if __LV_USE_KEYPAD_INDEV__
         extern lv_indev_t       *indev_keypad;
@@ -281,6 +283,32 @@ extern "C" {
 /*----------------------------------------------------------------------------*
  * Group macro func                                                           *
  *----------------------------------------------------------------------------*/
+/*!
+ * \note do NOT use this macro directly
+ */
+#if defined(_WIN64) || __LV_USE_KEYPAD_INDEV__
+#   define GUI_LV_BIND_KEYPAD(_group)                              \
+        do {                                                       \
+            if(LV_INDEV_KEYPAD != NULL)                            \
+                lv_indev_set_group(LV_INDEV_KEYPAD, (_group));     \
+        } while(0)
+#else
+#   define GUI_LV_BIND_KEYPAD(_group) ((void)0)
+#endif
+
+/*!
+ * \note do NOT use this macro directly
+ */
+#if defined(_WIN64) || __LV_USE_ENCODER_INDEV__
+#   define GUI_LV_BIND_ENCODER(_group)                             \
+        do {                                                       \
+            if(LV_INDEV_ENCODER != NULL)                           \
+                lv_indev_set_group(LV_INDEV_ENCODER, (_group));    \
+        } while(0)
+#else
+#   define GUI_LV_BIND_ENCODER(_group) ((void)0)
+#endif
+
 #define GUI_LV_GROUP_FOCUS_NEXT(void)                                          \
 	do {                                                                       \
         lv_indev_t *ptIndev = LV_SCENE_GROUP_INDEV;                            \
@@ -298,12 +326,10 @@ extern "C" {
 	} while (0)
 
 #define GUI_LV_INDEV_BIND_GROUP(_group)                                        \
-	do {                                                                       \
-        lv_indev_t *ptIndev = LV_SCENE_GROUP_INDEV;                            \
-		if(ptIndev != NULL) {                                                  \
-			lv_indev_set_group(ptIndev, (_group));                             \
-		}                                                                      \
-	} while (0)
+    do {                                                                       \
+        GUI_LV_BIND_KEYPAD(_group);                                            \
+        GUI_LV_BIND_ENCODER(_group);                                           \
+    } while(0)
 
 #define GUI_LV_GROUP_GET_FOCUSED_OBJ()                                         \
 	({                                                                         \

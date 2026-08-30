@@ -121,9 +121,7 @@ static void gui_all_scene_init(void)
 #if defined(__RTE_Acceleration_GUI_LVGL_SCENE__)
     __RTE_Acceleration_GUI_LV_ALL_SCENE_INIT();
 #else
-    /* !!! If this auto initialization function is disabled,
-     * manually append all scene initialization logic below */
-    __GUI_LV_SCENE_AUTO_INIT_EXPORTED();
+    
 #endif
 
     gui_lv_scene_set_home((gui_lv_scene_id_t)0);

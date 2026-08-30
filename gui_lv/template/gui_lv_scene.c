@@ -114,7 +114,6 @@ void gui_lv_scene_%Instance%_init(void)
 
     gui_lv_scene_register(&s_tCFG);
 }
-__GUI_LV_SCENE_INIT_APPEND_RO(gui_lv_scene_%Instance%_init);
 
 /*============================== SCENE CALLBACKS =============================*/
 /******************************************************************************
