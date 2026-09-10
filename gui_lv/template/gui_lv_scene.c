@@ -46,7 +46,6 @@
 /*============================ MACROS ========================================*/
 #define GUI_LV_SCENE_GROUP_NUM      0
 #define GUI_LV_SCENE_TIMER_NUM      0
-#define GUI_LV_SCENE_USED_DATA      0
 
 /*============================ TYPES =========================================*/
 static struct {
@@ -70,8 +69,14 @@ GUI_LV_PRIVATE(
 
 } s_tGUI;
 
-/*============================ LOCAL VARIABLES ===============================*/
+typedef enum {
+    NONE_DATA_MASK = 0U,
 
+    ALL_DATA_MASK,
+} Data_Mask;
+
+
+/*============================ LOCAL VARIABLES ===============================*/
 /*============================ PROTOTYPES ====================================*/
 static void __on_scene%Instance%_draw  (lv_obj_t *ptRoot);
 static void __on_scene%Instance%_load  (lv_obj_t *ptRoot);
@@ -82,10 +87,10 @@ static void __on_scene%Instance%_depose(void);
 static void __on_scene%Instance%_timer0_cb(lv_timer_t *ptTimer);
 #endif
 
-static void __scene_get_app_data_single(void);
-static gui_lv_fsm_rt_t __scene_sync_app_data(void);
+static void __scene%Instance%_get_app_data(Data_Mask eData_Mask);
+static void __scene%Instance%_set_app_data(Data_Mask eData_Mask);
 
-/*============================ IMPLEMENTATION ================================*/
+
 /*============================ SCENE REGISTRATION ============================*/
 /****************************************************************************** 
  * @note The scene ID should be defined in your enum as GUI_LV_SCENE_<NAME>.
@@ -114,6 +119,7 @@ void gui_lv_scene_%Instance%_init(void)
 
     gui_lv_scene_register(&s_tCFG);
 }
+
 
 /*============================== SCENE CALLBACKS =============================*/
 /******************************************************************************
@@ -145,7 +151,6 @@ GUI_LV_NONNULL(1)
 static void __on_scene%Instance%_load(lv_obj_t *ptRoot)
 {
     GUI_LV_UNUSED(ptRoot);
-    __scene_get_app_data_single();
 
     /* User load code begin --------------------------------------------------*/
 
@@ -180,7 +185,6 @@ GUI_LV_NONNULL(1)
 static void __on_scene%Instance%_timer0_cb(lv_timer_t *ptTimer)
 {
     GUI_LV_UNUSED(ptTimer);
-    (void)__scene_sync_app_data();
 
     /* USER: periodic visual refresh -----------------------------------------*/
     
@@ -188,36 +192,37 @@ static void __on_scene%Instance%_timer0_cb(lv_timer_t *ptTimer)
 #endif
 
 
-/*============================ DATA SYNC =====================================*/
-static void __scene_get_app_data_single(void)
+/*============================ DATA INTEGRATION ==============================*/
+/**
+ * \brief Fetch selected application data into the scene cache.
+ *
+ * Reads the application-layer data specified by \p eData_Mask and stores
+ * it in the scene-local cache \c s_tGUI.Data for rendering or refresh.
+ *
+ * \param[in] eData_Mask Mask specifying which application data fields to fetch.
+ *                       Use NONE_DATA_MASK for no data and ALL_DATA_MASK for
+ *                       all supported data fields.
+ */
+static void __scene%Instance%_get_app_data(Data_Mask eData_Mask)
 {
-    GUI_LV_UNUSED(0);
 
 }
 
-#if GUI_LV_SCENE_USED_DATA
-
-#   if (GUI_LV_SCENE_TIMER_NUM == 0)
-#   error "__scene_sync_app_data() requires a timer to trigger periodic updates."
-#   error "Please set GUI_LV_SCENE_TIMER_NUM > 0."
-#   endif
-
-IMPL_GUI_LV_PERIODIC_PT(__scene_sync_app_data, 100)
-    PLATFORM_ON_WIN64(
-        /* USER: simulator/mock/host-side data update ------------------------*/
-    )
-
-    PLATFORM_ON_MCU(
-        /* USER: target AppData mapping and hardware-dependent refresh -------*/
-    )
-END_IMPL_GUI_LV_PERIODIC_PT(__scene_sync_app_data)
-
-#else
-static gui_lv_fsm_rt_t __scene_sync_app_data(void)
+/**
+ * \brief Write selected scene-cache data back to application-layer variables.
+ *
+ * Copies the data fields selected by \p eData_Mask from
+ * \c s_tGUI.Data to the corresponding application-layer variables.
+ *
+ * \param[in] eData_Mask Mask specifying which cached data fields to write back.
+ *                       Use NONE_DATA_MASK for no data and ALL_DATA_MASK for
+ *                       all supported data fields.
+ */
+static void __scene%Instance%_set_app_data(Data_Mask eData_Mask)
 {
-    return gui_lv_fsm_rt_cpl;
+
 }
-#endif
+
 
 /*============================ END OF FILE ===================================*/
 
