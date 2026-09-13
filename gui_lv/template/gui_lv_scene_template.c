@@ -205,6 +205,7 @@ static void __on_scene_<name>_timer0_cb(lv_timer_t *ptTimer)
  */
 static void __scene_<name>_get_app_data(Data_Mask eData_Mask)
 {
+    GUI_LV_UNUSED(eData_Mask);
 
 }
 
@@ -220,6 +221,7 @@ static void __scene_<name>_get_app_data(Data_Mask eData_Mask)
  */
 static void __scene_<name>_set_app_data(Data_Mask eData_Mask)
 {
+    GUI_LV_UNUSED(eData_Mask);
 
 }
 
