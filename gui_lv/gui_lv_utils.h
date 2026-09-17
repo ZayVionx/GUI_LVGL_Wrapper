@@ -730,10 +730,13 @@ typedef enum {
 #endif
 
 #define IMPL_GUI_LV_PERIODIC_PT(__NAME, __PERIOD_MS)                           \
-    static gui_lv_fsm_rt_t __NAME(void)                                        \
+    static gui_lv_fsm_rt_t __NAME(uint8_t __chIsResetPtTaskState)              \
     {                                                                          \
         static uint8_t s_chGuiLvPtTaskState = 0;                               \
         const uint32_t u32GuiLvPtTaskPeriodMs = (uint32_t)(__PERIOD_MS);       \
+                                                                               \
+        if(__chIsResetPtTaskState)                                             \
+            s_chGuiLvPtTaskState = 0;                                          \
                                                                                \
         GUI_LV_PT_BEGIN(s_chGuiLvPtTaskState);                                 \
         while (1) {                                                            \
