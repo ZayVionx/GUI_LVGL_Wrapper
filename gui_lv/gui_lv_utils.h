@@ -729,6 +729,37 @@ typedef enum {
 #   define PLATFORM_ON_MCU(...)     do { __VA_ARGS__ } while (0);
 #endif
 
+/*----------------------------------------------------------------------------*
+ * Periodic Task (PT) Macro - V2.0.0                                          *
+ *----------------------------------------------------------------------------*/
+/*!
+ * @brief 周期任务宏 - 支持状态重置
+ * @version 2.0.0
+ *
+ * @note 破坏性更新 (Breaking Change from v1.2.0)
+ *       - V1.2.0: 函数无参数 task()
+ *       - V2.0.0: 函数带参数 task(uint8_t)
+ *
+ * @usage 定义周期任务:
+ * @code
+ *   IMPL_GUI_LV_PERIODIC_PT(my_task, 1000)
+ *       // 任务代码
+ *   END_IMPL_GUI_LV_PERIODIC_PT(my_task)
+ * @endcode
+ *
+ * @usage 调用方式:
+ * @code
+ *   my_task(0);  // 正常执行，不重置状态
+ *   my_task(1);  // 重置任务状态后执行
+ * @endcode
+ *
+ * @migration 从 v1.2.0 升级:
+ *   旧代码: my_task();
+ *   新代码: my_task(0);
+ *
+ * @param __NAME       任务函数名
+ * @param __PERIOD_MS  任务周期（毫秒）
+ */
 #define IMPL_GUI_LV_PERIODIC_PT(__NAME, __PERIOD_MS)                           \
     static gui_lv_fsm_rt_t __NAME(uint8_t __chIsResetPtTaskState)              \
     {                                                                          \

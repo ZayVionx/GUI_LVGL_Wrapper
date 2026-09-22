@@ -27,6 +27,13 @@
     <!--  Release History                                                   -->
     <!-- ================================================================== -->
     <releases>
+        <release version="1.3.0" date="2026-09-22">
+            Revision v1.3.0
+            - Add state reset parameter to periodic task (PT) macro
+            - BREAKING: Periodic task functions now require uint8_t parameter
+            - Migration: Change task() to task(0)
+        </release>
+
         <release version="1.2.0" date="2026-03-24">
             Revision v1.2.0
             - Add template component for user-defined scenes
