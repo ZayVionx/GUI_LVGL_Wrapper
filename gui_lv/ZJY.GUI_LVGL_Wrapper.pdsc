@@ -27,6 +27,14 @@
     <!--  Release History                                                   -->
     <!-- ================================================================== -->
     <releases>
+        <release version="1.3.1" date="2026-10-30">
+            Revision v1.3.1
+            - Expand page cursor start/end indices to uint16_t, fixing incorrect clamping at 255.
+            - BREAKING: Rename chStartIndex/chEndIndex to hwStartIndex/hwEndIndex and change the structure layout.
+            - Migration: Update field references and rebuild all modules using gui_lv_page_cursor_t.
+            - Update usage documentation and integration examples.
+        </release>
+
         <release version="1.3.0" date="2026-09-22">
             Revision v1.3.0
             - Add state reset parameter to periodic task (PT) macro

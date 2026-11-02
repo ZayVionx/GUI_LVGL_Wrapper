@@ -340,7 +340,7 @@ void gui_lv_scene_back_with_anim(gui_lv_switch_anim_mode_t eAnimMode)
 
     /************************************************
      * 1. Clear the current scene                   *
-     * 2. Load the previous scene with animation   *
+     * 2. Load the previous scene with animation    *
      ************************************************/
     __gui_lv_scene_list_pop_stack(eAnimMode);
 }

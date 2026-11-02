@@ -273,8 +273,8 @@ static void __page_cursor_clear(gui_lv_page_cursor_t *ptThis)
     this.u16PageNum    = 1;
     this.u16CurPage    = 1;
     this.chVaildNum    = 0;
-    this.chStartIndex  = 0;
-    this.chEndIndex    = 0;
+    this.hwStartIndex  = 0;
+    this.hwEndIndex    = 0;
     this.chFocusIndex  = 0;
 }
 
@@ -312,10 +312,10 @@ static void __page_cursor_refresh(gui_lv_page_cursor_t *ptThis)
     u32StartOffset = ((uint32_t)u16CurPage - 1) * this.chPageSize;
     u32RemainNum   = (uint32_t)this.u16ItemNum - u32StartOffset;
 
-    if(u32StartOffset > (UINT8_MAX - u32IndexBase))
-        this.chStartIndex = UINT8_MAX;
+    if(u32StartOffset > (UINT16_MAX - u32IndexBase))
+        this.hwStartIndex = UINT16_MAX;
     else
-        this.chStartIndex = (uint8_t)(u32StartOffset + u32IndexBase);
+        this.hwStartIndex = (uint16_t)(u32StartOffset + u32IndexBase);
 
     this.chVaildNum = u32RemainNum > this.chPageSize
                     ? this.chPageSize
@@ -332,16 +332,16 @@ static void __page_cursor_refresh(gui_lv_page_cursor_t *ptThis)
 
     if(this.chVaildNum == 0)
     {
-        this.chEndIndex = 0;
+        this.hwEndIndex = 0;
     }
     else
     {
         uint32_t u32EndOffset = u32StartOffset + this.chVaildNum - 1 + u32IndexBase;
 
-        if(u32EndOffset > UINT8_MAX)
-            this.chEndIndex = UINT8_MAX;
+        if(u32EndOffset > UINT16_MAX)
+            this.hwEndIndex = UINT16_MAX;
         else
-            this.chEndIndex = (uint8_t)u32EndOffset;
+            this.hwEndIndex = (uint16_t)u32EndOffset;
     }
 }
 /*============================ END ===========================================*/
