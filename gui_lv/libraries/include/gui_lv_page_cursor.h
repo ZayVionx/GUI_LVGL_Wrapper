@@ -48,10 +48,10 @@ typedef struct {
     uint16_t                   u16ItemNum  ;    //!< Total item count
     uint16_t                   u16PageNum  ;    //!< Total page count, minimum is 1
     uint16_t                   u16CurPage  ;    //!< Current page number, 1-based
+    uint16_t                   hwStartIndex;    //!< Start item index of the current page
+    uint16_t                   hwEndIndex  ;    //!< End item index of the current page
     uint8_t                    chPageSize  ;    //!< Maximum item count per page
     uint8_t                    chVaildNum  ;    //!< Valid item count on the current page
-    uint8_t                    chStartIndex;    //!< Start item index of the current page
-    uint8_t                    chEndIndex  ;    //!< End item index of the current page
     uint8_t                    chFocusIndex;    //!< Focused item index on the current page(0-vaildNum-1), or 0 if no focus
     gui_lv_page_cursor_index_e eIndexBase  ;    //!< Item index base, 0-based or 1-based
 } gui_lv_page_cursor_t;
