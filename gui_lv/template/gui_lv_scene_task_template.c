@@ -34,9 +34,9 @@
 void gui_lv_scene_task_<name>(lv_event_t *e)
 {
     if(lv_event_get_code(e) != LV_EVENT_KEY)    return;
-    uint32_t u32Key = lv_event_get_key(e);
+    uint32_t wKeyValue = lv_event_get_key(e);
 
-    switch(u32Key)
+    switch(wKeyValue)
     {
         // case LV_KEY_UP:    break;
         // case LV_KEY_DOWN:  break;
