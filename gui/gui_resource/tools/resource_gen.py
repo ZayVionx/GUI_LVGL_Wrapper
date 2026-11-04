@@ -16,6 +16,7 @@ import tempfile
 import os
 import sys
 import time
+import unicodedata
 from collections import OrderedDict
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -69,6 +70,16 @@ IMG_FORMAT_MAP: Dict[str, Tuple[int, str, bool, bool]] = {
     "CF_RAW":                      (0,  "LV_IMG_CF_RAW",               False, False),
     "CF_RAW_CHROMA":               (0,  "LV_IMG_CF_RAW_CHROMA",        False, False),
     "CF_RAW_ALPHA":                (0,  "LV_IMG_CF_RAW_ALPHA",         False, False),
+}
+
+IMG_FORMAT_MAP_V9: Dict[str, str] = {
+    f"LV_COLOR_FORMAT_{chFormat}": chFormat
+    for chFormat in (
+        "RGB565", "RGB565A8", "RGB888", "XRGB8888", "ARGB8888",
+        "RGB565_SWAPPED", "ARGB8565", "ARGB8888_PREMULTIPLIED",
+        "L8", "AL88", "I1", "I2", "I4", "I8",
+        "A1", "A2", "A4", "A8", "RAW", "RAW_ALPHA",
+    )
 }
 
 
@@ -278,10 +289,22 @@ def _render_progress(u32Done: int,
     if bQuiet:
         return
 
-    chLine = _progress_line(u32Done, u32Total, chStatus, bFinal)
-    u32Pad = max(0, _gProgressLineWidth - len(chLine))
+    u32MaxWidth = max(1, shutil.get_terminal_size().columns - 1)
+    lchLine: List[str] = []
+    u32LineWidth = 0
+    for chChar in _progress_line(u32Done, u32Total, chStatus, bFinal):
+        u32CharWidth = 0 if unicodedata.combining(chChar) else (
+            2 if unicodedata.east_asian_width(chChar) in ("W", "F") else 1
+        )
+        if u32LineWidth + u32CharWidth > u32MaxWidth:
+            break
+        lchLine.append(chChar)
+        u32LineWidth += u32CharWidth
+
+    chLine = "".join(lchLine)
+    u32Pad = max(0, min(_gProgressLineWidth, u32MaxWidth) - u32LineWidth)
     sys.stderr.write("\r" + chLine + (" " * u32Pad))
-    _gProgressLineWidth = len(chLine)
+    _gProgressLineWidth = u32LineWidth
     if bFinal:
         sys.stderr.write("\n")
         _gProgressLineWidth = 0
@@ -294,7 +317,8 @@ def _clear_progress(bQuiet: bool) -> None:
     if bQuiet:
         return
 
-    sys.stderr.write("\r" + (" " * _gProgressLineWidth) + "\r")
+    u32Width = min(_gProgressLineWidth, max(1, shutil.get_terminal_size().columns - 1))
+    sys.stderr.write("\r" + (" " * u32Width) + "\r")
     _gProgressLineWidth = 0
     sys.stderr.flush()
 
@@ -627,9 +651,9 @@ def _generate_fonts(ptFontConfigPath: Path,
             ptTempTextPath: Path = ptTempDir / f"{chOutputBase}.txt"
             ptOutputPath: Path = ptFontOutputDir / f"{chOutputBase}.c"
             _render_progress(
-                u32ProgressDone + tStats.ok + tStats.failed + 1,
+                u32ProgressDone + tStats.ok + tStats.failed,
                 u32ProgressTotal,
-                f"Processing: {ptOutputPath.name}",
+                f"Font: {ptOutputPath.name}",
                 bQuiet,
             )
 
@@ -671,6 +695,13 @@ def _generate_fonts(ptFontConfigPath: Path,
                 tStats.errors.append(
                     f"Failed to process {ptOutputPath.name}: {tError}"
                 )
+
+            _render_progress(
+                u32ProgressDone + tStats.ok + tStats.failed,
+                u32ProgressTotal,
+                f"Font: {ptOutputPath.name}",
+                bQuiet,
+            )
 
     tStats.seconds = time.perf_counter() - fStart
     return tStats
@@ -844,6 +875,37 @@ def _write_lvgl8_c_file(ptOutputPath: Path,
     ptOutputPath.write_text("\n".join(lchContent), encoding="utf-8")
 
 
+def _generate_lvgl9_image(ptScriptPath: Path,
+                          ptInputPath: Path,
+                          ptOutputPath: Path,
+                          chFormat: str) -> None:
+    lchCommand: List[str] = [
+        sys.executable, "-X", "utf8", str(ptScriptPath),
+        "--ofmt", "C", "--cf", chFormat,
+        "--name", ptOutputPath.stem,
+        "-o", str(ptOutputPath.parent), str(ptInputPath),
+    ]
+    try:
+        _run_command(lchCommand, ptOutputPath.stem)
+    except ResourceError:
+        ptOutputPath.unlink(missing_ok=True)
+        raise
+
+    # Preserve the official include options while detecting a flat LVGL include path.
+    chIncludePrefix = (
+        "#if !defined(LV_LVGL_H_INCLUDE_SIMPLE) && "
+        "!defined(LV_LVGL_H_INCLUDE_SYSTEM) && !defined(LV_BUILD_TEST)\n"
+        "    #ifdef __has_include\n"
+        "        #if __has_include(\"lvgl.h\")\n"
+        "            #define LV_LVGL_H_INCLUDE_SIMPLE\n"
+        "        #endif\n"
+        "    #endif\n"
+        "#endif\n"
+    )
+    chContent = ptOutputPath.read_text(encoding="utf-8")
+    ptOutputPath.write_text(chIncludePrefix + chContent, encoding="utf-8")
+
+
 def _generate_images(ptImgConfigPath: Path,
                      ptImgOutputDir: Path,
                      u32ProgressDone: int,
@@ -853,9 +915,17 @@ def _generate_images(ptImgConfigPath: Path,
     tStats = ResourceStats()
     tImgConfig: dict = _load_json_with_comments(ptImgConfigPath)
     ltImgItems = tImgConfig.get("img", [])
+    u32LvglVersion = tImgConfig.get("lvgl_version", 8)
+
+    if type(u32LvglVersion) is not int or u32LvglVersion not in (8, 9):
+        raise ResourceError("img config field 'lvgl_version' must be integer 8 or 9")
 
     if not isinstance(ltImgItems, list):
         raise ResourceError("img config field 'img' must be a list")
+
+    ptLvgl9Script = Path(__file__).resolve().with_name("LVGLImage.py")
+    if u32LvglVersion == 9 and not ptLvgl9Script.is_file():
+        raise ResourceError(f"LVGL 9 image converter not found: {ptLvgl9Script}")
 
     _cleanup_generated_files(ptImgOutputDir, "lv_img_")
     ptConfigDir: Path = ptImgConfigPath.parent
@@ -864,13 +934,13 @@ def _generate_images(ptImgConfigPath: Path,
     for u32Index, tImgItem in enumerate(ltImgItems):
         chProgressName = f"img[{u32Index}]"
         if not isinstance(tImgItem, dict):
+            tStats.failed += 1
             _render_progress(
-                u32ProgressDone + tStats.ok + tStats.failed + 1,
+                u32ProgressDone + tStats.ok + tStats.failed,
                 u32ProgressTotal,
-                f"Processing: {chProgressName}",
+                f"Image (LVGL {u32LvglVersion}): {chProgressName}",
                 bQuiet,
             )
-            tStats.failed += 1
             tStats.errors.append(f"Failed to process {chProgressName}: item must be an object")
             continue
 
@@ -884,42 +954,65 @@ def _generate_images(ptImgConfigPath: Path,
             chProgressName = Path(chFile).name
 
             _render_progress(
-                u32ProgressDone + tStats.ok + tStats.failed + 1,
+                u32ProgressDone + tStats.ok + tStats.failed,
                 u32ProgressTotal,
-                f"Processing: {chProgressName}",
+                f"Image (LVGL {u32LvglVersion}): {chProgressName}",
                 bQuiet,
             )
 
-            if chFormat not in IMG_FORMAT_MAP:
+            if u32LvglVersion == 9:
+                chLvgl9Format = IMG_FORMAT_MAP_V9.get(chFormat)
+                # Keep existing LVGL 8 indexed/alpha names readable in older configs.
+                tLegacyFormat = IMG_FORMAT_MAP.get(chFormat)
+                if chLvgl9Format is None and tLegacyFormat is not None:
+                    u32Bpp, _, bIndexed, bAlpha = tLegacyFormat
+                    if bIndexed or bAlpha:
+                        chLvgl9Format = f"{'I' if bIndexed else 'A'}{u32Bpp}"
+                if chLvgl9Format is None:
+                    raise ResourceError(
+                        f"Unsupported LVGL 9 image format '{chFormat}' in img[{u32Index}]"
+                    )
+            elif chFormat not in IMG_FORMAT_MAP:
                 raise ResourceError(
                     f"Unsupported image format '{chFormat}' in img[{u32Index}]"
                 )
 
-            u32Bpp, chCfMacro, bIndexed, bAlpha = IMG_FORMAT_MAP[chFormat]
             ptInputPath: Path = _resolve_input_path(ptConfigDir, "img_scr", chFile)
             ptOutputPath: Path = ptImgOutputDir / f"{chOutputName}.c"
 
-            if bIndexed:
-                # quantize with pngquant (same as LVGL8 online converter)
-                lu8PngBytes = _pngquant_quantize(ptInputPath, 1 << u32Bpp)
-                u32W, u32H, lu8Data = _png_bytes_to_indexed(lu8PngBytes, u32Bpp)
-            elif bAlpha:
-                u32W, u32H, lu8Data = _png_to_alpha_data(ptInputPath, u32Bpp)
-            else:
-                raise ResourceError(
-                    f"Format '{chFormat}' (true-color) is not yet supported"
+            if u32LvglVersion == 9:
+                _generate_lvgl9_image(
+                    ptLvgl9Script, ptInputPath, ptOutputPath, chLvgl9Format,
                 )
-
-            _write_lvgl8_c_file(ptOutputPath, chOutputName, chCfMacro,
-                                u32W, u32H, lu8Data)
+            else:
+                u32Bpp, chCfMacro, bIndexed, bAlpha = IMG_FORMAT_MAP[chFormat]
+                if bIndexed:
+                    # quantize with pngquant (same as LVGL8 online converter)
+                    lu8PngBytes = _pngquant_quantize(ptInputPath, 1 << u32Bpp)
+                    u32W, u32H, lu8Data = _png_bytes_to_indexed(lu8PngBytes, u32Bpp)
+                elif bAlpha:
+                    u32W, u32H, lu8Data = _png_to_alpha_data(ptInputPath, u32Bpp)
+                else:
+                    raise ResourceError(
+                        f"Format '{chFormat}' (true-color) is not yet supported"
+                    )
+                _write_lvgl8_c_file(ptOutputPath, chOutputName, chCfMacro,
+                                    u32W, u32H, lu8Data)
 
             tStats.ok += 1
             tStats.bytes += ptOutputPath.stat().st_size
         except ResourceError as tError:
             tStats.failed += 1
             tStats.errors.append(
-                f"Failed to process {ptInputPath.name}: {tError}"
+                f"Failed to process {chProgressName}: {tError}"
             )
+
+        _render_progress(
+            u32ProgressDone + tStats.ok + tStats.failed,
+            u32ProgressTotal,
+            f"Image (LVGL {u32LvglVersion}): {chProgressName}",
+            bQuiet,
+        )
 
     tStats.seconds = time.perf_counter() - fStart
     return tStats

@@ -1,0 +1,128 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "properties": {
+        "lvgl_version": {
+            "type": "integer",
+            "description": "选择图片资源生成的目标 LVGL 版本",
+            "enum": [8, 9],
+            "default": 8
+        },
+        "img": {
+            "type": "array",
+            "description": "图片资源列表，format 的可选值随 lvgl_version 切换；未指定版本时使用 LVGL 8",
+            "items": {
+                "type": "object",
+                "required": ["name", "file", "format"],
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "description": "图片名称，生成的文件名和变量名会自动添加 lv_img_ 前缀"
+                    },
+                    "file": {
+                        "type": "string",
+                        "description": "源图片文件名或路径，文件名可相对于 assets/img_scr 目录填写"
+                    },
+                    "format": {
+                        "type": "string",
+                        "description": "选择与 lvgl_version 对应的图片颜色格式"
+                    }
+                }
+            }
+        }
+    },
+    "if": {
+        "required": ["lvgl_version"],
+        "properties": {
+            "lvgl_version": { "const": 9 }
+        }
+    },
+    "then": {
+        "properties": {
+            "img": {
+                "items": {
+                    "properties": {
+                        "format": {
+                            "enum": [
+                                "LV_COLOR_FORMAT_RGB565",
+                                "LV_COLOR_FORMAT_RGB565A8",
+                                "LV_COLOR_FORMAT_RGB888",
+                                "LV_COLOR_FORMAT_XRGB8888",
+                                "LV_COLOR_FORMAT_ARGB8888",
+                                "LV_COLOR_FORMAT_RGB565_SWAPPED",
+                                "LV_COLOR_FORMAT_ARGB8565",
+                                "LV_COLOR_FORMAT_ARGB8888_PREMULTIPLIED",
+                                "LV_COLOR_FORMAT_L8",
+                                "LV_COLOR_FORMAT_AL88",
+                                "LV_COLOR_FORMAT_I1",
+                                "LV_COLOR_FORMAT_I2",
+                                "LV_COLOR_FORMAT_I4",
+                                "LV_COLOR_FORMAT_I8",
+                                "LV_COLOR_FORMAT_A1",
+                                "LV_COLOR_FORMAT_A2",
+                                "LV_COLOR_FORMAT_A4",
+                                "LV_COLOR_FORMAT_A8",
+                                "LV_COLOR_FORMAT_RAW",
+                                "LV_COLOR_FORMAT_RAW_ALPHA"
+                            ],
+                            "enumDescriptions": [
+                                "16 位 RGB 颜色，不含透明度",
+                                "RGB565 颜色与独立的 8 位透明度平面",
+                                "24 位 RGB 颜色，不含透明度",
+                                "32 位像素，24 位 RGB 颜色，额外 8 位不作为透明度",
+                                "32 位像素，24 位 RGB 颜色和 8 位透明度",
+                                "RGB565，每个像素的两个字节交换顺序",
+                                "RGB565 颜色和 8 位透明度；LVGL 9.6 标注软件渲染不支持，需确认渲染后端",
+                                "ARGB8888，颜色通道预乘透明度",
+                                "8 位亮度，不含透明度",
+                                "8 位亮度和 8 位透明度",
+                                "1 位索引色，最多 2 色",
+                                "2 位索引色，最多 4 色",
+                                "4 位索引色，最多 16 色",
+                                "8 位索引色，最多 256 色",
+                                "1 位透明度，2 级；LVGL 9.6 标注软件渲染不支持，需确认渲染后端",
+                                "2 位透明度，4 级；LVGL 9.6 标注软件渲染不支持，需确认渲染后端",
+                                "4 位透明度，16 级；LVGL 9.6 标注软件渲染不支持，需确认渲染后端",
+                                "8 位透明度，256 级",
+                                "保留源文件编码数据，不含透明度标记；运行时需要对应的图片解码器",
+                                "保留源文件编码数据，带透明度标记；运行时需要对应的图片解码器"
+                            ]
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "else": {
+        "properties": {
+            "img": {
+                "items": {
+                    "properties": {
+                        "format": {
+                            "enum": [
+                                "LV_IMG_CF_INDEXED_1BIT",
+                                "LV_IMG_CF_INDEXED_2BIT",
+                                "LV_IMG_CF_INDEXED_4BIT",
+                                "LV_IMG_CF_INDEXED_8BIT",
+                                "LV_IMG_CF_ALPHA_1BIT",
+                                "LV_IMG_CF_ALPHA_2BIT",
+                                "LV_IMG_CF_ALPHA_4BIT",
+                                "LV_IMG_CF_ALPHA_8BIT"
+                            ],
+                            "enumDescriptions": [
+                                "1 位索引色，最多 2 色",
+                                "2 位索引色，最多 4 色",
+                                "4 位索引色，最多 16 色",
+                                "8 位索引色，最多 256 色",
+                                "1 位透明度，2 级",
+                                "2 位透明度，4 级",
+                                "4 位透明度，16 级",
+                                "8 位透明度，256 级"
+                            ]
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

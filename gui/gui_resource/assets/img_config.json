@@ -1,9 +1,11 @@
 {
+    "$schema": "./img_config.schema.json",
+    "lvgl_version": 9,
     "img": [
         {
             "name"  : "sys_set",
             "file"  : "sys_set.png",
-            "format": "LV_IMG_CF_INDEXED_4BIT"
+            "format": "LV_COLOR_FORMAT_I4"
         }
     ]
     
