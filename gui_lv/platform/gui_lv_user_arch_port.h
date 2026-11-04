@@ -22,10 +22,26 @@
 /*============================ INCLUDES ======================================*/
 #include <stdint.h>
 
+#ifdef _WIN64
+#   include "lvgl/lvgl.h"
+#else
+#   include "lvgl.h"
+#endif
+
 #ifdef   __cplusplus
 extern "C" {
 #endif
 /*============================ MACROS ========================================*/
+/* detect LVGL Version */
+#undef __IS_LVGL_VERSION_8__
+#if defined(LVGL_VERSION_MAJOR) && (LVGL_VERSION_MAJOR == 8)
+#   define __IS_LVGL_VERSION_8__                1
+#endif
+
+#undef __IS_LVGL_VERSION_9__
+#if defined(LVGL_VERSION_MAJOR) && (LVGL_VERSION_MAJOR == 9)
+#   define __IS_LVGL_VERSION_9__                1
+#endif
 
 /*----------------------------------------------------------------------------*
  * Environment Detection                                                      *
@@ -76,59 +92,59 @@ extern "C" {
  *----------------------------------------------------------------------------*/
 #if defined(_MSC_VER)
 #   ifndef __STATIC_FORCEINLINE
-#       define __STATIC_FORCEINLINE               static __forceinline
+#       define __STATIC_FORCEINLINE             static __forceinline
 #   endif
 #   ifndef __STATIC_INLINE
-#       define __STATIC_INLINE                    static __inline
+#       define __STATIC_INLINE                  static __inline
 #   endif
 #   ifndef __ALIGNED
-#       define __ALIGNED(__N)                     __declspec(align(__N))
+#       define __ALIGNED(__N)                   __declspec(align(__N))
 #   endif
 #   ifndef __WEAK
 #       define __WEAK
 #   endif
 #elif defined(__APPLE_CC__)
 #   ifndef __STATIC_FORCEINLINE
-#       define __STATIC_FORCEINLINE               static inline                    \
-											 __attribute__((always_inline))
+#       define __STATIC_FORCEINLINE             static inline                  \
+											    __attribute__((always_inline))
 #   endif
 #   ifndef __STATIC_INLINE
-#       define __STATIC_INLINE                    static inline
+#       define __STATIC_INLINE                  static inline
 #   endif
 #   ifndef __ALIGNED
-#       define __ALIGNED(__N)                     __attribute__((aligned(__N)))
+#       define __ALIGNED(__N)                   __attribute__((aligned(__N)))
 #   endif
 #   ifndef __WEAK
-#       define __WEAK                             __attribute__((weak))
+#       define __WEAK                           __attribute__((weak))
 #   endif
 #else
 #   ifndef __STATIC_FORCEINLINE
-#       define __STATIC_FORCEINLINE               static inline                    \
-											 __attribute__((always_inline))
+#       define __STATIC_FORCEINLINE             static inline                  \
+											    __attribute__((always_inline))
 #   endif
 #   ifndef __STATIC_INLINE
-#       define __STATIC_INLINE                    static inline
+#       define __STATIC_INLINE                  static inline
 #   endif
 #   ifndef __ALIGNED
-#       define __ALIGNED(__N)                     __attribute__((aligned(__N)))
+#       define __ALIGNED(__N)                   __attribute__((aligned(__N)))
 #   endif
 #   ifndef __WEAK
-#       define __WEAK                             __attribute__((weak))
+#       define __WEAK                           __attribute__((weak))
 #   endif
 #endif
 
 #ifndef GUI_LV_ALIGNOF
 #   if defined(__cplusplus) && (__cplusplus >= 201103L)
-#       define GUI_LV_ALIGNOF(__TYPE)         alignof(__TYPE)
+#       define GUI_LV_ALIGNOF(__TYPE)           alignof(__TYPE)
 #   elif defined(_MSC_VER)
-#       define GUI_LV_ALIGNOF(__TYPE)         __alignof(__TYPE)
+#       define GUI_LV_ALIGNOF(__TYPE)           __alignof(__TYPE)
 #   elif defined(__IAR_SYSTEMS_ICC__)
-#       define GUI_LV_ALIGNOF(__TYPE)         __ALIGNOF__(__TYPE)
+#       define GUI_LV_ALIGNOF(__TYPE)           __ALIGNOF__(__TYPE)
 #   elif defined(__clang__) || defined(__GNUC__)                               \
 		|| defined(__ARMCC_VERSION)
-#       define GUI_LV_ALIGNOF(__TYPE)         __alignof__(__TYPE)
+#       define GUI_LV_ALIGNOF(__TYPE)           __alignof__(__TYPE)
 #   elif defined(__STDC_VERSION__) && (__STDC_VERSION__ >= 201112L)
-#       define GUI_LV_ALIGNOF(__TYPE)         _Alignof(__TYPE)
+#       define GUI_LV_ALIGNOF(__TYPE)           _Alignof(__TYPE)
 #   else
 #       define GUI_LV_ALIGNOF(__TYPE)                                          \
 			(sizeof(struct {                                                   \
@@ -143,22 +159,22 @@ extern "C" {
  *----------------------------------------------------------------------------*/
 #ifndef FALL_THROUGH
 #   if defined(__cplusplus) && (__cplusplus >= 201703L)
-#       define FALL_THROUGH               [[fallthrough]]
+#       define FALL_THROUGH                     [[fallthrough]]
 #   elif defined(__GNUC__) && (__GNUC__ >= 7)
-#       define FALL_THROUGH               __attribute__((fallthrough))
+#       define FALL_THROUGH                     __attribute__((fallthrough))
 #   elif defined(__clang__) && defined(__has_attribute)
 #       if __has_attribute(fallthrough)
-#           define FALL_THROUGH           __attribute__((fallthrough))
+#           define FALL_THROUGH                 __attribute__((fallthrough))
 #       else
-#           define FALL_THROUGH           ((void)0)
+#           define FALL_THROUGH                 ((void)0)
 #       endif
 #   else
-#       define FALL_THROUGH               ((void)0)
+#       define FALL_THROUGH                     ((void)0)
 #   endif
 #endif
 
 #ifndef GUI_LV_WEAK
-#   define GUI_LV_WEAK                        __WEAK
+#   define GUI_LV_WEAK                          __WEAK
 #endif
 
 #ifndef GUI_LV_NONNULL
@@ -166,7 +182,7 @@ extern "C" {
 	|| defined(__IS_COMPILER_ARM_COMPILER_6__)                                 \
 	|| defined(__IS_COMPILER_GCC__)                                            \
 	|| defined(__IS_COMPILER_LLVM__)
-#       define GUI_LV_NONNULL(...)           __attribute__((nonnull(__VA_ARGS__)))
+#       define GUI_LV_NONNULL(...)              __attribute__((nonnull(__VA_ARGS__)))
 #   else
 #       define GUI_LV_NONNULL(...)
 #   endif

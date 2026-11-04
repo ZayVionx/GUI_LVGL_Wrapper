@@ -65,7 +65,9 @@ extern "C" {
 #define GUI_LV_STYLE_BG_MAIN_STOP(v)            .bg_main_stop            = (v), ._mark_bg_main_stop            = 1
 #define GUI_LV_STYLE_BG_GRAD_STOP(v)            .bg_grad_stop            = (v), ._mark_bg_grad_stop            = 1
 #define GUI_LV_STYLE_BG_GRAD(v)                 .bg_grad                 = (v), ._mark_bg_grad                 = 1
+#if defined(__IS_LVGL_VERSION_8__)
 #define GUI_LV_STYLE_BG_DITHER_MODE(v)          .bg_dither_mode          = (v), ._mark_bg_dither_mode          = 1
+#endif
 #define GUI_LV_STYLE_BG_IMG_SRC(v)              .bg_img_src              = (v), ._mark_bg_img_src              = 1
 #define GUI_LV_STYLE_BG_IMG_OPA(v)              .bg_img_opa              = (v), ._mark_bg_img_opa              = 1
 #define GUI_LV_STYLE_BG_IMG_RECOLOR(v)          .bg_img_recolor          = {v}, ._mark_bg_img_recolor          = 1
@@ -122,7 +124,9 @@ extern "C" {
 #define GUI_LV_STYLE_COLOR_FILTER_OPA(v)        .color_filter_opa        = (v), ._mark_color_filter_opa        = 1
 #define GUI_LV_STYLE_ANIM(v)                    .anim                    = (v), ._mark_anim                    = 1
 #define GUI_LV_STYLE_ANIM_TIME(v)               .anim_time               = (v), ._mark_anim_time               = 1
+#if defined(__IS_LVGL_VERSION_8__)
 #define GUI_LV_STYLE_ANIM_SPEED(v)              .anim_speed              = (v), ._mark_anim_speed              = 1
+#endif
 #define GUI_LV_STYLE_TRANSITION(v)              .transition              = (v), ._mark_transition              = 1
 #define GUI_LV_STYLE_BLEND_MODE(v)              .blend_mode              = (v), ._mark_blend_mode              = 1
 
@@ -185,7 +189,9 @@ typedef struct {
     lv_coord_t bg_main_stop;
     lv_coord_t bg_grad_stop;
     const lv_grad_dsc_t *bg_grad;
+#if defined(__IS_LVGL_VERSION_8__)
     lv_dither_mode_t bg_dither_mode;
+#endif
     const void *bg_img_src;
     lv_opa_t bg_img_opa;
     lv_color_t bg_img_recolor;
@@ -260,7 +266,9 @@ typedef struct {
     lv_opa_t color_filter_opa;
     const lv_anim_t *anim;
     uint32_t anim_time;
+#if defined(__IS_LVGL_VERSION_8__)
     uint32_t anim_speed;
+#endif
     const lv_style_transition_dsc_t *transition;
     lv_blend_mode_t blend_mode;
 
@@ -300,7 +308,9 @@ typedef struct {
     uint8_t _mark_bg_main_stop;
     uint8_t _mark_bg_grad_stop;
     uint8_t _mark_bg_grad;
+#if defined(__IS_LVGL_VERSION_8__)
     uint8_t _mark_bg_dither_mode;
+#endif
     uint8_t _mark_bg_img_opa;
     uint8_t _mark_bg_img_recolor;
     uint8_t _mark_bg_img_recolor_opa;
@@ -349,7 +359,9 @@ typedef struct {
     uint8_t _mark_color_filter_opa;
     uint8_t _mark_anim;
     uint8_t _mark_anim_time;
+#if defined(__IS_LVGL_VERSION_8__)
     uint8_t _mark_anim_speed;
+#endif
     uint8_t _mark_transition;
     uint8_t _mark_blend_mode;
 

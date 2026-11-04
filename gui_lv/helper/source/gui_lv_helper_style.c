@@ -116,14 +116,14 @@ void gui_lv_style_init(gui_lv_style_t *ptStyle)
     if (ptCfg->_mark_pad_right) {
         lv_style_set_pad_right(&ptStyle->style, ptCfg->pad_right);
     }
+    if (ptCfg->_mark_pad_gap) {
+        lv_style_set_pad_gap(&ptStyle->style, ptCfg->pad_gap);
+    }
     if (ptCfg->_mark_pad_row) {
         lv_style_set_pad_row(&ptStyle->style, ptCfg->pad_row);
     }
     if (ptCfg->_mark_pad_column) {
         lv_style_set_pad_column(&ptStyle->style, ptCfg->pad_column);
-    }
-    if (ptCfg->_mark_pad_gap) {
-        lv_style_set_pad_gap(&ptStyle->style, ptCfg->pad_gap);
     }
     if (ptCfg->_mark_base_dir) {
         lv_style_set_base_dir(&ptStyle->style, ptCfg->base_dir);
@@ -154,24 +154,38 @@ void gui_lv_style_init(gui_lv_style_t *ptStyle)
     if (ptCfg->_mark_bg_grad) {
         lv_style_set_bg_grad(&ptStyle->style, ptCfg->bg_grad);
     }
+#if defined(__IS_LVGL_VERSION_8__)
     if (ptCfg->_mark_bg_dither_mode) {
         lv_style_set_bg_dither_mode(&ptStyle->style, ptCfg->bg_dither_mode);
     }
+#endif
     if (ptCfg->_mark_bg_img_src) {
         lv_style_set_bg_img_src(&ptStyle->style, ptCfg->bg_img_src);
     }
+#if defined(__IS_LVGL_VERSION_8__)
     if (ptCfg->_mark_bg_img_opa) {
         lv_style_set_bg_img_opa(&ptStyle->style, ptCfg->bg_img_opa);
     }
+#elif defined(__IS_LVGL_VERSION_9__)
+    if (ptCfg->_mark_bg_img_opa) {
+        lv_style_set_bg_image_opa(&ptStyle->style, ptCfg->bg_img_opa);
+    }
+#endif
     if (ptCfg->_mark_bg_img_recolor) {
         lv_style_set_bg_img_recolor(&ptStyle->style, ptCfg->bg_img_recolor);
     }
     if (ptCfg->_mark_bg_img_recolor_opa) {
         lv_style_set_bg_img_recolor_opa(&ptStyle->style, ptCfg->bg_img_recolor_opa);
     }
+#if defined(__IS_LVGL_VERSION_8__)
     if (ptCfg->_mark_bg_img_tiled) {
         lv_style_set_bg_img_tiled(&ptStyle->style, ptCfg->bg_img_tiled);
     }
+#elif defined(__IS_LVGL_VERSION_9__)
+    if (ptCfg->_mark_bg_img_tiled) {
+        lv_style_set_bg_image_tiled(&ptStyle->style, ptCfg->bg_img_tiled);
+    }
+#endif
 
     // 边框
     if (ptCfg->_mark_border_color) {
@@ -291,9 +305,15 @@ void gui_lv_style_init(gui_lv_style_t *ptStyle)
     if (ptCfg->_mark_arc_opa) {
         lv_style_set_arc_opa(&ptStyle->style, ptCfg->arc_opa);
     }
+#if defined(__IS_LVGL_VERSION_8__)
     if (ptCfg->_mark_arc_img_src) {
         lv_style_set_arc_img_src(&ptStyle->style, ptCfg->arc_img_src);
     }
+#elif defined(__IS_LVGL_VERSION_9__)
+    if (ptCfg->_mark_arc_img_src) {
+        lv_style_set_arc_image_src(&ptStyle->style, ptCfg->arc_img_src);
+    }
+#endif
 
     // Common effects
     if (ptCfg->_mark_clip_corner) {
@@ -317,9 +337,11 @@ void gui_lv_style_init(gui_lv_style_t *ptStyle)
     if (ptCfg->_mark_anim_time) {
         lv_style_set_anim_time(&ptStyle->style, ptCfg->anim_time);
     }
+#if defined(__IS_LVGL_VERSION_8__)
     if (ptCfg->_mark_anim_speed) {
         lv_style_set_anim_speed(&ptStyle->style, ptCfg->anim_speed);
     }
+#endif
     if (ptCfg->_mark_transition) {
         lv_style_set_transition(&ptStyle->style, ptCfg->transition);
     }

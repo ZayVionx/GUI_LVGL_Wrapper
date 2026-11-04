@@ -28,43 +28,85 @@ extern "C" {
 #endif
 /*============================ PROTOTYPES ====================================*/
 extern
-lv_obj_t *gui_lv_container_init(lv_obj_t *parent, int16_t x, int16_t y, uint16_t width, uint16_t height, 
-                                        lv_color_t bg_color, bool bIsClearStyle);
+lv_obj_t *gui_lv_container_init(lv_obj_t *parent, 
+                                int16_t x, 
+                                int16_t y, 
+                                uint16_t width, 
+                                uint16_t height, 
+                                lv_color_t bg_color, 
+                                bool bIsClearStyle);
 
 extern
-lv_obj_t *gui_lv_img_init(lv_obj_t *parent, int16_t x, int16_t y, const void *img_scr);                       
+lv_obj_t *gui_lv_img_init(      lv_obj_t *parent, 
+                                int16_t x, 
+                                int16_t y, 
+                                const void *img_scr);                       
 
 extern
-lv_obj_t *gui_lv_label_init(lv_obj_t *parent, int16_t x, int16_t y, const char *text, 
-                                        const lv_font_t *font, lv_color_t color);
+lv_obj_t *gui_lv_label_init(    lv_obj_t *parent, 
+                                int16_t x, 
+                                int16_t y, 
+                                const char *text, 
+                                const lv_font_t *font, 
+                                lv_color_t color);
 
 extern
-lv_obj_t *gui_lv_btn_init(lv_obj_t *parent, int16_t x, int16_t y, uint16_t width, uint16_t height,
-                                        lv_color_t bg_color, bool bIsClearStyle);
+lv_obj_t *gui_lv_btn_init(      lv_obj_t *parent, 
+                                int16_t x, 
+                                int16_t y, 
+                                uint16_t width, 
+                                uint16_t height,
+                                lv_color_t bg_color, 
+                                bool bIsClearStyle);
 
 extern
-lv_obj_t *gui_lv_bar_init(lv_obj_t *parent, int16_t x, int16_t y, uint16_t width, uint16_t height, 
-                                        int32_t min, int32_t max, int32_t value);
+lv_obj_t *gui_lv_bar_init(      lv_obj_t *parent, 
+                                int16_t x, 
+                                int16_t y, 
+                                uint16_t width, 
+                                uint16_t height, 
+                                int32_t min, 
+                                int32_t max, 
+                                int32_t value);
 
 extern
-lv_obj_t *gui_lv_slider_init(lv_obj_t *parent, int16_t x, int16_t y, uint16_t width, uint16_t height, 
-                                        int32_t min, int32_t max, int32_t value);
+lv_obj_t *gui_lv_slider_init(   lv_obj_t *parent, 
+                                int16_t x, 
+                                int16_t y, 
+                                uint16_t width, 
+                                uint16_t height, 
+                                int32_t min, 
+                                int32_t max, 
+                                int32_t value);
 
 #if LV_USE_SPINBOX
 
 extern
-lv_obj_t *gui_lv_spinbox_init(lv_obj_t *parent, int16_t x, int16_t y, uint16_t width, uint16_t height, 
-                                      const lv_font_t *font, bool bIsClearStyle);
+lv_obj_t *gui_lv_spinbox_init(  lv_obj_t *parent, 
+                                int16_t x, 
+                                int16_t y, 
+                                uint16_t width, 
+                                uint16_t height, 
+                                const lv_font_t *font, 
+                                bool bIsClearStyle);
 
 extern
-void gui_lv_spinbox_param_init(lv_obj_t *spinbox, int32_t count, int32_t point, uint32_t step,
-                               int32_t value, int32_t min  , int32_t max  , uint8_t pos);
+void gui_lv_spinbox_param_init( lv_obj_t *spinbox, 
+                                int32_t count, 
+                                int32_t point, 
+                                uint32_t step,
+                                int32_t value, 
+                                int32_t min, 
+                                int32_t max, 
+                                uint8_t pos);
 
 #endif
 
 extern
-lv_timer_t *gui_lv_timer_init(lv_timer_cb_t timer_cb, uint32_t period, void *user_data,
-                                                                    bool BIs_On);
+lv_timer_t *gui_lv_timer_init(  lv_timer_cb_t timer_cb, 
+                                uint32_t period, 
+                                void *user_data,
+                                bool BIs_On);
                                                                     
 /*============================ UTILS =========================================*/
 extern
@@ -74,7 +116,7 @@ extern
 int16_t gui_lv_group_get_focus_index(lv_group_t *ptGroup);
 
 extern
-lv_obj_t *gui_lv_group_get_index_obj(lv_group_t *ptGroup, uint8_t chIdx);
+lv_obj_t *gui_lv_group_get_index_obj(lv_group_t *ptGroup, uint32_t wIndex);
 
 
 /*============================ STATIC INLINE =================================*/

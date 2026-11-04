@@ -263,7 +263,8 @@ void __gui_lv_battery_refresh_display(gui_lv_custom_battery_t *ptBattery)
  */
 static void __gui_lv_battery_timer_cb(lv_timer_t *ptTimer)
 {
-    gui_lv_custom_battery_t *ptBattery = (gui_lv_custom_battery_t *)ptTimer->user_data;
+    gui_lv_custom_battery_t *ptBattery = 
+                (gui_lv_custom_battery_t *)GUI_LV_TIMER_GET_USER_DATA(ptTimer);
 
     /* Step1: Toggle blink visibility */
     ptBattery->tAnim.bBlinkVisible = !ptBattery->tAnim.bBlinkVisible;

@@ -81,21 +81,21 @@ extern "C" {
 
 
 // <h> Input device selection
-    // <q> Enable keypad input device
-    #ifndef __LV_USE_KEYPAD_INDEV__
-    #   define __LV_USE_KEYPAD_INDEV__      1
-    #endif
     // <q> Enable touch input device
     #ifndef __LV_USE_TOUCHPAD_INDEV__
     #   define __LV_USE_TOUCHPAD_INDEV__    0
     #endif
-    // <q> Enable encoder input device
-    #ifndef __LV_USE_ENCODER_INDEV__
-    #   define __LV_USE_ENCODER_INDEV__     0
-    #endif
     // <q> Enable mouse input device
     #ifndef __LV_USE_MOUSE_INDEV__
     #   define __LV_USE_MOUSE_INDEV__       0
+    #endif
+    // <q> Enable keypad input device
+    #ifndef __LV_USE_KEYPAD_INDEV__
+    #   define __LV_USE_KEYPAD_INDEV__      1
+    #endif
+    // <q> Enable encoder input device
+    #ifndef __LV_USE_ENCODER_INDEV__
+    #   define __LV_USE_ENCODER_INDEV__     0
     #endif
     // <q> Enable button input device
     #ifndef __LV_USE_BUTTON_INDEV__
@@ -103,12 +103,12 @@ extern "C" {
     #endif
     // <o> Default scene input device
     //     <0=>LV_INDEV_TOUCHPAD
-    //     <1=>LV_INDEV_KEYPAD
-    //     <2=>LV_INDEV_ENCODER
-    //     <3=>LV_INDEV_MOUSE
+    //     <1=>LV_INDEV_MOUSE
+    //     <2=>LV_INDEV_KEYPAD
+    //     <3=>LV_INDEV_ENCODER
     //     <4=>LV_INDEV_BUTTON
     #ifndef __LV_SCENE_DEFAULT_INDEV__
-    #   define __LV_SCENE_DEFAULT_INDEV__   1
+    #   define __LV_SCENE_DEFAULT_INDEV__   2
     #endif
 // </h>
 

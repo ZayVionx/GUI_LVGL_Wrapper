@@ -90,6 +90,8 @@ extern "C" {
 #define COLOR_HEX(_hex)             lv_color_hex(0x##_hex)
 #define rgb(_r, _g, _b)             lv_color_make(_r, _g, _b)
 
+#if defined(__IS_LVGL_VERSION_8__)
+
 #if LV_COLOR_DEPTH == 1
 	#define RGB(r, g, b)                                            \
 		{.full = ((uint8_t)(((uint16_t)(r) + (uint16_t)(g) + (uint16_t)(b)) / 3 > 128 ? 1 : 0))}
@@ -121,7 +123,13 @@ extern "C" {
 	#error "Unsupported LV_COLOR_DEPTH"
 #endif
 
-#define RGB_TO_COLOR(r, g, b)  ((lv_color_t){.full = RGB(r, g, b)})
+#elif defined(__IS_LVGL_VERSION_9__)
+#   define RGB(r, g, b)         .blue = (b), .green = (g), .red = (r)
+#else
+#   error "Unsupported LVGL version"
+#endif
+
+#define RGB_TO_COLOR(r, g, b)   ((lv_color_t){.full = RGB(r, g, b)})
 
 /*----------------------------------------------------------------------------*
  * Macro Utilities                                                            *
@@ -230,26 +238,45 @@ extern "C" {
 /*----------------------------------------------------------------------------*
  * Timer macro func                                                           *
  *----------------------------------------------------------------------------*/
+#if defined(__IS_LVGL_VERSION_8__)
+#   define GUI_LV_TIMER_SET_USER_DATA(_timer, _data)                           \
+        ((_timer)->user_data = (_data))
+#   define GUI_LV_TIMER_GET_USER_DATA(_timer)                                  \
+        ((_timer)->user_data)
+#   define GUI_LV_TIMER_DELETE(_timer)                                         \
+        lv_timer_del(_timer)
+
+#elif defined(__IS_LVGL_VERSION_9__)
+#   define GUI_LV_TIMER_SET_USER_DATA(_timer, _data)                           \
+        lv_timer_set_user_data((_timer), (_data))
+#   define GUI_LV_TIMER_GET_USER_DATA(_timer)                                  \
+        lv_timer_get_user_data(_timer)
+#   define GUI_LV_TIMER_DELETE(_timer) \
+        lv_timer_delete(_timer)
+#else
+#   error "Unsupported LVGL version"
+#endif
+
 #define GUI_LV_TIMER_SET(_timer, _cb, _period, _user_data)                     \
 	do {                                                                       \
 		if ((_timer) != NULL) {                                                \
-			(_timer)->timer_cb  = (_cb);                                       \
-			(_timer)->period    = (_period);                                   \
-			(_timer)->user_data = (_user_data);                                \
+			lv_timer_set_cb((_timer), (_cb));                                  \
+			lv_timer_set_period((_timer), (_period));                          \
+			GUI_LV_TIMER_SET_USER_DATA((_timer), (_user_data));                \
 		}                                                                      \
 	} while (0)
 
 #define GUI_LV_TIMER_START(_timer)                                             \
 	do {                                                                       \
 		if ((_timer) != NULL) {                                                \
-			(_timer)->paused = false;                                          \
+			lv_timer_resume((_timer));                                         \
 		}                                                                      \
 	} while (0)
 
 #define GUI_LV_TIMER_STOP(_timer)                                              \
 	do {                                                                       \
 		if ((_timer) != NULL) {                                                \
-			(_timer)->paused = true;                                           \
+			lv_timer_pause((_timer));                                          \
 		}                                                                      \
 	} while (0)
 
@@ -257,7 +284,7 @@ extern "C" {
 	do {                                                                       \
 		for (uint8_t i = 0; i < (_number); i++) {                              \
 			if ((_timer)[i] != NULL) {                                         \
-				(_timer)[i]->paused = false;                                   \
+				lv_timer_resume((_timer)[i]);                                  \
 			}                                                                  \
 		}                                                                      \
 	} while (0)
@@ -266,7 +293,7 @@ extern "C" {
 	do {                                                                       \
 		for (uint8_t i = 0; i < (_number); i++) {                              \
 			if ((_timer)[i] != NULL) {                                         \
-				(_timer)[i]->paused = true;                                    \
+				lv_timer_pause((_timer)[i]);                                   \
 			}                                                                  \
 		}                                                                      \
 	} while (0)
@@ -274,8 +301,8 @@ extern "C" {
 #define GUI_LV_TIMER_DESTROY(_timer)                                           \
 	do {                                                                       \
 		if ((_timer) != NULL) {                                                \
-			(_timer)->paused = true;                                           \
-			lv_timer_del((_timer));                                            \
+			lv_timer_pause((_timer));                                          \
+			GUI_LV_TIMER_DELETE((_timer));                                     \
 			(_timer) = NULL;                                                   \
 		}                                                                      \
 	} while (0)
@@ -309,19 +336,35 @@ extern "C" {
 #   define GUI_LV_BIND_ENCODER(_group) ((void)0)
 #endif
 
+#if defined(__IS_LVGL_VERSION_8__)
+#   define GUI_LV_INDEV_GET_GROUP(_indev) ((_indev)->group)
+#elif defined(__IS_LVGL_VERSION_9__)
+#   define GUI_LV_INDEV_GET_GROUP(_indev) (lv_indev_get_group(_indev))
+#else
+#   error "Unsupported LVGL version"
+#endif
+
 #define GUI_LV_GROUP_FOCUS_NEXT(void)                                          \
 	do {                                                                       \
         lv_indev_t *ptIndev = LV_SCENE_GROUP_INDEV;                            \
-        if(ptIndev != NULL && ptIndev->group != NULL) {                        \
-		    lv_group_focus_next(ptIndev->group);                               \
+        lv_group_t *ptGroup = NULL;                                            \
+        if (ptIndev != NULL) {                                                 \
+            ptGroup = GUI_LV_INDEV_GET_GROUP(ptIndev);                         \
+        }                                                                      \
+        if (ptGroup != NULL) {                                                 \
+            lv_group_focus_next(ptGroup);                                      \
         }                                                                      \
 	} while (0)
-    
+
 #define GUI_LV_GROUP_FOCUS_PREV(void)                                          \
 	do {                                                                       \
         lv_indev_t *ptIndev = LV_SCENE_GROUP_INDEV;                            \
-        if(ptIndev != NULL && ptIndev->group != NULL) {                        \
-		    lv_group_focus_prev(ptIndev->group);                               \
+        lv_group_t *ptGroup = NULL;                                            \
+        if (ptIndev != NULL) {                                                 \
+            ptGroup = GUI_LV_INDEV_GET_GROUP(ptIndev);                         \
+        }                                                                      \
+        if (ptGroup != NULL) {                                                 \
+            lv_group_focus_prev(ptGroup);                                      \
         }                                                                      \
 	} while (0)
 
@@ -335,8 +378,12 @@ extern "C" {
 	({                                                                         \
 		lv_obj_t *_ptObj = NULL;                                               \
         lv_indev_t *ptIndev = LV_SCENE_GROUP_INDEV;                            \
-		if(ptIndev != NULL && ptIndev->group != NULL) {                        \
-			_ptObj = lv_group_get_focused(ptIndev->group);                     \
+        lv_group_t *ptGroup = NULL;                                            \
+        if (ptIndev != NULL) {                                                 \
+            ptGroup = GUI_LV_INDEV_GET_GROUP(ptIndev);                         \
+        }                                                                      \
+		if(ptIndev != NULL && ptGroup != NULL) {                               \
+			_ptObj = lv_group_get_focused(ptGroup);                            \
 		}                                                                      \
 		_ptObj;                                                                \
 	})

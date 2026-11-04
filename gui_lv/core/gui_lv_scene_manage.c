@@ -621,6 +621,7 @@ static void __gui_lv_extend_create(gui_lv_extend_t *ptExtend)
     GUI_LV_ASSERT(!(ptExtend->chGroupNum > 0 && ptExtend->ptGroup == NULL));
     GUI_LV_ASSERT(!(ptExtend->chTimerNum > 0 && ptExtend->ptTimer == NULL));
 
+#if defined(__IS_LVGL_VERSION_8__)
     /* Create groups */
     gui_lv_foreach(lv_group_t*, 
                    ptExtend->ptGroup, 
@@ -639,6 +640,22 @@ static void __gui_lv_extend_create(gui_lv_extend_t *ptExtend)
         if(*pptTimer == NULL)   *pptTimer = lv_timer_create(NULL, 500, NULL);
         GUI_LV_TIMER_STOP(*pptTimer);
     }
+#elif defined(__IS_LVGL_VERSION_9__)
+    /* Create groups */
+    for (uint8_t i = 0; i < ptExtend->chGroupNum; i++)
+    {
+        lv_group_t **pptGroup = &ptExtend->ptGroup[i];
+        if (*pptGroup == NULL)  *pptGroup = lv_group_create();
+    }
+
+    /* Create timers */
+    for (uint8_t i = 0; i < ptExtend->chTimerNum; i++)
+    {
+        lv_timer_t **pptTimer = &ptExtend->ptTimer[i];
+        if (*pptTimer == NULL)  *pptTimer = lv_timer_create(NULL, 500, NULL);
+        GUI_LV_TIMER_STOP(*pptTimer);
+    }
+#endif
 }
 
 
@@ -654,6 +671,7 @@ static void __gui_lv_extend_depose(gui_lv_extend_t *ptExtend)
     GUI_LV_ASSERT(!(ptExtend->chGroupNum > 0 && ptExtend->ptGroup == NULL));
     GUI_LV_ASSERT(!(ptExtend->chTimerNum > 0 && ptExtend->ptTimer == NULL));
     
+#if defined(__IS_LVGL_VERSION_8__)
     /* Destroy groups */
     gui_lv_foreach(lv_group_t*, 
                    ptExtend->ptGroup, 
@@ -671,6 +689,21 @@ static void __gui_lv_extend_depose(gui_lv_extend_t *ptExtend)
     {
         if(*pptTimer != NULL)   GUI_LV_TIMER_DESTROY(*pptTimer);
     }
+#elif defined(__IS_LVGL_VERSION_9__)
+    /* Destroy groups */
+    for (uint8_t i = 0; i < ptExtend->chGroupNum; i++)
+    {
+        lv_group_t **pptGroup = &ptExtend->ptGroup[i];
+        if (*pptGroup != NULL)  GUI_LV_GROUP_DESTROY(*pptGroup);
+    }
+
+    /* Destroy timers */
+    for (uint8_t i = 0; i < ptExtend->chTimerNum; i++)
+    {
+        lv_timer_t **pptTimer = &ptExtend->ptTimer[i];
+        if (*pptTimer != NULL)  GUI_LV_TIMER_DESTROY(*pptTimer);
+    }
+#endif
 }
 
 
@@ -704,6 +737,7 @@ static void __gui_lv_focus_save(gui_lv_scene_id_t eId,
 
     gui_lv_scene_cfg_t *ptThis = s_tScenePools[eId].ptCFG;
 
+#if defined(__IS_LVGL_VERSION_8__)
     gui_lv_foreach(lv_group_t*,
                    ptExtend->ptGroup,
                    ptExtend->chGroupNum,
@@ -715,6 +749,16 @@ static void __gui_lv_focus_save(gui_lv_scene_id_t eId,
                                         gui_lv_group_get_focus_index(*pptGroup);
         }
     }
+#elif defined(__IS_LVGL_VERSION_9__)
+    for (uint8_t i = 0; i < ptExtend->chGroupNum; i++)
+    {
+        lv_group_t **pptGroup = &ptExtend->ptGroup[i];
+        if (*pptGroup != NULL)
+        {
+            ptThis->pchFocusIndex[i] = gui_lv_group_get_focus_index(*pptGroup);
+        }
+    }
+#endif
 }
 
 
@@ -732,6 +776,7 @@ static void __gui_lv_focus_restore(gui_lv_scene_id_t eId,
 
     gui_lv_scene_cfg_t *ptThis = s_tScenePools[eId].ptCFG;
 
+#if defined(__IS_LVGL_VERSION_8__)
     gui_lv_foreach(lv_group_t*,
                    ptExtend->ptGroup,
                    ptExtend->chGroupNum,
@@ -745,6 +790,19 @@ static void __gui_lv_focus_restore(gui_lv_scene_id_t eId,
             lv_group_focus_obj(ptFocusObj);
         }
     }
+#elif defined(__IS_LVGL_VERSION_9__)
+    for (uint8_t i = 0; i < ptExtend->chGroupNum; i++)
+    {
+        lv_group_t **pptGroup = &ptExtend->ptGroup[i];
+        if (*pptGroup != NULL && lv_group_get_obj_count(*pptGroup) > 0)
+        {
+            lv_obj_t *ptFocusObj = gui_lv_group_get_index_obj(*pptGroup, 
+                                         ptThis->pchFocusIndex[i]);
+            lv_obj_add_state(ptFocusObj, LV_STATE_FOCUSED);
+            lv_group_focus_obj(ptFocusObj);
+        }
+    }
+#endif
 }
 
 /*============================ END ===========================================*/
