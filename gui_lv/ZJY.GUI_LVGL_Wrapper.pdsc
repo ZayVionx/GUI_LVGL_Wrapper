@@ -176,7 +176,7 @@
                 <file category="header"  attr="config"  version="1.1.0" name="gui_lv_sys_data.h"/>
                 <file category="header"  attr="config"  version="1.1.0" name="gui_lv_scene_id.h"/>
                 <file category="header"  attr="config"  version="1.0.0" name="gui_lv_custom_components.h"/>
-                <file category="header"  attr="config"  version="1.0.0" name="platform/gui_lv_user_arch_port.h"/>
+                <file category="header"  attr="config"  version="2.0.0" name="platform/gui_lv_user_arch_port.h"/>
 
                 <!-- ================== Framework sources ================== -->
                 <file category="sourceC" attr="config" version="1.1.0" name="gui_lvgl.c"/>
@@ -196,7 +196,7 @@
 
 
         <component Cclass="GUI_LVGL_Wrapper"  Cgroup="Scene"
-                   Cversion="1.2.0"           condition="GUI_Scene" maxInstances="20">
+                   Cversion="1.2.0"           condition="GUI_Scene" maxInstances="21">
             <description>
                 GUI scene wrapper instance template.
 
@@ -255,11 +255,11 @@
 
             <files>
                 <!-- ======== Framework headers (read-only) ================ -->
-                <file category="header"  version="1.0.0" name="Libraries/include/__gui_lv_lib.h"/>
-                <file category="header"  version="1.0.0" name="Libraries/include/gui_lv_page_cursor.h"/>
+                <file category="header"  version="1.0.0" name="libraries/include/__gui_lv_lib.h"/>
+                <file category="header"  version="1.0.0" name="libraries/include/gui_lv_page_cursor.h"/>
 
                 <!-- ======== Framework sources (read-only) ================ -->
-                <file category="sourceC" version="1.0.0" name="Libraries/source/gui_lv_page_cursor.c"/>
+                <file category="sourceC" version="1.0.0" name="libraries/source/gui_lv_page_cursor.c"/>
 
             </files>
             
