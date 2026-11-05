@@ -76,14 +76,14 @@ static void gui_sys_data_init(void)
 	gui_lv_beep_level_t   volume = GUI_LV_BEEP_LEVEL_1;     //!< Need to replace with actual data and remove this comment
 
     /* Set device information */
-    uint8_t  u8HW_Ver  = 10;                                //!< Need to replace with actual data and remove this comment
-    uint8_t  u8SW_Ver  = 10;                                //!< Need to replace with actual data and remove this comment
-    uint32_t u32SN_Ver = 1234567890;                        //!< Need to replace with actual data and remove this comment
+    uint8_t  chHW_Ver = 10;                                 //!< Need to replace with actual data and remove this comment
+    uint8_t  chSW_Ver = 10;                                 //!< Need to replace with actual data and remove this comment
+    uint32_t wSN_Ver  = 1234567890;                         //!< Need to replace with actual data and remove this comment
     
     gui_lv_set_lang            ((gui_lv_language_t)   language);
     gui_lv_set_startup_scene_id((gui_lv_scene_id_t)   startup );
     gui_lv_set_beep_level      ((gui_lv_beep_level_t) volume  );
-    gui_lv_set_device_info     ("NAME", u32SN_Ver, u8SW_Ver, u8HW_Ver);
+    gui_lv_set_device_info     ("NAME", wSN_Ver, chHW_Ver, chSW_Ver);
 
     gui_lv_data_init(&tUiDataCfg);
 #else

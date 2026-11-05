@@ -64,7 +64,7 @@ typedef enum {
  */
 typedef struct {
     const char *pchName;            //!< Device name
-    uint32_t    u32SN;              //!< Device serial number
+    uint32_t    wSN;                //!< Device serial number
     uint8_t     chHardWare_Ver;     //!< Device hardware version
     uint8_t     chSoftWare_Ver;     //!< Device software version
 } gui_lv_device_info_t;
@@ -107,7 +107,7 @@ bool gui_lv_set_beep_level(gui_lv_beep_level_t eLevel);
  * @brief   Set device information. 
  * 
  * @param[in] pchName Device name string (null-terminated). 
- * @param[in] u32SN Device serial number.   
+ * @param[in] wSN Device serial number.   
  * @param[in] chHardWare_Ver Device hardware version.
  * @param[in] chSoftWare_Ver Device software version.
  * 
@@ -116,7 +116,7 @@ bool gui_lv_set_beep_level(gui_lv_beep_level_t eLevel);
  */
 extern
 bool gui_lv_set_device_info( const char *pchName, 
-                             uint32_t u32SN, 
+                             uint32_t wSN, 
                              uint8_t chHardWare_Ver, 
                              uint8_t chSoftWare_Ver );
                              

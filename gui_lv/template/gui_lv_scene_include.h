@@ -38,7 +38,7 @@ extern "C" {
  *   __GUI_LV_ALL_SCENE_INIT() is always safe to call.
  */
 
-/* Declare all possible instance init symbols (maxInstances = 20). */
+/* Declare all possible instance init symbols (maxInstances = 21). */
 
 /* Per-instance init macros (enabled by __RTE_Acceleration_GUI_LVGL_SceneN__). */
 #ifdef __RTE_Acceleration_GUI_LVGL_Scene0__
