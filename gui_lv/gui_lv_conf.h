@@ -53,7 +53,7 @@ extern "C" {
     // <o> Display buffer size in pixels 
 	// <1-273373156>
     #ifndef __BUF_PX_SIZE__
-    #   define __BUF_PX_SIZE__              19200
+    #   define __BUF_PX_SIZE__              (MY_DISP_HOR_RES * MY_DISP_VER_RES / 10)
     #endif
 
     // <o> Buffering mode
@@ -61,7 +61,7 @@ extern "C" {
     //     <1=>Two buffer
     //     <2=>Double buffer
     #ifndef __LV_DISP_USE_BUFFER__
-    #   define __LV_DISP_USE_BUFFER__       1
+    #   define __LV_DISP_USE_BUFFER__       0
     #endif
 
     // <o> Is DMA used for display flushing?
