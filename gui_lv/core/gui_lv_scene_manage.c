@@ -575,6 +575,19 @@ static void __gui_lv_scene_list_push_stack(gui_lv_scene_id_t         eTargetId,
                                    : emb_list_add_tail (ptNode, &s_tSceneHead);
     }
     
+#if defined(__IS_LVGL_VERSION_9__)
+    if (eAnimMode.eLoadAnim == LV_SCR_LOAD_ANIM_NONE &&
+        eAnimMode.u32AnimTime == 0 &&
+        eAnimMode.u32AnimDelay == 0)
+    {
+        lv_obj_t *ptOldRoot = lv_screen_active();
+        if (ptOldRoot != NULL)
+        {
+            lv_obj_clean(ptOldRoot);
+        }
+    }
+#endif
+
     /* [ 3.2 ]  Create Root and Extend */
     ptRoot = __gui_lv_create_container_root();
     s_tScenePools[eTargetId].ptRoot = ptRoot;
@@ -592,7 +605,28 @@ static void __gui_lv_scene_list_push_stack(gui_lv_scene_id_t         eTargetId,
     uint32_t           u32AnimTime  = eAnimMode.u32AnimTime ;         
     uint32_t           u32AnimDelay = eAnimMode.u32AnimDelay;
     lv_scr_load_anim_t eLoadAnim    = eAnimMode.eLoadAnim   ;
-    lv_scr_load_anim(ptRoot, eLoadAnim, u32AnimTime, u32AnimDelay, true);
+
+#if defined(__IS_LVGL_VERSION_9__)
+    lv_display_t *ptDisp = lv_obj_get_display(ptRoot);
+
+    if (u32AnimTime == 0 && u32AnimDelay == 0 &&
+        lv_display_get_screen_loading(ptDisp) == NULL)
+    {
+        lv_obj_t *ptOldRoot = lv_display_get_screen_active(ptDisp);
+
+        lv_scr_load_anim(ptRoot, eLoadAnim, 0, 0, false);
+
+        if (ptOldRoot != NULL && ptOldRoot != ptRoot &&
+            lv_display_get_screen_active(ptDisp) == ptRoot)
+        {
+            lv_obj_delete_async(ptOldRoot);
+        }
+    }
+    else
+#endif
+    {
+        lv_scr_load_anim(ptRoot, eLoadAnim, u32AnimTime, u32AnimDelay, true);
+    }
 
     /* -----------------------------------------------------------------------
      * [STEP 5] BIND INPUT DEVICE TO SCENE
