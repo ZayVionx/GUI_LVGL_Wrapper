@@ -316,7 +316,7 @@ extern "C" {
 #if defined(_WIN64) || __LV_USE_KEYPAD_INDEV__
 #   define GUI_LV_BIND_KEYPAD(_group)                              \
         do {                                                       \
-            if(LV_INDEV_KEYPAD != NULL)                            \
+            if (LV_INDEV_KEYPAD != NULL)                           \
                 lv_indev_set_group(LV_INDEV_KEYPAD, (_group));     \
         } while(0)
 #else
@@ -329,7 +329,7 @@ extern "C" {
 #if defined(_WIN64) || __LV_USE_ENCODER_INDEV__
 #   define GUI_LV_BIND_ENCODER(_group)                             \
         do {                                                       \
-            if(LV_INDEV_ENCODER != NULL)                           \
+            if (LV_INDEV_ENCODER != NULL)                          \
                 lv_indev_set_group(LV_INDEV_ENCODER, (_group));    \
         } while(0)
 #else
@@ -382,7 +382,7 @@ extern "C" {
         if (ptIndev != NULL) {                                                 \
             ptGroup = GUI_LV_INDEV_GET_GROUP(ptIndev);                         \
         }                                                                      \
-		if(ptIndev != NULL && ptGroup != NULL) {                               \
+		if (ptIndev != NULL && ptGroup != NULL) {                              \
 			_ptObj = lv_group_get_focused(ptGroup);                            \
 		}                                                                      \
 		_ptObj;                                                                \

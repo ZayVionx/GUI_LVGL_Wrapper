@@ -53,18 +53,17 @@ extern "C" {
 /*============================ MACROFIED FUNCTIONS ===========================*/
 /*============================ TYPES =========================================*/
 typedef enum {
-    GUI_LV_MODE_NAVIGATE,
-    GUI_LV_MODE_EDIT    ,
-    
-    GUI_LV_MODE_MAX
+    GUI_LV_MODE_NAVIGATE = 0,
+    GUI_LV_MODE_EDIT     = 1,
+    GUI_LV_MODE_MAX,
 } gui_lv_mode_e;
 
 /**
  * @brief Switch screen with animation
  */
 typedef const struct {
-    uint32_t           u32AnimTime;         //!< time of the animation   
-    uint32_t           u32AnimDelay;        //!< delay before the transition
+    uint32_t           wAnimTime;           //!< time of the animation   
+    uint32_t           wAnimDelay;          //!< delay before the transition
     lv_scr_load_anim_t eLoadAnim;           //!< type of the animation (see lv_scr_load_anim_t)
 } gui_lv_switch_anim_mode_t;
 

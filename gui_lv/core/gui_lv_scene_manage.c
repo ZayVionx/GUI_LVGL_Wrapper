@@ -72,79 +72,79 @@ typedef struct {
 
 /*============================ GLOBAL VARIABLES ==============================*/
 gui_lv_switch_anim_mode_t GUI_LV_SWITCH_MODE_NONE        = {
-    .u32AnimTime  = 0,
-    .u32AnimDelay = 0,
-    .eLoadAnim    = LV_SCR_LOAD_ANIM_NONE,
+    .wAnimTime  = 0,
+    .wAnimDelay = 0,
+    .eLoadAnim  = LV_SCR_LOAD_ANIM_NONE,
 };
 gui_lv_switch_anim_mode_t GUI_LV_SWITCH_MODE_OVER_LEFT   = {
-    .u32AnimTime  = 200,
-    .u32AnimDelay = 0,
-    .eLoadAnim    = LV_SCR_LOAD_ANIM_OVER_LEFT,
+    .wAnimTime  = 200,
+    .wAnimDelay = 0,
+    .eLoadAnim  = LV_SCR_LOAD_ANIM_OVER_LEFT,
 };
 gui_lv_switch_anim_mode_t GUI_LV_SWITCH_MODE_OVER_RIGHT  = {
-    .u32AnimTime  = 200,
-    .u32AnimDelay = 0,
-    .eLoadAnim    = LV_SCR_LOAD_ANIM_OVER_RIGHT,
+    .wAnimTime  = 200,
+    .wAnimDelay = 0,
+    .eLoadAnim  = LV_SCR_LOAD_ANIM_OVER_RIGHT,
 };
 gui_lv_switch_anim_mode_t GUI_LV_SWITCH_MODE_OVER_TOP    = {
-    .u32AnimTime  = 200,
-    .u32AnimDelay = 0,
-    .eLoadAnim    = LV_SCR_LOAD_ANIM_OVER_TOP,
+    .wAnimTime  = 200,
+    .wAnimDelay = 0,
+    .eLoadAnim  = LV_SCR_LOAD_ANIM_OVER_TOP,
 };
 gui_lv_switch_anim_mode_t GUI_LV_SWITCH_MODE_OVER_BOTTOM = {
-    .u32AnimTime  = 200,
-    .u32AnimDelay = 0,
-    .eLoadAnim    = LV_SCR_LOAD_ANIM_OVER_BOTTOM,
+    .wAnimTime  = 200,
+    .wAnimDelay = 0,
+    .eLoadAnim  = LV_SCR_LOAD_ANIM_OVER_BOTTOM,
 };
 gui_lv_switch_anim_mode_t GUI_LV_SWITCH_MODE_MOVE_LEFT   = {
-    .u32AnimTime  = 200,
-    .u32AnimDelay = 0,
-    .eLoadAnim    = LV_SCR_LOAD_ANIM_MOVE_LEFT,
+    .wAnimTime  = 200,
+    .wAnimDelay = 0,
+    .eLoadAnim  = LV_SCR_LOAD_ANIM_MOVE_LEFT,
 };
 gui_lv_switch_anim_mode_t GUI_LV_SWITCH_MODE_MOVE_RIGHT  = {
-    .u32AnimTime  = 200,
-    .u32AnimDelay = 0,
-    .eLoadAnim    = LV_SCR_LOAD_ANIM_MOVE_RIGHT,
+    .wAnimTime  = 200,
+    .wAnimDelay = 0,
+    .eLoadAnim  = LV_SCR_LOAD_ANIM_MOVE_RIGHT,
 };
 gui_lv_switch_anim_mode_t GUI_LV_SWITCH_MODE_MOVE_TOP    = {
-    .u32AnimTime  = 200,
-    .u32AnimDelay = 0,
-    .eLoadAnim    = LV_SCR_LOAD_ANIM_MOVE_TOP,
+    .wAnimTime  = 200,
+    .wAnimDelay = 0,
+    .eLoadAnim  = LV_SCR_LOAD_ANIM_MOVE_TOP,
 };
 gui_lv_switch_anim_mode_t GUI_LV_SWITCH_MODE_MOVE_BOTTOM = {
-    .u32AnimTime  = 200,
-    .u32AnimDelay = 0,
-    .eLoadAnim    = LV_SCR_LOAD_ANIM_MOVE_BOTTOM,
+    .wAnimTime  = 200,
+    .wAnimDelay = 0,
+    .eLoadAnim  = LV_SCR_LOAD_ANIM_MOVE_BOTTOM,
 };
 gui_lv_switch_anim_mode_t GUI_LV_SWITCH_MODE_FADE_IN     = {
-    .u32AnimTime  = 150,
-    .u32AnimDelay = 0,
-    .eLoadAnim    = LV_SCR_LOAD_ANIM_FADE_IN,
+    .wAnimTime  = 150,
+    .wAnimDelay = 0,
+    .eLoadAnim  = LV_SCR_LOAD_ANIM_FADE_IN,
 };
 gui_lv_switch_anim_mode_t GUI_LV_SWITCH_MODE_FADE_OUT    = {
-    .u32AnimTime  = 150,
-    .u32AnimDelay = 0,
-    .eLoadAnim    = LV_SCR_LOAD_ANIM_FADE_OUT,
+    .wAnimTime  = 150,
+    .wAnimDelay = 0,
+    .eLoadAnim  = LV_SCR_LOAD_ANIM_FADE_OUT,
 };
 gui_lv_switch_anim_mode_t GUI_LV_SWITCH_MODE_OUT_LEFT    = {
-    .u32AnimTime  = 180,
-    .u32AnimDelay = 0,
-    .eLoadAnim    = LV_SCR_LOAD_ANIM_OUT_LEFT,
+    .wAnimTime  = 180,
+    .wAnimDelay = 0,
+    .eLoadAnim  = LV_SCR_LOAD_ANIM_OUT_LEFT,
 };
 gui_lv_switch_anim_mode_t GUI_LV_SWITCH_MODE_OUT_RIGHT   = {
-    .u32AnimTime  = 180,
-    .u32AnimDelay = 0,
-    .eLoadAnim    = LV_SCR_LOAD_ANIM_OUT_RIGHT,
+    .wAnimTime  = 180,
+    .wAnimDelay = 0,
+    .eLoadAnim  = LV_SCR_LOAD_ANIM_OUT_RIGHT,
 };
 gui_lv_switch_anim_mode_t GUI_LV_SWITCH_MODE_OUT_TOP     = {
-    .u32AnimTime  = 180,
-    .u32AnimDelay = 0,
-    .eLoadAnim    = LV_SCR_LOAD_ANIM_OUT_TOP,
+    .wAnimTime  = 180,
+    .wAnimDelay = 0,
+    .eLoadAnim  = LV_SCR_LOAD_ANIM_OUT_TOP,
 };
 gui_lv_switch_anim_mode_t GUI_LV_SWITCH_MODE_OUT_BOTTOM  = {
-    .u32AnimTime  = 180,
-    .u32AnimDelay = 0,
-    .eLoadAnim    = LV_SCR_LOAD_ANIM_OUT_BOTTOM,
+    .wAnimTime  = 180,
+    .wAnimDelay = 0,
+    .eLoadAnim  = LV_SCR_LOAD_ANIM_OUT_BOTTOM,
 };
 
 /*============================ LOCAL VARIABLES ===============================*/
@@ -483,6 +483,23 @@ static void __gui_lv_scene_list_pop_stack(gui_lv_switch_anim_mode_t eAnimMode)
 
     } while(0);
 
+
+    /*
+     * For transitions without animation or delay, delete all children of the
+     * active screen before creating the new scene to reduce peak memory usage.
+     * Keep the screen root for the subsequent screen-switching process.
+     */
+    if (eAnimMode.wAnimTime == 0 &&
+        eAnimMode.wAnimDelay == 0 &&
+        eAnimMode.eLoadAnim == LV_SCR_LOAD_ANIM_NONE) {
+#if defined(__IS_LVGL_VERSION_8__)
+        lv_obj_t *ptOldRoot = lv_scr_act();
+#elif defined(__IS_LVGL_VERSION_9__)
+        lv_obj_t *ptOldRoot = lv_screen_active();
+#endif
+        if (ptOldRoot != NULL)  lv_obj_clean(ptOldRoot);
+    }
+
     /* -----------------------------------------------------------------------
      * [STEP 2] PREVIOUS SCENE SETUP
      * -----------------------------------------------------------------------*/
@@ -503,10 +520,36 @@ static void __gui_lv_scene_list_pop_stack(gui_lv_switch_anim_mode_t eAnimMode)
     /* -----------------------------------------------------------------------
      * [STEP 3] LOAD SCENE WITH ANIMATION
      * -----------------------------------------------------------------------*/
-    uint32_t           u32AnimTime  = eAnimMode.u32AnimTime ;         
-    uint32_t           u32AnimDelay = eAnimMode.u32AnimDelay;
-    lv_scr_load_anim_t eLoadAnim    = eAnimMode.eLoadAnim   ;
-    lv_scr_load_anim(ptRoot, eLoadAnim, u32AnimTime, u32AnimDelay, true);
+    uint32_t           wAnimTime  = eAnimMode.wAnimTime ;         
+    uint32_t           wAnimDelay = eAnimMode.wAnimDelay;
+    lv_scr_load_anim_t eLoadAnim  = eAnimMode.eLoadAnim ;
+    
+#if defined(__IS_LVGL_VERSION_9__)
+    /*
+     * Prevent invalid event-list cleanup when switching scenes from an event
+     * callback. Keep the old screen root alive until the current event dispatch
+     * finishes cleaning up LVGL's temporary screen event handlers.
+     */
+    lv_display_t *ptDisp = lv_obj_get_display(ptRoot);
+
+    if (wAnimTime == 0 &&
+        wAnimDelay == 0 &&
+        lv_display_get_screen_loading(ptDisp) == NULL) {
+        lv_obj_t *ptOldRoot = lv_display_get_screen_active(ptDisp);
+
+        lv_scr_load_anim(ptRoot, eLoadAnim, 0, 0, false);
+
+        if (ptOldRoot != NULL &&
+            ptOldRoot != ptRoot &&
+            lv_display_get_screen_active(ptDisp) == ptRoot) {
+            lv_obj_delete_async(ptOldRoot);
+        }
+    }
+    else
+#endif
+    {
+        lv_scr_load_anim(ptRoot, eLoadAnim, wAnimTime, wAnimDelay, true);
+    }
 
     /* -----------------------------------------------------------------------
      * [STEP 4] BIND INPUT DEVICE TO SCENE
@@ -561,6 +604,22 @@ static void __gui_lv_scene_list_push_stack(gui_lv_scene_id_t         eTargetId,
         emb_list_del(&ptCFG->tSceneNode);
     }
 
+    /*
+     * For transitions without animation or delay, delete all children of the
+     * active screen before creating the new scene to reduce peak memory usage.
+     * Keep the screen root for the subsequent screen-switching process.
+     */
+    if (eAnimMode.wAnimTime == 0 &&
+        eAnimMode.wAnimDelay == 0 &&
+        eAnimMode.eLoadAnim == LV_SCR_LOAD_ANIM_NONE) {
+#if defined(__IS_LVGL_VERSION_8__)
+        lv_obj_t *ptOldRoot = lv_scr_act();
+#elif defined(__IS_LVGL_VERSION_9__)
+        lv_obj_t *ptOldRoot = lv_screen_active();
+#endif
+        if (ptOldRoot != NULL)  lv_obj_clean(ptOldRoot);
+    }
+
     /* -----------------------------------------------------------------------
      * [STEP 3] SCENE SETUP
      * -----------------------------------------------------------------------*/
@@ -575,19 +634,6 @@ static void __gui_lv_scene_list_push_stack(gui_lv_scene_id_t         eTargetId,
                                    : emb_list_add_tail (ptNode, &s_tSceneHead);
     }
     
-#if defined(__IS_LVGL_VERSION_9__)
-    if (eAnimMode.eLoadAnim == LV_SCR_LOAD_ANIM_NONE &&
-        eAnimMode.u32AnimTime == 0 &&
-        eAnimMode.u32AnimDelay == 0)
-    {
-        lv_obj_t *ptOldRoot = lv_screen_active();
-        if (ptOldRoot != NULL)
-        {
-            lv_obj_clean(ptOldRoot);
-        }
-    }
-#endif
-
     /* [ 3.2 ]  Create Root and Extend */
     ptRoot = __gui_lv_create_container_root();
     s_tScenePools[eTargetId].ptRoot = ptRoot;
@@ -602,30 +648,35 @@ static void __gui_lv_scene_list_push_stack(gui_lv_scene_id_t         eTargetId,
     /* -----------------------------------------------------------------------
      * [STEP 4] LOAD SCENE WITH ANIMATION
      * -----------------------------------------------------------------------*/
-    uint32_t           u32AnimTime  = eAnimMode.u32AnimTime ;         
-    uint32_t           u32AnimDelay = eAnimMode.u32AnimDelay;
-    lv_scr_load_anim_t eLoadAnim    = eAnimMode.eLoadAnim   ;
+    uint32_t           wAnimTime  = eAnimMode.wAnimTime ;         
+    uint32_t           wAnimDelay = eAnimMode.wAnimDelay;
+    lv_scr_load_anim_t eLoadAnim  = eAnimMode.eLoadAnim ;
 
 #if defined(__IS_LVGL_VERSION_9__)
+    /*
+     * Prevent invalid event-list cleanup when switching scenes from an event
+     * callback. Keep the old screen root alive until the current event dispatch
+     * finishes cleaning up LVGL's temporary screen event handlers.
+     */
     lv_display_t *ptDisp = lv_obj_get_display(ptRoot);
 
-    if (u32AnimTime == 0 && u32AnimDelay == 0 &&
-        lv_display_get_screen_loading(ptDisp) == NULL)
-    {
+    if (wAnimTime == 0 &&
+        wAnimDelay == 0 &&
+        lv_display_get_screen_loading(ptDisp) == NULL) {
         lv_obj_t *ptOldRoot = lv_display_get_screen_active(ptDisp);
 
         lv_scr_load_anim(ptRoot, eLoadAnim, 0, 0, false);
 
-        if (ptOldRoot != NULL && ptOldRoot != ptRoot &&
-            lv_display_get_screen_active(ptDisp) == ptRoot)
-        {
+        if (ptOldRoot != NULL &&
+            ptOldRoot != ptRoot &&
+            lv_display_get_screen_active(ptDisp) == ptRoot) {
             lv_obj_delete_async(ptOldRoot);
         }
     }
     else
 #endif
     {
-        lv_scr_load_anim(ptRoot, eLoadAnim, u32AnimTime, u32AnimDelay, true);
+        lv_scr_load_anim(ptRoot, eLoadAnim, wAnimTime, wAnimDelay, true);
     }
 
     /* -----------------------------------------------------------------------
@@ -660,7 +711,7 @@ static void __gui_lv_extend_create(gui_lv_extend_t *ptExtend)
     gui_lv_foreach(lv_group_t*, 
                    ptExtend->ptGroup, 
                    ptExtend->chGroupNum, 
-                   pptGroup) 
+                   pptGroup)
     {
         if(*pptGroup == NULL)   *pptGroup = lv_group_create();
     }
@@ -669,7 +720,7 @@ static void __gui_lv_extend_create(gui_lv_extend_t *ptExtend)
     gui_lv_foreach(lv_timer_t*, 
                    ptExtend->ptTimer, 
                    ptExtend->chTimerNum, 
-                   pptTimer) 
+                   pptTimer)
     {
         if(*pptTimer == NULL)   *pptTimer = lv_timer_create(NULL, 500, NULL);
         GUI_LV_TIMER_STOP(*pptTimer);
@@ -816,7 +867,7 @@ static void __gui_lv_focus_restore(gui_lv_scene_id_t eId,
                    ptExtend->chGroupNum,
                    pptGroup)
     {
-        if(*pptGroup != NULL && lv_group_get_obj_count(*pptGroup) > 0)
+        if (*pptGroup != NULL && lv_group_get_obj_count(*pptGroup) > 0) 
         {
             lv_obj_t *ptFocusObj = gui_lv_group_get_index_obj(*pptGroup, 
                                          ptThis->pchFocusIndex[pptGroup - ptExtend->ptGroup]);
