@@ -7,11 +7,11 @@
     <vendor>ZJY</vendor>
     <name>GUI_LVGL_Wrapper</name>
     <description>
-        GUI LVGL Wrapper: scene management and UI framework for LVGL 8.x.
-        This pack depends on an external LVGL 8.x Lib.
+        GUI LVGL Wrapper: scene management and UI framework for LVGL 8.x or LVGL 9.x.
+        This pack depends on an external LVGL 8.x or LVGL 9.x Lib.
     </description>
-    <url>https://github.com/ZJY-Nerd/GUI_LVGL_Wrapper/</url>
-    <supportContact>3102196558@qq.com</supportContact>
+    <url>https://github.com/ZayVionx/GUI_LVGL_Wrapper/</url>
+    <supportContact>zhujinyuan818@gmail.com</supportContact>
     <license>LICENSE</license>
 
     <!-- ================================================================== -->
@@ -27,8 +27,16 @@
     <!--  Release History                                                   -->
     <!-- ================================================================== -->
     <releases>
-        <release version="2.0.0" date="2026-11-2">
+        <release version="2.0.0" date="2026-11-27">
             Revision v2.0.0
+            - Add LVGL 9.x compatibility alongside existing LVGL 8.x support.
+            - Fix memory leak and reduce memory fragmentation when switching scenes from within an event callback.
+            - Increase maximum scene instances from 20 to 21.
+            - Fix default display buffer size calculation and buffering mode in gui_lv_conf.h.
+            - Fix CMSIS-Pack component file paths (Libraries -> libraries) and bump config file versions.
+            - BREAKING: Rename u32-prefixed fields/parameters to the w-prefix convention (gui_lv_switch_anim_mode_t: u32AnimTime/u32AnimDelay -> wAnimTime/wAnimDelay; gui_lv_device_info_t/gui_lv_set_device_info: u32SN -> wSN).
+            - Migration: Update field/parameter references to the renamed w-prefixed members.
+            - Update setup documentation (README).
         </release>
 
         <release version="1.3.1" date="2026-10-30">
@@ -97,29 +105,29 @@
     <!--  Components                                                        -->
     <!-- ================================================================== -->
     <components>
-         <component Cclass="GUI_LVGL_Wrapper" Cgroup="Core" Cversion="1.1.0">
+         <component Cclass="GUI_LVGL_Wrapper" Cgroup="Core" Cversion="2.0.0">
             <description>
                 LVGL GUI Wrapper core framework with minimal .
             </description>
 
             <files>
                 <!-- ======== Framework headers (read-only) ================ -->
-                <file category="header"  name="gui_lv_utils.h"/>
+                <file category="header"  version="2.0.0" name="gui_lv_utils.h"/>
 
                 <!-- ======== Framework headers (read-only) ================ -->
-                <file category="header"  name="core/gui_lv_common.h"/>
-                <file category="header"  name="core/gui_lv_scene_manage.h"/>
-                <file category="header"  name="core/_internal/emb_list.h"/>
+                <file category="header"  version="2.0.0" name="core/gui_lv_common.h"/>
+                <file category="header"  version="2.0.0" name="core/gui_lv_scene_manage.h"/>
+                <file category="header"  version="1.2.0" name="core/_internal/emb_list.h"/>
 
                 <!-- ======== Framework sources (read-only) ================ -->
-                <file category="sourceC" name="core/gui_lv_common.c"/>
-                <file category="sourceC" name="core/gui_lv_scene_manage.c"/>
+                <file category="sourceC" version="2.0.0" name="core/gui_lv_common.c"/>
+                <file category="sourceC" version="2.0.0" name="core/gui_lv_scene_manage.c"/>
 
                 <!-- the template for scenes -->
-                <file category="sourceC" attr="template" version="1.2.0" select="User Scene Template"      name="template/gui_lv_scene_template.c"/>
-                <file category="header"  attr="template" version="1.2.0" select="User Scene Template"      name="template/gui_lv_scene_template.h"/>
-                <file category="sourceC" attr="template" version="1.2.0" select="User Scene Task Template" name="template/gui_lv_scene_task_template.c"/>
-                <file category="header"  attr="template" version="1.2.0" select="User Scene Task Template" name="template/gui_lv_scene_task_template.h"/>
+                <file category="sourceC" attr="template" version="1.3.1" select="User Scene Template"      name="template/gui_lv_scene_template.c"/>
+                <file category="header"  attr="template" version="1.3.1" select="User Scene Template"      name="template/gui_lv_scene_template.h"/>
+                <file category="sourceC" attr="template" version="1.3.1" select="User Scene Task Template" name="template/gui_lv_scene_task_template.c"/>
+                <file category="header"  attr="template" version="1.3.1" select="User Scene Task Template" name="template/gui_lv_scene_task_template.h"/>
             </files>
             <Pre_Include_Global_h>
 #define __GUI_LVGL_WRAPPER__        1
@@ -134,25 +142,25 @@
 
 
         <component Cclass="GUI_LVGL_Wrapper"  Cgroup="Helper"
-                   Cversion="1.1.0"           condition="GUI_Helper">
+                   Cversion="1.3.1"           condition="GUI_Helper">
             <description>
                 LVGL GUI Wrapper user helper functions and styles.
             </description>
 
             <files>
                 <!-- ======== Framework headers (read-only) ================ -->
-                <file category="header"  name="helper/include/gui_lv_helper.h"/>
-                <file category="header"  name="helper/include/gui_lv_helper_style.h"/>
-                <file category="header"  name="helper/include/gui_lv_helper_data.h"/>
-                <file category="header"  name="helper/include/gui_lv_helper_input.h"/>
-                <file category="header"  name="helper/include/gui_lv_helper_bind.h"/>
+                <file category="header"  version="1.3.1" name="helper/include/gui_lv_helper.h"/>
+                <file category="header"  version="1.3.1" name="helper/include/gui_lv_helper_style.h"/>
+                <file category="header"  version="1.3.1" name="helper/include/gui_lv_helper_data.h"/>
+                <file category="header"  version="1.3.1" name="helper/include/gui_lv_helper_input.h"/>
+                <file category="header"  version="1.3.1" name="helper/include/gui_lv_helper_bind.h"/>
 
                 <!-- ======== Framework sources (read-only) ================ -->
-                <file category="sourceC" name="helper/source/gui_lv_helper.c"/>
-                <file category="sourceC" name="helper/source/gui_lv_helper_style.c"/>
-                <file category="sourceC" name="helper/source/gui_lv_helper_data.c"/>
-                <file category="sourceC" name="helper/source/gui_lv_helper_input.c"/>
-                <file category="sourceC" name="helper/source/gui_lv_helper_bind.c"/>
+                <file category="sourceC" version="1.3.1" name="helper/source/gui_lv_helper.c"/>
+                <file category="sourceC" version="1.3.1" name="helper/source/gui_lv_helper_style.c"/>
+                <file category="sourceC" version="1.3.1" name="helper/source/gui_lv_helper_data.c"/>
+                <file category="sourceC" version="1.3.1" name="helper/source/gui_lv_helper_input.c"/>
+                <file category="sourceC" version="1.3.1" name="helper/source/gui_lv_helper_bind.c"/>
                 
             </files>
             <!-- Inject RTE_Components_h macro so code can detect the pack -->
@@ -163,25 +171,25 @@
 
 
         <component Cclass="GUI_LVGL_Wrapper"  Cgroup="User"
-                   Cversion="1.1.0"           condition="GUI_User">
+                   Cversion="2.0.0"           condition="GUI_User">
             <description>
                 LVGL GUI Wrapper user code templates and examples.
             </description>
 
             <files>
                 <!-- ================== Framework headers ================== -->
-                <file category="header"  attr="config"  version="1.1.0" name="gui_lvgl.h"/>
-                <file category="header"  attr="config"  version="1.1.0" name="gui_lv_conf.h"/>
-                <file category="header"  attr="config"  version="1.1.0" name="gui_lv_font.h"/>
-                <file category="header"  attr="config"  version="1.1.0" name="gui_lv_sys_data.h"/>
-                <file category="header"  attr="config"  version="1.1.0" name="gui_lv_scene_id.h"/>
-                <file category="header"  attr="config"  version="1.0.0" name="gui_lv_custom_components.h"/>
+                <file category="header"  attr="config"  version="2.0.0" name="gui_lvgl.h"/>
+                <file category="header"  attr="config"  version="1.2.0" name="gui_lv_conf.h"/>
+                <file category="header"  attr="config"  version="1.2.0" name="gui_lv_font.h"/>
+                <file category="header"  attr="config"  version="1.2.0" name="gui_lv_sys_data.h"/>
+                <file category="header"  attr="config"  version="1.2.0" name="gui_lv_scene_id.h"/>
+                <file category="header"  attr="config"  version="1.3.1" name="gui_lv_custom_components.h"/>
                 <file category="header"  attr="config"  version="2.0.0" name="platform/gui_lv_user_arch_port.h"/>
 
                 <!-- ================== Framework sources ================== -->
-                <file category="sourceC" attr="config" version="1.1.0" name="gui_lvgl.c"/>
-                <file category="sourceC" attr="config" version="1.1.0" name="gui_lv_sys_data.c"/>
-                <file category="sourceC" attr="config" version="1.0.0" name="gui_lv_custom_components.c"/>
+                <file category="sourceC" attr="config" version="2.0.0" name="gui_lvgl.c"/>
+                <file category="sourceC" attr="config" version="1.2.0" name="gui_lv_sys_data.c"/>
+                <file category="sourceC" attr="config" version="1.2.0" name="gui_lv_custom_components.c"/>
 
             </files>
             <Pre_Include_Global_h>
@@ -196,7 +204,7 @@
 
 
         <component Cclass="GUI_LVGL_Wrapper"  Cgroup="Scene"
-                   Cversion="1.2.0"           condition="GUI_Scene" maxInstances="21">
+                   Cversion="2.0.0"           condition="GUI_Scene" maxInstances="21">
             <description>
                 GUI scene wrapper instance template.
 
@@ -210,10 +218,10 @@
             <files>
                 <file category="sourceh" name="template/gui_lv_scene_include.h"/>
 
-                <file category="sourceC" attr="config" version="1.2.0" name="template/gui_lv_scene.c"/>
-                <file category="header"  attr="config" version="1.2.0" name="template/gui_lv_scene.h"/>
-                <file category="sourceC" attr="config" version="1.2.0" name="template/gui_lv_scene_task.c"/>
-                <file category="header"  attr="config" version="1.2.0" name="template/gui_lv_scene_task.h"/>
+                <file category="sourceC" attr="config" version="2.0.0" name="template/gui_lv_scene.c"/>
+                <file category="header"  attr="config" version="2.0.0" name="template/gui_lv_scene.h"/>
+                <file category="sourceC" attr="config" version="2.0.0" name="template/gui_lv_scene_task.c"/>
+                <file category="header"  attr="config" version="2.0.0" name="template/gui_lv_scene_task.h"/>
             </files>
 
             <RTE_Components_h>
@@ -246,7 +254,7 @@
 
 
         <component Cclass="GUI_LVGL_Wrapper"  Cgroup="Libraries"
-                   Cversion="1.0.0"           condition="GUI_Libraries">
+                   Cversion="1.2.0"           condition="GUI_Libraries">
             <description>
                 GUI libraries and components.
 
@@ -255,11 +263,11 @@
 
             <files>
                 <!-- ======== Framework headers (read-only) ================ -->
-                <file category="header"  version="1.0.0" name="libraries/include/__gui_lv_lib.h"/>
-                <file category="header"  version="1.0.0" name="libraries/include/gui_lv_page_cursor.h"/>
+                <file category="header"  version="1.2.0" name="libraries/include/__gui_lv_lib.h"/>
+                <file category="header"  version="1.2.0" name="libraries/include/gui_lv_page_cursor.h"/>
 
                 <!-- ======== Framework sources (read-only) ================ -->
-                <file category="sourceC" version="1.0.0" name="libraries/source/gui_lv_page_cursor.c"/>
+                <file category="sourceC" version="1.2.0" name="libraries/source/gui_lv_page_cursor.c"/>
 
             </files>
             

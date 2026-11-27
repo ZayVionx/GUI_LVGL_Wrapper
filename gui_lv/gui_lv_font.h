@@ -1,5 +1,5 @@
-#ifndef __UI_FONT_H__
-#define __UI_FONT_H__
+#ifndef __GUI_LV_FONT_H__
+#define __GUI_LV_FONT_H__
 
 /*============================ INCLUDES ======================================*/
 #ifdef __GUI_LVGL_WRAPPER_CONF__
